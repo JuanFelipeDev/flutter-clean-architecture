@@ -66,3 +66,12 @@ final class ForceUpdateEvent extends SocketEvent {
     : super(channel: SocketChannel.publisher);
   final String latestVersion;
 }
+
+/// Raw, unparsed payload for channels whose schema is feature-specific
+/// (chat/tracking/beneficiary). Feature layers subscribe to the event stream
+/// and interpret the payload.
+final class RawSocketEvent extends SocketEvent {
+  const RawSocketEvent({required super.channel, required this.type, required this.payload});
+  final String? type;
+  final Map<String, dynamic> payload;
+}

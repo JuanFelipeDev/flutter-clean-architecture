@@ -40,6 +40,9 @@ dependencies:
   connectivity_plus: ^6.1.0
   cached_network_image: ^3.4.1
 
+  # Realtime
+  socket_io_client: ^3.0.2
+
   # Telemetry (guarded init; full Firebase wiring lands in Phase 4)
   sentry_flutter: ^8.9.0
 

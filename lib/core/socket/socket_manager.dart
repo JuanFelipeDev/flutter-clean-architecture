@@ -11,7 +11,7 @@ abstract class SocketManager {
   /// Stream of typed events across all connected channels.
   Stream<SocketEvent> get events;
 
-  Future<void> connect(SocketChannel channel, {Map<String, dynamic>? auth});
+  Future<void> connect(SocketChannel channel, {Map<String, String>? auth});
   Future<void> disconnect(SocketChannel channel);
   Future<void> disconnectAll();
 }
