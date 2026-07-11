@@ -1,0 +1,19 @@
+{
+  "FLAVOR": "masservicios",
+  "ENVIRONMENT": "dev",
+  "APP_NAME": "Masservicios",
+  "PRIMARY_COLOR": "0xFFC62828",
+  "ACCENT_COLOR": "0xFFFFFFFF",
+  "LOGIN_STRATEGY": "standard",
+  "REGISTER_FIELDS": "email,phone,name,lastname,nit",
+  "CLIENT_ID": "masservicios",
+  "COUNTRY": "MX",
+  "URL_SERVER_DEV": "https://dev.masservicios.com.mx",
+  "URL_SERVER_QA": "https://qa.masservicios.com.mx",
+  "URL_SERVER_PROD": "https://prod.masservicios.com.mx",
+  "URL_SERVER_PREPROD": "https://preprod.masservicios.com.mx",
+  "URL_SOCKET": "https://dev.masservicios.com.mx",
+  "SOCKET_PATH": "/soaang-notifier/wss/",
+  "SENTRY_DSN": "",
+  "MAPS_API_KEY": ""
+}

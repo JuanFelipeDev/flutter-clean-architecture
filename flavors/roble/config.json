@@ -1,0 +1,19 @@
+{
+  "FLAVOR": "roble",
+  "ENVIRONMENT": "dev",
+  "APP_NAME": "Roble Afiliado",
+  "PRIMARY_COLOR": "0xFF2E7D32",
+  "ACCENT_COLOR": "0xFFFFA000",
+  "LOGIN_STRATEGY": "roble",
+  "REGISTER_FIELDS": "nit,phone,name",
+  "CLIENT_ID": "roble",
+  "COUNTRY": "GT",
+  "URL_SERVER_DEV": "https://dev.sistemaoperaciones.com",
+  "URL_SERVER_QA": "https://qa.sistemaoperaciones.com",
+  "URL_SERVER_PROD": "https://prod.sistemaoperaciones.com",
+  "URL_SERVER_PREPROD": "https://preprod.sistemaoperaciones.com",
+  "URL_SOCKET": "https://dev.sistemaoperaciones.com",
+  "SOCKET_PATH": "/soaang-notifier/wss/",
+  "SENTRY_DSN": "",
+  "MAPS_API_KEY": ""
+}

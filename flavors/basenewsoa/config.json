@@ -1,0 +1,19 @@
+{
+  "FLAVOR": "basenewsoa",
+  "ENVIRONMENT": "dev",
+  "APP_NAME": "Afiliado",
+  "PRIMARY_COLOR": "0xFF1E88E5",
+  "ACCENT_COLOR": "0xFFFFC107",
+  "LOGIN_STRATEGY": "standard",
+  "REGISTER_FIELDS": "email,phone,name,lastname",
+  "CLIENT_ID": "basenewsoa",
+  "COUNTRY": "CO",
+  "URL_SERVER_DEV": "https://dev.sistemaoperaciones.com",
+  "URL_SERVER_QA": "https://qa.sistemaoperaciones.com",
+  "URL_SERVER_PROD": "https://prod.sistemaoperaciones.com",
+  "URL_SERVER_PREPROD": "https://preprod.sistemaoperaciones.com",
+  "URL_SOCKET": "https://dev.sistemaoperaciones.com",
+  "SOCKET_PATH": "/soaang-notifier/wss/",
+  "SENTRY_DSN": "",
+  "MAPS_API_KEY": ""
+}

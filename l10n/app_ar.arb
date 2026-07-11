@@ -1,0 +1,19 @@
+{
+  "@@locale": "ar",
+  "appName": "المنتسب",
+  "loading": "جارٍ التحميل…",
+  "retry": "إعادة المحاولة",
+  "errorGeneric": "حدث خطأ غير متوقع",
+  "errorNoConnection": "لا يوجد اتصال بالإنترنت",
+  "errorSessionExpired": "انتهت جلستك",
+  "splashStarting": "جارٍ البدء…",
+  "loginTitle": "تسجيل الدخول",
+  "loginUsername": "المستخدم",
+  "loginPassword": "كلمة المرور",
+  "loginSubmit": "دخول",
+  "homeTitle": "الرئيسية",
+  "tabAssistance": "المساعدات",
+  "tabNotifications": "الإشعارات",
+  "tabTracking": "التتبع",
+  "tabHome": "الرئيسية"
+}

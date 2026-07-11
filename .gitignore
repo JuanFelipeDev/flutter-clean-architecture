@@ -1,43 +1,61 @@
-.gradle
+# Flutter / Dart
 build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
-.kotlin
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+# pubspec.lock IS committed for applications (dependency reproducibility).
 
-### IntelliJ IDEA ###
-.idea/modules.xml
-.idea/jarRepositories.xml
-.idea/compiler.xml
-.idea/libraries/
-*.iws
+# Generated code
+*.g.dart
+*.freezed.dart
+*.gr.dart
+*.config.dart
+lib/generated/
+**/generated_plugin_registrant.dart
+
+# Coverage
+coverage/
+
+# IDE
+.idea/
+.vscode/
 *.iml
 *.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-
-### Eclipse ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
-
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-
-### VS Code ###
-.vscode/
-
-### Mac OS ###
+*.iws
 .DS_Store
+.md
+*.md
+
+# Flutter / native build outputs
+.dart_tool/
+**/android/.gradle
+**/android/captures/
+**/android/gradlew
+**/android/gradlew.bat
+**/android/local.properties
+**/android/**/GeneratedPluginRegistrant.java
+**/ios/Flutter/.last_build_id
+**/ios/Flutter/App.framework
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/ios/Flutter/Generated.xcconfig
+**/ios/Flutter/ephemeral
+**/ios/Flutter/flutter_export_environment.sh
+**/ios/ServiceDefinitions.json
+**/ios/Runner/GeneratedPluginRegistrant.*
+
+# Secrets & per-flavor config that must not be committed
+flavors/*/google-services.json
+flavors/*/GoogleService-Info.plist
+flavors/*/secrets.json
+**/android/app/google-services.json
+**/ios/Runner/GoogleService-Info.plist
+*.keystore
+*.jks
+key.properties
+
+# Tolerate empty asset dirs
+!assets/images/.gitkeep

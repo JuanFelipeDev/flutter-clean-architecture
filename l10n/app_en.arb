@@ -1,0 +1,19 @@
+{
+  "@@locale": "en",
+  "appName": "Affiliate",
+  "loading": "Loading…",
+  "retry": "Retry",
+  "errorGeneric": "An unexpected error occurred",
+  "errorNoConnection": "No internet connection",
+  "errorSessionExpired": "Your session has expired",
+  "splashStarting": "Starting…",
+  "loginTitle": "Sign in",
+  "loginUsername": "Username",
+  "loginPassword": "Password",
+  "loginSubmit": "Sign in",
+  "homeTitle": "Home",
+  "tabAssistance": "Assistance",
+  "tabNotifications": "Notifications",
+  "tabTracking": "Tracking",
+  "tabHome": "Home"
+}
