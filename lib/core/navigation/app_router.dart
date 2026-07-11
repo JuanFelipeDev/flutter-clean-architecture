@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/authentication/presentation/pages/login_page.dart';
+import '../../features/authentication/presentation/pages/two_factor_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/splash/presentation/pages/splash_page.dart';
 import '../session/session_state_provider.dart';
@@ -52,6 +53,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoute.login.path,
         builder: (_, _) => const LoginPage(),
+      ),
+      GoRoute(
+        path: AppRoute.twoFactor.path,
+        builder: (_, _) => const TwoFactorPage(),
       ),
       GoRoute(
         path: AppRoute.home.path,
