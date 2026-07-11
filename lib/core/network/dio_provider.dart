@@ -11,6 +11,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../config/config_providers.dart';
 import '../logging/logging_providers.dart';
 import '../localization/localization_providers.dart';
+import '../session/session_data.dart';
+import '../session/session_providers.dart';
+import '../session/session_repository.dart';
 import '../storage/secure_storage_service.dart';
 import '../storage/storage_providers.dart';
 import 'connectivity_service.dart';
@@ -31,17 +34,18 @@ final connectivityProvider = Provider<ConnectivityService>((ref) {
 // -- Accessor implementations (DI seams wired to storage/config) -----------
 
 class _CredentialAccessor implements CredentialAccessor {
-  _CredentialAccessor(this._storage);
+  _CredentialAccessor(this._storage, this._session);
   final SecureStorageService _storage;
+  final SessionData? _session;
 
   @override
   Future<String?> accessToken() => _storage.accessToken();
 
   @override
-  String? clientId() => null; // populated in Phase 4 from the session model.
+  String? clientId() => _session?.clientId;
 
   @override
-  String? username() => null; // populated in Phase 4 from the session model.
+  String? username() => _session?.username;
 }
 
 class _BaseUrlAccessor implements BaseUrlAccessor {
@@ -58,22 +62,33 @@ class _LocaleAccessor implements LocaleAccessor {
   String currentLanguageTag() => _tag;
 }
 
-/// Phase 3 stub. Phase 4 wires this to the auth repository's refresh call.
-class _StubTokenRefresher implements TokenRefresher {
+/// Real refresher: delegates to [SessionRepository.refresh], then reads the
+/// new access token from secure storage.
+class _TokenRefresherImpl implements TokenRefresher {
+  _TokenRefresherImpl(this._repository, this._storage);
+  final SessionRepository _repository;
+  final SecureStorageService _storage;
+
   @override
   Future<String> refresh() async {
-    throw UnimplementedError('Token refresh is wired in Phase 4 (auth).');
+    final result = await _repository.refresh();
+    return result.fold(
+      onSuccess: (_) async => (await _storage.accessToken())!,
+      onFailure: (failure) => throw failure,
+    );
   }
 }
 
-/// The app's configured [Dio]. Rebuilds when the locale/base URL change so
-/// interceptors pick up new values.
+/// The app's configured [Dio]. Rebuilds when the locale/base URL/session
+/// change so interceptors pick up new values.
 final dioProvider = Provider<Dio>((ref) {
   final flavor = ref.watch(flavorConfigProvider);
   final storage = ref.watch(secureStorageProvider);
   final telemetry = ref.watch(telemetryProvider);
   final languageTag = ref.watch(languageTagProvider);
   final logger = ref.watch(loggerProvider);
+  final session = ref.watch(cachedSessionProvider);
+  final sessionRepository = ref.watch(sessionRepositoryProvider);
 
   final uploadSink = StreamController<UploadProgress>.broadcast();
   ref.onDispose(uploadSink.close);
@@ -86,10 +101,10 @@ final dioProvider = Provider<Dio>((ref) {
       skipHosts: const ['googleapis.com', 'google.com'],
     ),
     AuthInterceptor(
-      _CredentialAccessor(storage),
+      _CredentialAccessor(storage, session),
       skipPaths: const ['api/token/', 'sign_up', 'password-reset'],
     ),
-    RefreshTokenInterceptor(_StubTokenRefresher()),
+    RefreshTokenInterceptor(_TokenRefresherImpl(sessionRepository, storage)),
     LoggingInterceptor(telemetry: telemetry, verbose: true),
   ];
 
