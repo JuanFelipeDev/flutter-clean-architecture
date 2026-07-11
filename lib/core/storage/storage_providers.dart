@@ -3,7 +3,7 @@ library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'local_database.dart';
+import 'database/app_database.dart';
 import 'prefs_service.dart';
 import 'secure_storage_service.dart';
 
@@ -16,7 +16,9 @@ final prefsServiceProvider = FutureProvider<PrefsService>((ref) async {
   return PrefsService.create();
 });
 
-/// Phase 3 placeholder DB; Phase 4 swaps in the drift `AppDatabase`.
-final localDatabaseProvider = Provider<LocalDatabase>((ref) {
-  return NoopLocalDatabase();
+/// Real drift database (Phase 4). Disposed on container teardown.
+final localDatabaseProvider = Provider<AppDatabase>((ref) {
+  final db = AppDatabase();
+  ref.onDispose(db.close);
+  return db;
 });
