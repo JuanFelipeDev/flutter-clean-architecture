@@ -3,16 +3,13 @@ library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../config/config_providers.dart';
 import 'logger.dart';
 import 'telemetry_service.dart';
 
+/// No-op until a Sentry/Firebase project is provisioned (see
+/// [telemetry_service.dart]).
 final telemetryProvider = Provider<TelemetryService>((ref) {
-  final flavor = ref.watch(flavorConfigProvider);
-  if (flavor.sentryDsn.isEmpty) {
-    return NoopTelemetry();
-  }
-  return SentryTelemetry(dsn: flavor.sentryDsn, environment: flavor.environment.name);
+  return NoopTelemetry();
 });
 
 final loggerProvider = Provider<Logger>((ref) {

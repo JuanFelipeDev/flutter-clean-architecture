@@ -6,8 +6,13 @@ plugins {
 
 android {
     namespace = "com.americanassist.affiliate_app"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    // Bumped to 36: package_info_plus requires libraries compiled against
+    // API 36+. (flutter.compileSdkVersion defaults lower.)
+    compileSdk = 36
+    // NDK intentionally not pinned: the project's plugins ship prebuilt .so
+    // and don't compile native code. Pinning flutter.ndkVersion forces Gradle
+    // to install a specific (incomplete-on-this-machine) NDK and fails the
+    // build. Re-enable + install that NDK if a future plugin needs to compile.
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
