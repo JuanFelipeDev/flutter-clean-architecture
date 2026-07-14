@@ -14,6 +14,7 @@ import '../../features/videocall/presentation/pages/videocall_page.dart';
 import '../../features/authentication/presentation/pages/login_page.dart';
 import '../../features/history/presentation/pages/history_page.dart';
 import '../../features/notifications/presentation/pages/notifications_page.dart';
+import '../../features/scheduling/presentation/pages/scheduling_page.dart';
 import '../../features/payment/presentation/pages/payment_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/authentication/presentation/pages/two_factor_page.dart';
@@ -112,6 +113,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoute.history.path,
         builder: (_, _) => const HistoryPage(),
+      ),
+      GoRoute(
+        path: AppRoute.scheduling.path,
+        builder: (context, state) => SchedulingPage(serviceId: (state.extra as String?) ?? ''),
       ),
       GoRoute(
         path: AppRoute.home.path,
