@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/assistance/presentation/pages/assistance_page.dart';
 import '../../features/chat/presentation/pages/chat_page.dart';
+import '../../features/videocall/presentation/pages/videocall_page.dart';
 import '../../features/authentication/presentation/pages/login_page.dart';
 import '../../features/authentication/presentation/pages/two_factor_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
@@ -77,6 +78,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoute.chat.path,
         builder: (context, state) => ChatPage(assistanceId: (state.extra as String?) ?? ''),
+      ),
+      GoRoute(
+        path: AppRoute.videoCall.path,
+        builder: (context, state) => VideoCallPage(assistanceId: (state.extra as String?) ?? ''),
       ),
       GoRoute(
         path: AppRoute.home.path,

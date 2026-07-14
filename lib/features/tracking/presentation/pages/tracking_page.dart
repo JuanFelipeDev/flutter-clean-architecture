@@ -131,6 +131,10 @@ class _AssistanceTile extends ConsumerWidget {
                 onPressed: () => context.push(AppRoute.chat.path, extra: assistance.id),
                 child: const Text('Chat'),
               ),
+              FilledButton.tonal(
+                onPressed: () => context.push(AppRoute.videoCall.path, extra: assistance.id),
+                child: const Text('Video'),
+              ),
               OutlinedButton(
                 onPressed: () => notifier.panic(assistance.id, 0, 0),
                 child: const Text('Panic'),
