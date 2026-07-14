@@ -11,9 +11,11 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/config/flavor_config.dart';
 import '../../../../core/localization/l10n.dart';
+import '../../../../core/navigation/app_routes.dart';
 import '../../../../core/utils/validators.dart';
 import '../../../../core/widgets/validated_text_field.dart';
 import '../providers/auth_providers.dart';
@@ -89,6 +91,11 @@ class _LoginFormState extends ConsumerState<LoginForm> {
           FilledButton(
             onPressed: () => ref.read(loginProvider.notifier).submit(),
             child: Text(context.l10n.loginSubmit),
+          ),
+          const SizedBox(height: 16),
+          TextButton(
+            onPressed: () => context.push(AppRoute.register.path),
+            child: const Text('Register'),
           ),
         ],
       ),

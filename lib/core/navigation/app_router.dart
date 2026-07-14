@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/authentication/presentation/pages/login_page.dart';
 import '../../features/authentication/presentation/pages/two_factor_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
+import '../../features/registration/presentation/pages/register_page.dart';
 import '../../features/splash/presentation/pages/splash_page.dart';
 import '../session/session_state_provider.dart';
 import 'app_routes.dart';
@@ -57,6 +58,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoute.twoFactor.path,
         builder: (_, _) => const TwoFactorPage(),
+      ),
+      GoRoute(
+        path: AppRoute.register.path,
+        builder: (_, _) => const RegisterPage(),
       ),
       GoRoute(
         path: AppRoute.home.path,
