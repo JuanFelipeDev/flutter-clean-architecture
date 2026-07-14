@@ -10,7 +10,9 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../../core/navigation/app_routes.dart';
 import '../../../../core/widgets/loading.dart';
 import '../../../../core/widgets/toast.dart';
 import '../../domain/entities/tracking_entities.dart';
@@ -124,6 +126,10 @@ class _AssistanceTile extends ConsumerWidget {
               FilledButton.tonal(
                 onPressed: () => notifier.confirmFinal(assistance.id),
                 child: const Text('Confirm end'),
+              ),
+              FilledButton(
+                onPressed: () => context.push(AppRoute.chat.path, extra: assistance.id),
+                child: const Text('Chat'),
               ),
               OutlinedButton(
                 onPressed: () => notifier.panic(assistance.id, 0, 0),
