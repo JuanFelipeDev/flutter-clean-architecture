@@ -5,6 +5,7 @@ library;
 import 'dart:convert';
 
 import '../../domain/entities/payment_entities.dart';
+import '../../../../core/utils/json_list_parser.dart';
 
 double? _toDouble(dynamic v) => v is num ? v.toDouble() : null;
 
@@ -119,16 +120,7 @@ class PaymentMapper {
       );
 }
 
-List<T> _listFrom<T>(dynamic body, T Function(Map<String, dynamic>) fromJson, [String? key]) {
-  List<Map<String, dynamic>> extract(List<dynamic> l) =>
-      l.whereType<Map<dynamic, dynamic>>().map((e) => Map<String, dynamic>.from(e)).toList();
-  if (body is List) return extract(body).map(fromJson).toList();
-  if (body is Map<String, dynamic> && key != null && body[key] is List) {
-    return extract(body[key] as List).map(fromJson).toList();
-  }
-  return <T>[];
-}
 
-List<ShopPlanDto> parsePlans(dynamic body) => _listFrom(body, ShopPlanDto.fromJson, 'plans');
-List<ShopServiceDto> parseServices(dynamic body) => _listFrom(body, ShopServiceDto.fromJson, 'services');
-List<PurchaseDto> parsePurchases(dynamic body) => _listFrom(body, PurchaseDto.fromJson, 'purchases');
+List<ShopPlanDto> parsePlans(dynamic body) => parseJsonList(body, ShopPlanDto.fromJson, 'plans');
+List<ShopServiceDto> parseServices(dynamic body) => parseJsonList(body, ShopServiceDto.fromJson, 'services');
+List<PurchaseDto> parsePurchases(dynamic body) => parseJsonList(body, PurchaseDto.fromJson, 'purchases');

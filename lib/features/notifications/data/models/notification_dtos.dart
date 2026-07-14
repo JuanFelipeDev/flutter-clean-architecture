@@ -2,6 +2,7 @@
 library;
 
 import '../../domain/entities/notification_entities.dart';
+import '../../../../core/utils/json_list_parser.dart';
 
 class NotificationDto {
   const NotificationDto({this.id, this.type, this.message, this.assistanceId, this.createdAt, this.read});
@@ -40,18 +41,5 @@ class NotificationsMapper {
   }
 }
 
-List<NotificationDto> parseNotifications(dynamic body) {
-  if (body is List) {
-    return body
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => NotificationDto.fromJson(Map<String, dynamic>.from(e)))
-        .toList();
-  }
-  if (body is Map<String, dynamic> && body['notifications'] is List) {
-    return (body['notifications'] as List)
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => NotificationDto.fromJson(Map<String, dynamic>.from(e)))
-        .toList();
-  }
-  return <NotificationDto>[];
-}
+List<NotificationDto> parseNotifications(dynamic body) =>
+    parseJsonList(body, NotificationDto.fromJson, 'notifications');

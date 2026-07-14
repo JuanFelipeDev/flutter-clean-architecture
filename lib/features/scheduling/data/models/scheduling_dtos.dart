@@ -5,6 +5,7 @@ library;
 import 'dart:convert';
 
 import '../../domain/entities/scheduling_entities.dart';
+import '../../../../core/utils/json_list_parser.dart';
 
 class TimeSlotDto {
   const TimeSlotDto({this.start, this.end, this.available});
@@ -67,18 +68,5 @@ class SchedulingMapper {
       '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
 }
 
-List<TimeSlotDto> parseSlots(dynamic body) {
-  if (body is List) {
-    return body
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => TimeSlotDto.fromJson(Map<String, dynamic>.from(e)))
-        .toList();
-  }
-  if (body is Map<String, dynamic> && body['slots'] is List) {
-    return (body['slots'] as List)
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => TimeSlotDto.fromJson(Map<String, dynamic>.from(e)))
-        .toList();
-  }
-  return <TimeSlotDto>[];
-}
+List<TimeSlotDto> parseSlots(dynamic body) =>
+    parseJsonList(body, TimeSlotDto.fromJson, 'slots');

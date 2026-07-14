@@ -6,6 +6,7 @@ library;
 import 'dart:convert';
 
 import '../../domain/entities/assistance_entities.dart';
+import '../../../../core/utils/json_list_parser.dart';
 
 // -- Catalog DTOs ----------------------------------------------------------
 
@@ -173,31 +174,15 @@ class AssistanceMapper {
 
 // -- List parsing helpers --------------------------------------------------
 
-List<T> _parseList<T>(
-  dynamic body,
-  T Function(Map<String, dynamic>) fromJson, [
-  String? singleKey,
-]) {
-  List<Map<String, dynamic>> extract(List<dynamic> list) =>
-      list.whereType<Map<dynamic, dynamic>>().map((e) => Map<String, dynamic>.from(e)).toList();
 
-  if (body is List) {
-    return extract(body).map(fromJson).toList();
-  }
-  if (body is Map<String, dynamic> && singleKey != null && body[singleKey] is List) {
-    return extract(body[singleKey] as List).map(fromJson).toList();
-  }
-  return <T>[];
-}
-
-List<AccountDto> parseAccounts(dynamic body) => _parseList(body, AccountDto.fromJson, 'accounts');
-List<PlanDto> parsePlans(dynamic body) => _parseList(body, PlanDto.fromJson, 'plans');
-List<FamilyDto> parseFamilies(dynamic body) => _parseList(body, FamilyDto.fromJson, 'families');
-List<ServiceDto> parseServices(dynamic body) => _parseList(body, ServiceDto.fromJson, 'services');
+List<AccountDto> parseAccounts(dynamic body) => parseJsonList(body, AccountDto.fromJson, 'accounts');
+List<PlanDto> parsePlans(dynamic body) => parseJsonList(body, PlanDto.fromJson, 'plans');
+List<FamilyDto> parseFamilies(dynamic body) => parseJsonList(body, FamilyDto.fromJson, 'families');
+List<ServiceDto> parseServices(dynamic body) => parseJsonList(body, ServiceDto.fromJson, 'services');
 List<CoverageQuestionDto> parseQuestions(dynamic body) =>
-    _parseList(body, CoverageQuestionDto.fromJson, 'questions');
+    parseJsonList(body, CoverageQuestionDto.fromJson, 'questions');
 List<PlaceSuggestionDto> parseSuggestions(dynamic body) =>
-    _parseList(body, PlaceSuggestionDto.fromJson, 'suggestions');
+    parseJsonList(body, PlaceSuggestionDto.fromJson, 'suggestions');
 
 T? parseSingle<T>(dynamic body, T Function(Map<String, dynamic>) fromJson) {
   if (body is Map<String, dynamic>) return fromJson(body);

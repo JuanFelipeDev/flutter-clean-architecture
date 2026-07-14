@@ -5,6 +5,7 @@ library;
 import 'dart:convert';
 
 import '../../domain/entities/vehicle_entities.dart';
+import '../../../../core/utils/json_list_parser.dart';
 
 class VehicleDto {
   const VehicleDto({this.id, this.plate, this.brandId, this.modelId, this.brand, this.model, this.color, this.type});
@@ -89,15 +90,6 @@ class VehicleMapper {
       VehicleModel(id: dto.id ?? '', brandId: dto.brandId ?? '', name: dto.name ?? '');
 }
 
-List<T> _listFrom<T>(dynamic body, T Function(Map<String, dynamic>) fromJson, [String? key]) {
-  List<Map<String, dynamic>> extract(List<dynamic> l) =>
-      l.whereType<Map<dynamic, dynamic>>().map((e) => Map<String, dynamic>.from(e)).toList();
-  if (body is List) return extract(body).map(fromJson).toList();
-  if (body is Map<String, dynamic> && key != null && body[key] is List) {
-    return extract(body[key] as List).map(fromJson).toList();
-  }
-  return <T>[];
-}
 
 T? _single<T>(dynamic body, T Function(Map<String, dynamic>) fromJson) {
   if (body is Map<String, dynamic>) return fromJson(body);
@@ -108,7 +100,7 @@ T? _single<T>(dynamic body, T Function(Map<String, dynamic>) fromJson) {
   return null;
 }
 
-List<VehicleDto> parseVehicles(dynamic body) => _listFrom(body, VehicleDto.fromJson, 'vehicles');
-List<BrandDto> parseBrands(dynamic body) => _listFrom(body, BrandDto.fromJson, 'brands');
-List<VehicleModelDto> parseModels(dynamic body) => _listFrom(body, VehicleModelDto.fromJson, 'models');
+List<VehicleDto> parseVehicles(dynamic body) => parseJsonList(body, VehicleDto.fromJson, 'vehicles');
+List<BrandDto> parseBrands(dynamic body) => parseJsonList(body, BrandDto.fromJson, 'brands');
+List<VehicleModelDto> parseModels(dynamic body) => parseJsonList(body, VehicleModelDto.fromJson, 'models');
 VehicleDto? parseVehicle(dynamic body) => _single(body, VehicleDto.fromJson);

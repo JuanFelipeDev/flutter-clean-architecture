@@ -3,6 +3,7 @@
 library;
 
 import '../../domain/entities/survey_entities.dart';
+import '../../../../core/utils/json_list_parser.dart';
 
 class SurveyQuestionDto {
   const SurveyQuestionDto({this.id, this.text, this.options = const <String>[]});
@@ -35,18 +36,5 @@ class SurveyMapper {
       };
 }
 
-List<SurveyQuestionDto> parseQuestions(dynamic body) {
-  if (body is List) {
-    return body
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => SurveyQuestionDto.fromJson(Map<String, dynamic>.from(e)))
-        .toList();
-  }
-  if (body is Map<String, dynamic> && body['questions'] is List) {
-    return (body['questions'] as List)
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => SurveyQuestionDto.fromJson(Map<String, dynamic>.from(e)))
-        .toList();
-  }
-  return <SurveyQuestionDto>[];
-}
+List<SurveyQuestionDto> parseQuestions(dynamic body) =>
+    parseJsonList(body, SurveyQuestionDto.fromJson, 'questions');

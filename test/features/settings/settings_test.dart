@@ -14,12 +14,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _FakePrefs implements PrefsService {
-  String? locale;
+  String? _localeTag;
   @override
-  String? getLocale() => locale;
+  String? get locale => _localeTag;
   @override
   Future<void> setLocale(String tag) async {
-    locale = tag;
+    _localeTag = tag;
   }
   @override
   String? getString(String key) => null;

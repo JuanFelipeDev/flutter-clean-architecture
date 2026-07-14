@@ -5,6 +5,7 @@ library;
 import 'dart:convert';
 
 import '../../domain/entities/chat_entities.dart';
+import '../../../../core/utils/json_list_parser.dart';
 
 class ChatMessageDto {
   const ChatMessageDto({
@@ -73,22 +74,12 @@ class ChatMapper {
 }
 
 List<ChatMessageDto> parseMessages(dynamic body) {
-  if (body is List) {
-    return body
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => ChatMessageDto.fromJson(Map<String, dynamic>.from(e)))
-        .toList();
-  }
-  if (body is Map<String, dynamic>) {
+  var list = jsonObjectList(body);
+  if (list.isEmpty && body is Map<String, dynamic>) {
     final msgs = body['messages'] ?? body['results'];
-    if (msgs is List) {
-      return msgs
-          .whereType<Map<dynamic, dynamic>>()
-          .map((e) => ChatMessageDto.fromJson(Map<String, dynamic>.from(e)))
-          .toList();
-    }
+    if (msgs is List) list = jsonObjectList(msgs);
   }
-  return <ChatMessageDto>[];
+  return list.map(ChatMessageDto.fromJson).toList();
 }
 
 // Unused but kept for parity with other features' json helpers.

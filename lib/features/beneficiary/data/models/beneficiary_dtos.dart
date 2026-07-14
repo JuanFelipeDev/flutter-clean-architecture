@@ -5,6 +5,7 @@ library;
 import 'dart:convert';
 
 import '../../domain/entities/beneficiary_entities.dart';
+import '../../../../core/utils/json_list_parser.dart';
 
 class BeneficiaryDto {
   const BeneficiaryDto({this.id, this.name, this.relationship, this.documentNumber, this.state});
@@ -83,15 +84,6 @@ class BeneficiaryMapper {
   }
 }
 
-List<T> _listFrom<T>(dynamic body, T Function(Map<String, dynamic>) fromJson, [String? key]) {
-  List<Map<String, dynamic>> extract(List<dynamic> l) =>
-      l.whereType<Map<dynamic, dynamic>>().map((e) => Map<String, dynamic>.from(e)).toList();
-  if (body is List) return extract(body).map(fromJson).toList();
-  if (body is Map<String, dynamic> && key != null && body[key] is List) {
-    return extract(body[key] as List).map(fromJson).toList();
-  }
-  return <T>[];
-}
 
 T? _single<T>(dynamic body, T Function(Map<String, dynamic>) fromJson) {
   if (body is Map<String, dynamic>) return fromJson(body);
@@ -103,7 +95,7 @@ T? _single<T>(dynamic body, T Function(Map<String, dynamic>) fromJson) {
 }
 
 List<BeneficiaryDto> parseBeneficiaries(dynamic body) =>
-    _listFrom(body, BeneficiaryDto.fromJson, 'beneficiaries');
+    parseJsonList(body, BeneficiaryDto.fromJson, 'beneficiaries');
 List<RelationshipDto> parseRelationships(dynamic body) =>
-    _listFrom(body, RelationshipDto.fromJson, 'parentescos');
+    parseJsonList(body, RelationshipDto.fromJson, 'parentescos');
 BeneficiaryDto? parseBeneficiary(dynamic body) => _single(body, BeneficiaryDto.fromJson);

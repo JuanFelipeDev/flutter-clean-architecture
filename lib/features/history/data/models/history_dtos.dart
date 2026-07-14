@@ -2,6 +2,7 @@
 library;
 
 import '../../domain/entities/history_entities.dart';
+import '../../../../core/utils/json_list_parser.dart';
 
 class HistoryItemDto {
   const HistoryItemDto({this.id, this.serviceId, this.serviceName, this.status, this.createdAt, this.address, this.providerName});
@@ -43,18 +44,5 @@ class HistoryMapper {
   }
 }
 
-List<HistoryItemDto> parseHistory(dynamic body) {
-  if (body is List) {
-    return body
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => HistoryItemDto.fromJson(Map<String, dynamic>.from(e)))
-        .toList();
-  }
-  if (body is Map<String, dynamic> && body['assistances'] is List) {
-    return (body['assistances'] as List)
-        .whereType<Map<dynamic, dynamic>>()
-        .map((e) => HistoryItemDto.fromJson(Map<String, dynamic>.from(e)))
-        .toList();
-  }
-  return <HistoryItemDto>[];
-}
+List<HistoryItemDto> parseHistory(dynamic body) =>
+    parseJsonList(body, HistoryItemDto.fromJson, 'assistances');
