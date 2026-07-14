@@ -12,6 +12,7 @@ import '../../features/chat/presentation/pages/chat_page.dart';
 import '../../features/videocall/presentation/pages/videocall_page.dart';
 import '../../features/authentication/presentation/pages/login_page.dart';
 import '../../features/payment/presentation/pages/payment_page.dart';
+import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/authentication/presentation/pages/two_factor_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/registration/presentation/pages/register_page.dart';
@@ -87,6 +88,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoute.payment.path,
         builder: (_, _) => const PaymentPage(),
+      ),
+      GoRoute(
+        path: AppRoute.profile.path,
+        builder: (_, _) => const ProfilePage(),
       ),
       GoRoute(
         path: AppRoute.home.path,
