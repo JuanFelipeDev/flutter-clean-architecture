@@ -19,6 +19,7 @@ import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/registration/presentation/pages/register_page.dart';
 import '../../features/splash/presentation/pages/splash_page.dart';
 import '../../features/tracking/presentation/pages/tracking_page.dart';
+import '../../features/vehicle/presentation/pages/vehicle_page.dart';
 import '../session/session_state_provider.dart';
 import 'app_routes.dart';
 
@@ -97,6 +98,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoute.beneficiary.path,
         builder: (_, _) => const BeneficiaryPage(),
+      ),
+      GoRoute(
+        path: AppRoute.vehicle.path,
+        builder: (_, _) => const VehiclePage(),
       ),
       GoRoute(
         path: AppRoute.home.path,

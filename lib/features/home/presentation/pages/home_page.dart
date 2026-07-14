@@ -21,6 +21,10 @@ class HomePage extends StatelessWidget {
           title: const Text('Home'),
           actions: [
             IconButton(
+              icon: const Icon(Icons.directions_car_outlined),
+              onPressed: () => context.push(AppRoute.vehicle.path),
+            ),
+            IconButton(
               icon: const Icon(Icons.groups_outlined),
               onPressed: () => context.push(AppRoute.beneficiary.path),
             ),
