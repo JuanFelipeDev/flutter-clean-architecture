@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/assistance/presentation/pages/assistance_page.dart';
+import '../../features/beneficiary/presentation/pages/beneficiary_page.dart';
 import '../../features/chat/presentation/pages/chat_page.dart';
 import '../../features/videocall/presentation/pages/videocall_page.dart';
 import '../../features/authentication/presentation/pages/login_page.dart';
@@ -92,6 +93,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoute.profile.path,
         builder: (_, _) => const ProfilePage(),
+      ),
+      GoRoute(
+        path: AppRoute.beneficiary.path,
+        builder: (_, _) => const BeneficiaryPage(),
       ),
       GoRoute(
         path: AppRoute.home.path,
