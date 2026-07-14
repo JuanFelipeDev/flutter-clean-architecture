@@ -30,7 +30,7 @@ class HomePage extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            const _PlaceholderTab('Home'),
+            _ActionTab(label: 'Shop', route: AppRoute.payment.path),
             _ActionTab(label: 'Assistance', route: AppRoute.assistance.path),
             _ActionTab(label: 'Tracking', route: AppRoute.tracking.path),
             const _PlaceholderTab('Notifications'),
