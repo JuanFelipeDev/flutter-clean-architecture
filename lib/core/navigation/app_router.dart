@@ -15,6 +15,7 @@ import '../../features/authentication/presentation/pages/login_page.dart';
 import '../../features/history/presentation/pages/history_page.dart';
 import '../../features/notifications/presentation/pages/notifications_page.dart';
 import '../../features/scheduling/presentation/pages/scheduling_page.dart';
+import '../../features/settings/presentation/pages/settings_page.dart';
 import '../../features/survey/presentation/pages/survey_page.dart';
 import '../../features/payment/presentation/pages/payment_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
@@ -122,6 +123,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoute.survey.path,
         builder: (context, state) => SurveyPage(assistanceId: (state.extra as String?) ?? ''),
+      ),
+      GoRoute(
+        path: AppRoute.settings.path,
+        builder: (_, _) => const SettingsPage(),
       ),
       GoRoute(
         path: AppRoute.home.path,
