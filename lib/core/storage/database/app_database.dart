@@ -1,6 +1,5 @@
 /// Drift [AppDatabase] — the offline-first relational store. Versioned with a
 /// migration strategy; opened via `sqlite3_flutter_libs` + `path_provider`.
-/// Phase 4 introduces the real DB (Phase 3 used [NoopLocalDatabase]).
 library;
 
 import 'dart:io';
@@ -10,7 +9,6 @@ import 'package:drift/native.dart';
 import 'package:path/path.dart' as p;
 import 'package:path_provider/path_provider.dart';
 
-import '../local_database.dart';
 import 'chat_outbox_dao.dart';
 import 'tables.dart';
 
@@ -20,7 +18,7 @@ part 'app_database.g.dart';
   tables: [AssistCacheEntries, CoordinateEntries, ChatOutboxEntries, NotificationCacheEntries],
   daos: [ChatOutboxDao],
 )
-class AppDatabase extends _$AppDatabase implements LocalDatabase {
+class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_open());
   AppDatabase.forTesting(super.e);
 
@@ -34,12 +32,6 @@ class AppDatabase extends _$AppDatabase implements LocalDatabase {
           await customStatement('PRAGMA foreign_keys = ON');
         },
       );
-
-  @override
-  Future<void> init() async {}
-
-  @override
-  Future<void> close() async => await super.close();
 }
 
 QueryExecutor _open() {
