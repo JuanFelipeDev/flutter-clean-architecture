@@ -13,6 +13,7 @@ import '../../features/authentication/presentation/pages/two_factor_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/registration/presentation/pages/register_page.dart';
 import '../../features/splash/presentation/pages/splash_page.dart';
+import '../../features/tracking/presentation/pages/tracking_page.dart';
 import '../session/session_state_provider.dart';
 import 'app_routes.dart';
 
@@ -67,6 +68,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoute.assistance.path,
         builder: (_, _) => const AssistancePage(),
+      ),
+      GoRoute(
+        path: AppRoute.tracking.path,
+        builder: (_, _) => const TrackingPage(),
       ),
       GoRoute(
         path: AppRoute.home.path,

@@ -32,7 +32,7 @@ class HomePage extends StatelessWidget {
           children: [
             const _PlaceholderTab('Home'),
             _ActionTab(label: 'Assistance', route: AppRoute.assistance.path),
-            const _PlaceholderTab('Tracking'),
+            _ActionTab(label: 'Tracking', route: AppRoute.tracking.path),
             const _PlaceholderTab('Notifications'),
           ],
         ),
