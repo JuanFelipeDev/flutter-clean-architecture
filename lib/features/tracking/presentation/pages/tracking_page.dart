@@ -52,6 +52,10 @@ class _TrackingPageState extends ConsumerState<TrackingPage> {
         title: const Text('Tracking'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.history),
+            onPressed: () => context.push(AppRoute.history.path),
+          ),
+          IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () => ref.read(trackingProvider.notifier).refresh(),
           ),
