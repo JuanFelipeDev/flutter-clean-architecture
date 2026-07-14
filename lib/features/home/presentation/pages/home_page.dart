@@ -47,22 +47,10 @@ class HomePage extends StatelessWidget {
             _ActionTab(label: 'Shop', route: AppRoute.payment.path),
             _ActionTab(label: 'Assistance', route: AppRoute.assistance.path),
             _ActionTab(label: 'Tracking', route: AppRoute.tracking.path),
-            const _PlaceholderTab('Notifications'),
+            _ActionTab(label: 'Notifications', route: AppRoute.notifications.path),
           ],
         ),
       ),
-    );
-  }
-}
-
-class _PlaceholderTab extends StatelessWidget {
-  const _PlaceholderTab(this.label);
-  final String label;
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('$label — soon', style: Theme.of(context).textTheme.titleMedium),
     );
   }
 }
