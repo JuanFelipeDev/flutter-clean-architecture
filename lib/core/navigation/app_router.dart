@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/assistance/presentation/pages/assistance_page.dart';
 import '../../features/authentication/presentation/pages/login_page.dart';
 import '../../features/authentication/presentation/pages/two_factor_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
@@ -62,6 +63,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoute.register.path,
         builder: (_, _) => const RegisterPage(),
+      ),
+      GoRoute(
+        path: AppRoute.assistance.path,
+        builder: (_, _) => const AssistancePage(),
       ),
       GoRoute(
         path: AppRoute.home.path,

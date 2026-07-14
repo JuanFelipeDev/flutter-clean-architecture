@@ -1,10 +1,13 @@
-/// Home shell — PLACEHOLDER. Phase 5 implements the real `DrawerActivity`
-/// hub: bottom nav (`assistance | notifications | tracking | main`) + drawer,
-/// with items gated by `configuraciones_app_afiliado/` flags. For Phase 3 this
-/// is a shell with the four tabs as stubs.
+/// Home shell — PARTIAL. Implements the `DrawerActivity` hub bottom nav
+/// (`home | assistance | tracking | notifications`). The assistance tab opens
+/// the assistance wizard; the rest remain placeholders until their features
+/// land. Drawer + per-item gating flags land with the settings feature.
 library;
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../core/navigation/app_routes.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -25,12 +28,12 @@ class HomePage extends StatelessWidget {
             ],
           ),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: [
-            _PlaceholderTab('Home'),
-            _PlaceholderTab('Assistance'),
-            _PlaceholderTab('Tracking'),
-            _PlaceholderTab('Notifications'),
+            const _PlaceholderTab('Home'),
+            _ActionTab(label: 'Assistance', route: AppRoute.assistance.path),
+            const _PlaceholderTab('Tracking'),
+            const _PlaceholderTab('Notifications'),
           ],
         ),
       ),
@@ -45,9 +48,29 @@ class _PlaceholderTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Text(
-        '$label — Phase 5',
-        style: Theme.of(context).textTheme.titleMedium,
+      child: Text('$label — soon', style: Theme.of(context).textTheme.titleMedium),
+    );
+  }
+}
+
+class _ActionTab extends StatelessWidget {
+  const _ActionTab({required this.label, required this.route});
+  final String label;
+  final String route;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(label, style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 16),
+          FilledButton(
+            onPressed: () => context.push(route),
+            child: const Text('Open'),
+          ),
+        ],
       ),
     );
   }
