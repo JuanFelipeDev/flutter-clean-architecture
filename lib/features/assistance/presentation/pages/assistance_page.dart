@@ -67,6 +67,7 @@ class _AssistancePageState extends ConsumerState<AssistancePage> {
           items: state.accounts,
           title: (a) => a.name,
           subtitle: (a) => a.number,
+          icon: Icons.account_balance_wallet_outlined,
           onSelected: (a) => notifier.selectAccount(a.id),
         );
       case AssistanceStep.plans:
@@ -74,12 +75,14 @@ class _AssistancePageState extends ConsumerState<AssistancePage> {
           items: state.plans,
           title: (p) => p.name,
           subtitle: (p) => p.description,
+          icon: Icons.card_membership_outlined,
           onSelected: (p) => notifier.selectPlan(p.id),
         );
       case AssistanceStep.families:
         return _SelectionList<ServiceFamily>(
           items: state.families,
           title: (f) => f.name,
+          icon: Icons.category_outlined,
           onSelected: (f) => notifier.selectFamily(f.id),
         );
       case AssistanceStep.services:
@@ -87,6 +90,7 @@ class _AssistancePageState extends ConsumerState<AssistancePage> {
           items: state.services,
           title: (s) => s.name,
           subtitle: (s) => s.description,
+          icon: Icons.handshake_outlined,
           onSelected: (s) => notifier.selectService(s.id),
         );
       case AssistanceStep.questions:
@@ -126,29 +130,45 @@ class _SelectionList<T> extends StatelessWidget {
     required this.items,
     required this.title,
     this.subtitle,
+    this.icon = Icons.account_circle_outlined,
     required this.onSelected,
   });
 
   final List<T> items;
   final String Function(T) title;
   final String? Function(T)? subtitle;
+  final IconData icon;
   final void Function(T) onSelected;
 
   @override
   Widget build(BuildContext context) {
     if (items.isEmpty) {
-      return const Center(child: Text('No items'));
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.inbox_outlined, size: 48, color: Colors.grey),
+            const SizedBox(height: 8),
+            Text('No items', style: Theme.of(context).textTheme.bodyLarge),
+          ],
+        ),
+      );
     }
-    return ListView.separated(
-      padding: const EdgeInsets.all(16),
+    return ListView.builder(
+      padding: const EdgeInsets.all(12),
       itemCount: items.length,
-      separatorBuilder: (_, _) => const Divider(height: 1),
       itemBuilder: (context, i) {
         final item = items[i];
-        return ListTile(
-          title: Text(title(item)),
-          subtitle: subtitle?.call(item) == null ? null : Text(subtitle!(item)!),
-          onTap: () => onSelected(item),
+        final sub = subtitle?.call(item);
+        return Card(
+          margin: const EdgeInsets.symmetric(vertical: 4),
+          child: ListTile(
+            leading: CircleAvatar(child: Icon(icon, size: 22)),
+            title: Text(title(item), style: Theme.of(context).textTheme.titleSmall),
+            subtitle: sub != null ? Text(sub) : null,
+            trailing: const Icon(Icons.chevron_right, color: Colors.grey),
+            onTap: () => onSelected(item),
+          ),
         );
       },
     );

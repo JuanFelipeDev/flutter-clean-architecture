@@ -88,11 +88,23 @@ class AssistanceNotifier extends Notifier<AssistanceState> {
   Future<void> loadAccounts() async {
     final affKey = _affKey;
     if (affKey == null) {
+      // ignore: avoid_print
+      print('[ASSIST] no affKey — cachedSession=${ref.read(cachedSessionProvider)}');
       state = state.copyWith(status: AssistanceStatus.failure, errorMessage: 'No session');
       return;
     }
     state = state.copyWith(status: AssistanceStatus.loading, errorMessage: '');
     final result = await ref.read(getAccountsUseCaseProvider).call(affKey);
+    result.fold(
+      onSuccess: (accounts) {
+        // ignore: avoid_print
+        print('[ASSIST] loaded ${accounts.length} accounts for affKey=$affKey');
+      },
+      onFailure: (f) {
+        // ignore: avoid_print
+        print('[ASSIST] accounts failed: ${f.message} (${f.kind})');
+      },
+    );
     _apply(result, (accounts) => state = state.copyWith(
       accounts: accounts,
       status: AssistanceStatus.idle,
