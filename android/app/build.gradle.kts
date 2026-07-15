@@ -20,8 +20,13 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.americanassist.affiliate_app"
+        // Matches AFILIADO's default applicationId so the AFILIADO-issued
+        // Google Maps key (restricted to com.americanassist.afiliado) authorizes
+        // the native GoogleMap widget. Change to a dedicated package + your own
+        // Maps key for production. NOTE: also requires the debug SHA-1 of this
+        // machine to be registered on that key (same debug keystore AFILIADO
+        // uses, ~/.android/debug.keystore).
+        applicationId = "com.americanassist.afiliado"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
