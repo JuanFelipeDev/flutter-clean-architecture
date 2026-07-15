@@ -38,8 +38,17 @@ class _AssistancePageState extends ConsumerState<AssistancePage> {
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(assistanceProvider);
+    final canGoBack = state.step != AssistanceStep.accounts;
     return Scaffold(
-      appBar: AppBar(title: Text(_title(state.step))),
+      appBar: AppBar(
+        title: Text(_title(state.step)),
+        leading: canGoBack
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => ref.read(assistanceProvider.notifier).goBack(),
+              )
+            : null,
+      ),
       body: SafeArea(
         child: LoadingOverlay(
           isLoading: state.status == AssistanceStatus.loading,

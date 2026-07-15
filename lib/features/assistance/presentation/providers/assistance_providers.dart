@@ -224,6 +224,23 @@ class AssistanceNotifier extends Notifier<AssistanceState> {
 
   void backTo(AssistanceStep step) =>
       state = state.copyWith(step: step, status: AssistanceStatus.idle, errorMessage: '');
+
+  /// Go back to the previous wizard step. No-op when already on the first step.
+  void goBack() {
+    final previous = switch (state.step) {
+      AssistanceStep.plans => AssistanceStep.accounts,
+      AssistanceStep.families => AssistanceStep.plans,
+      AssistanceStep.services => AssistanceStep.families,
+      AssistanceStep.questions => AssistanceStep.services,
+      AssistanceStep.address => state.questions.isEmpty
+          ? AssistanceStep.services
+          : AssistanceStep.questions,
+      AssistanceStep.done => AssistanceStep.address,
+      AssistanceStep.accounts => null,
+    };
+    if (previous == null) return;
+    backTo(previous);
+  }
 }
 
 final assistanceProvider =
