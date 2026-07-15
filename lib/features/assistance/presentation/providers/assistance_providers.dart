@@ -4,8 +4,6 @@ library;
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../core/config/config_providers.dart';
-import '../../../../core/config/flavor_config.dart';
 import '../../../../core/error/result.dart';
 import '../../../../core/network/dio_provider.dart';
 import '../../../../core/session/session_providers.dart';
@@ -18,14 +16,15 @@ import '../../domain/usecases/assistance_usecases.dart';
 import '../states/assistance_state.dart';
 
 /// A separate Dio for Google Places (different base host + timeout). Uses the
-/// flavor maps key via dart-define when configured; otherwise the same base.
+/// runtime maps key resolved from the login response (AFILIADO
+/// `cltInfoApiKey`), falling back to the flavor compile-time key.
 final placesDioProvider = Provider<Dio>((ref) {
-  final flavor = ref.watch<FlavorConfig>(flavorConfigProvider);
+  final apiKey = ref.watch(mapsApiKeyProvider);
   return Dio(BaseOptions(
     baseUrl: 'https://places.googleapis.com/',
     connectTimeout: const Duration(seconds: 30),
     receiveTimeout: const Duration(seconds: 30),
-    headers: {'X-Goog-Api-Key': flavor.mapsApiKey},
+    headers: {'X-Goog-Api-Key': apiKey},
   ));
 });
 
@@ -47,7 +46,7 @@ final placesRemoteDataSourceProvider = Provider<PlacesRemoteDataSource>((ref) {
   return PlacesRemoteDataSource(
     ref.watch(placesDioProvider),
     ref.watch(geocodingDioProvider),
-    ref.watch<FlavorConfig>(flavorConfigProvider).mapsApiKey,
+    ref.watch(mapsApiKeyProvider),
   );
 });
 

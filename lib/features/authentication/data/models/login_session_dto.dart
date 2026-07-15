@@ -13,6 +13,7 @@ class LoginSessionDto {
     this.userName,
     this.cltId,
     this.affKey,
+    this.mapsApiKey,
     this.user,
     this.twoFactorsAuth,
   });
@@ -22,6 +23,7 @@ class LoginSessionDto {
   final String? userName;
   final String? cltId;
   final String? affKey;
+  final String? mapsApiKey;
   final Map<String, dynamic>? user;
   final bool? twoFactorsAuth;
 
@@ -49,14 +51,19 @@ class LoginSessionDto {
 
     // clientId: from user.clients[0].cltId (AFILIADO LoginActivity:633-634).
     String? cltId;
+    String? mapsApiKey;
     final clients = user?['clients'];
     if (clients is List && clients.isNotEmpty) {
       final firstClient = clients.first;
       if (firstClient is Map) {
         cltId = firstClient['cltId']?.toString();
+        // AFILIADO: ClientUser.cltInfoApiKey is the Google Maps key used for
+        // Places/Geocoding at runtime (UserRepository stores it as the api key).
+        mapsApiKey = firstClient['cltInfoApiKey']?.toString();
       }
     }
     cltId ??= json['cltId']?.toString() ?? json['client_id']?.toString();
+    mapsApiKey ??= json['cltInfoApiKey']?.toString() ?? json['maps_api_key']?.toString();
 
     // userName: from user.username (AFILIADO UserLogin @SerializedName("username")).
     final userName = user?['username']?.toString() ??
@@ -76,6 +83,7 @@ class LoginSessionDto {
       userName: userName,
       cltId: cltId,
       affKey: affKey,
+      mapsApiKey: mapsApiKey,
       user: user,
       twoFactorsAuth: twoFactorsAuth,
     );
@@ -109,6 +117,7 @@ class LoginSessionMapper {
       userName: dto.userName,
       clientId: dto.cltId,
       affKey: dto.affKey,
+      mapsApiKey: dto.mapsApiKey,
       user: user,
       twoFactorsAuth: dto.twoFactorsAuth ?? false,
     );

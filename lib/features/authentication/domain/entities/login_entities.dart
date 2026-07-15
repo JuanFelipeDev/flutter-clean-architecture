@@ -23,6 +23,7 @@ class LoginSession {
     this.userName,
     this.clientId,
     this.affKey,
+    this.mapsApiKey,
     this.user,
     this.twoFactorsAuth = false,
   });
@@ -32,6 +33,9 @@ class LoginSession {
   final String? userName;
   final String? clientId;
   final String? affKey;
+  /// Google Maps key from `user.clients[0].cltInfoApiKey` (AFILIADO runtime
+  /// api key, used for Places/Geocoding). Falls back to the flavor key.
+  final String? mapsApiKey;
   final AffiliateUser? user;
   final bool twoFactorsAuth;
 
@@ -50,6 +54,7 @@ class LoginSession {
         clientId: clientId,
         username: userName,
         affKey: affKey,
+        mapsApiKey: mapsApiKey,
       );
 }
 

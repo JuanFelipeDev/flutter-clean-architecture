@@ -15,6 +15,7 @@ class SessionData {
     this.clientId,
     this.username,
     this.affKey,
+    this.mapsApiKey,
   });
 
   final String accessToken;
@@ -22,6 +23,10 @@ class SessionData {
   final String? clientId;
   final String? username;
   final String? affKey;
+  /// Google Maps API key resolved from the login response
+  /// (`user.clients[0].cltInfoApiKey`, AFILIADO runtime key). Used for
+  /// Places/Geocoding; falls back to the flavor compile-time key when absent.
+  final String? mapsApiKey;
 
   bool get isEmpty => accessToken.isEmpty;
 
@@ -31,6 +36,7 @@ class SessionData {
         if (clientId != null) 'client_id': clientId,
         if (username != null) 'username': username,
         if (affKey != null) 'aff_key': affKey,
+        if (mapsApiKey != null) 'maps_api_key': mapsApiKey,
       };
 
   static SessionData? fromJson(Map<String, dynamic> json) {
@@ -42,6 +48,7 @@ class SessionData {
       clientId: json['client_id']?.toString(),
       username: json['username'] as String?,
       affKey: json['aff_key']?.toString(),
+      mapsApiKey: json['maps_api_key']?.toString() ?? json['cltInfoApiKey']?.toString(),
     );
   }
 

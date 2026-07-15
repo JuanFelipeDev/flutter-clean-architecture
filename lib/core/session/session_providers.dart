@@ -36,3 +36,15 @@ final sessionRepositoryProvider = Provider<SessionRepository>((ref) {
 /// Cached session for synchronous accessor reads (clientId/username in the
 /// auth interceptor). Seeded in [bootstrap] from secure storage.
 final cachedSessionProvider = StateProvider<SessionData?>((ref) => null);
+
+/// Google Maps API key used at runtime. Prefers the per-client key resolved
+/// from the login response (`user.clients[0].cltInfoApiKey`, AFILIADO's
+/// runtime key) and falls back to the compile-time flavor key. Powers Places
+/// autocomplete + Geocoding.
+final mapsApiKeyProvider = Provider<String>((ref) {
+  final session = ref.watch(cachedSessionProvider);
+  final flavorKey = ref.watch(flavorConfigProvider).mapsApiKey;
+  final sessionKey = session?.mapsApiKey;
+  if (sessionKey != null && sessionKey.isNotEmpty) return sessionKey;
+  return flavorKey;
+});
