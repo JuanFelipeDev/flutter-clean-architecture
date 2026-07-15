@@ -26,24 +26,58 @@ class LoginSessionDto {
   final bool? twoFactorsAuth;
 
   factory LoginSessionDto.fromJson(Map<String, dynamic> json) {
-    // AFILIADO `LoginSession.affKey` is a List<String>; take the first as the
-    // active affiliate key (the app operates on one affKey at a time).
-    final rawAffKey = json['affKey'] ?? json['aff_key'];
-    String? affKey;
-    if (rawAffKey is List && rawAffKey.isNotEmpty) {
-      affKey = rawAffKey.first?.toString();
-    } else if (rawAffKey is String) {
-      affKey = rawAffKey;
+    // AFILIADO: `affKey` and `userName` live INSIDE the `user` object, not at
+    // the top level. `clientId` comes from `user.clients[0].cltId`.
+    // UserLogin: @SerializedName("affKey") val affKey: String
+    // UserLogin: @SerializedName("username") val userName: String?
+    // UserLogin: @SerializedName("clients") val clients: List<ClientUser>?
+    final user = json['user'] is Map<String, dynamic>
+        ? json['user'] as Map<String, dynamic>
+        : (json['user'] is Map ? Map<String, dynamic>.from(json['user'] as Map) : null);
+
+    // affKey: prefer user.affKey (String, as AFILIADO uses it), fall back to
+    // top-level affKey (List<String>) taking the first.
+    String? affKey = user?['affKey']?.toString();
+    if (affKey == null || affKey.isEmpty) {
+      final rawTopAffKey = json['affKey'] ?? json['aff_key'];
+      if (rawTopAffKey is List && rawTopAffKey.isNotEmpty) {
+        affKey = rawTopAffKey.first?.toString();
+      } else if (rawTopAffKey is String) {
+        affKey = rawTopAffKey;
+      }
     }
+
+    // clientId: from user.clients[0].cltId (AFILIADO LoginActivity:633-634).
+    String? cltId;
+    final clients = user?['clients'];
+    if (clients is List && clients.isNotEmpty) {
+      final firstClient = clients.first;
+      if (firstClient is Map) {
+        cltId = firstClient['cltId']?.toString();
+      }
+    }
+    cltId ??= json['cltId']?.toString() ?? json['client_id']?.toString();
+
+    // userName: from user.username (AFILIADO UserLogin @SerializedName("username")).
+    final userName = user?['username']?.toString() ??
+        json['userName']?.toString() ??
+        json['username']?.toString();
+
+    // twoFactorsAuth: top-level field (AFILIADO LoginSession.twoFactorsAuth).
+    final twoFactorsAuth = json['twoFactorsAuth'] is bool
+        ? json['twoFactorsAuth'] as bool
+        : (user?['two_factors_auth'] is bool
+            ? user!['two_factors_auth'] as bool
+            : null);
 
     return LoginSessionDto(
       access: json['access']?.toString(),
       refresh: json['refresh']?.toString(),
-      userName: json['userName']?.toString() ?? json['username']?.toString(),
-      cltId: json['cltId']?.toString() ?? json['client_id']?.toString(),
+      userName: userName,
+      cltId: cltId,
       affKey: affKey,
-      user: json['user'] is Map<String, dynamic> ? json['user'] as Map<String, dynamic> : null,
-      twoFactorsAuth: json['twoFactorsAuth'] is bool ? json['twoFactorsAuth'] as bool : null,
+      user: user,
+      twoFactorsAuth: twoFactorsAuth,
     );
   }
 
