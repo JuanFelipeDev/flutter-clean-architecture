@@ -33,9 +33,15 @@ class AssistanceRemoteDataSource {
   }
 
   Future<List<ServiceDto>> fetchServices(String affKey, String planId, String familyId) async {
+    // AFILIADO `Webservice.getAffiliateServices` has NO trailing slash on this
+    // route (unlike family-services). Keep it slash-less to avoid a backend
+    // redirect/404 that strips auth headers.
     final res = await _dio.get<dynamic>(
-      'soaang-catalogs/api/affiliate/get-affiliate-plan-services/$affKey/$planId/$familyId/',
+      'soaang-catalogs/api/affiliate/get-affiliate-plan-services/$affKey/$planId/$familyId',
     );
+    // ignore: avoid_print
+    print('[ASSIST] services $affKey/$planId/$familyId -> '
+        '${res.statusCode} ${res.data}');
     return parseServices(res.data);
   }
 
