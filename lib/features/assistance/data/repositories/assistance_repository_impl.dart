@@ -83,6 +83,8 @@ class AssistanceRepositoryImpl implements AssistanceRepository {
     required String serviceId,
     required String accountId,
     required String address,
+    required String latitude,
+    required String longitude,
     required List<CoverageAnswer> answers,
   }) async {
     try {
@@ -94,6 +96,8 @@ class AssistanceRepositoryImpl implements AssistanceRepository {
         serviceId: serviceId,
         accountId: accountId,
         address: address,
+        latitude: latitude,
+        longitude: longitude,
         answers: answerJson,
       );
       return Success(mapper.toAssistance(dto));
@@ -128,6 +132,21 @@ class PlacesRepositoryImpl implements PlacesRepository {
     try {
       final dto = await remoteDataSource.placeDetails(placeId);
       return Success(mapper.toPlace(dto));
+    } on DioException catch (e) {
+      return Err(mapDioError(e));
+    } on Object catch (e, st) {
+      return Err(Failure.unknown(e, st));
+    }
+  }
+
+  @override
+  Future<Result<String>> reverseGeocode(double lat, double lng) async {
+    try {
+      final address = await remoteDataSource.reverseGeocode(lat, lng);
+      if (address == null || address.isEmpty) {
+        return Err(Failure.unknown('No address found for location'));
+      }
+      return Success(address);
     } on DioException catch (e) {
       return Err(mapDioError(e));
     } on Object catch (e, st) {

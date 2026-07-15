@@ -15,12 +15,16 @@ abstract class AssistanceRepository {
     required String serviceId,
     required String accountId,
     required String address,
+    required String latitude,
+    required String longitude,
     required List<CoverageAnswer> answers,
   });
 }
 
-/// Google Places repository (AFILIADO `v1/places:autocomplete` + details).
+/// Google Places repository (AFILIADO `v1/places:autocomplete` + details +
+/// reverse geocoding for the map picker).
 abstract class PlacesRepository {
   Future<Result<List<PlaceSuggestion>>> autocomplete(String query);
   Future<Result<PlaceLocation>> placeDetails(String placeId);
+  Future<Result<String>> reverseGeocode(double lat, double lng);
 }

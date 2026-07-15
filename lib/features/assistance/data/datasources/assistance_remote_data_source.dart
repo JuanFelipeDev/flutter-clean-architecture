@@ -58,6 +58,8 @@ class AssistanceRemoteDataSource {
     required String serviceId,
     required String accountId,
     required String address,
+    required String latitude,
+    required String longitude,
     required List<Map<String, String>> answers,
   }) async {
     final res = await _dio.post<dynamic>(
@@ -67,6 +69,8 @@ class AssistanceRemoteDataSource {
         'ssid': serviceId,
         'idaccount': accountId,
         'address': address,
+        'latitude': latitude,
+        'longitude': longitude,
         'answers': answers,
       },
       options: Options(contentType: Headers.jsonContentType),
@@ -83,8 +87,14 @@ class AssistanceRemoteDataSource {
 }
 
 class PlacesRemoteDataSource {
-  PlacesRemoteDataSource(this._dio);
+  PlacesRemoteDataSource(this._dio, this._geocodingDio, this._apiKey);
+
+  /// Places API host (`https://places.googleapis.com/`, header auth).
   final Dio _dio;
+
+  /// Geocoding API host (`https://maps.googleapis.com/`, `key` query param).
+  final Dio _geocodingDio;
+  final String _apiKey;
 
   /// `v1/places:autocomplete` (POST body with input).
   Future<List<PlaceSuggestionDto>> autocomplete(String query) async {
@@ -107,5 +117,29 @@ class PlacesRemoteDataSource {
       );
     }
     return dto;
+  }
+
+  /// Google Geocoding reverse-lookup (AFILIADO `GoogleApiRepository.getDirectionGeocode`).
+  /// Returns the first `formatted_address` for the given lat/lng, or null when
+  /// the API returns no results.
+  Future<String?> reverseGeocode(double lat, double lng) async {
+    final res = await _geocodingDio.get<dynamic>(
+      'maps/api/geocode/json',
+      queryParameters: {
+        'latlng': '$lat,$lng',
+        'key': _apiKey,
+      },
+    );
+    final data = res.data;
+    if (data is Map<String, dynamic>) {
+      final results = data['results'];
+      if (results is List && results.isNotEmpty) {
+        final first = results.first;
+        if (first is Map<String, dynamic>) {
+          return first['formatted_address']?.toString();
+        }
+      }
+    }
+    return null;
   }
 }

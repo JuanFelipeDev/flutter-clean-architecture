@@ -29,12 +29,26 @@ final placesDioProvider = Provider<Dio>((ref) {
   ));
 });
 
+/// Dio for the Google Geocoding API (reverse-lookup). Different host from
+/// Places and authenticates via the `key` query param, not a header.
+final geocodingDioProvider = Provider<Dio>((ref) {
+  return Dio(BaseOptions(
+    baseUrl: 'https://maps.googleapis.com/',
+    connectTimeout: const Duration(seconds: 30),
+    receiveTimeout: const Duration(seconds: 30),
+  ));
+});
+
 final assistanceRemoteDataSourceProvider = Provider<AssistanceRemoteDataSource>((ref) {
   return AssistanceRemoteDataSource(ref.watch(dioProvider));
 });
 
 final placesRemoteDataSourceProvider = Provider<PlacesRemoteDataSource>((ref) {
-  return PlacesRemoteDataSource(ref.watch(placesDioProvider));
+  return PlacesRemoteDataSource(
+    ref.watch(placesDioProvider),
+    ref.watch(geocodingDioProvider),
+    ref.watch<FlavorConfig>(flavorConfigProvider).mapsApiKey,
+  );
 });
 
 final assistanceRepositoryProvider = Provider<AssistanceRepository>((ref) {
@@ -77,6 +91,14 @@ final createAssistanceUseCaseProvider = Provider<CreateAssistanceUseCase>((ref) 
 
 final autocompletePlacesUseCaseProvider = Provider<AutocompletePlacesUseCase>((ref) {
   return AutocompletePlacesUseCase(ref.watch(placesRepositoryProvider));
+});
+
+final placeDetailsUseCaseProvider = Provider<PlaceDetailsUseCase>((ref) {
+  return PlaceDetailsUseCase(ref.watch(placesRepositoryProvider));
+});
+
+final reverseGeocodeUseCaseProvider = Provider<ReverseGeocodeUseCase>((ref) {
+  return ReverseGeocodeUseCase(ref.watch(placesRepositoryProvider));
 });
 
 class AssistanceNotifier extends Notifier<AssistanceState> {
@@ -181,6 +203,37 @@ class AssistanceNotifier extends Notifier<AssistanceState> {
     _apply(result, (suggestions) => state = state.copyWith(suggestions: suggestions));
   }
 
+  /// User picked an autocomplete suggestion: resolve its lat/lng and drop the
+  /// suggestions list. The map animates to the resolved point; the street
+  /// address is reverse-geocoded on confirm (AFILIADO flow).
+  Future<void> selectSuggestion(PlaceSuggestion suggestion) async {
+    state = state.copyWith(suggestions: const []);
+    final result = await ref.read(placeDetailsUseCaseProvider).call(suggestion.placeId);
+    _apply(result, (place) => state = state.copyWith(
+      lat: place.lat,
+      lng: place.lng,
+    ));
+  }
+
+  /// Camera moved on the map (drag/pan). Just track the target lat/lng; the
+  /// address is reverse-geocoded on confirm.
+  void onMapMoved(double lat, double lng) =>
+      state = state.copyWith(lat: lat, lng: lng);
+
+  /// Confirm the current camera target: reverse-geocode it to a street address
+  /// so the create call has something to send (AFILIADO `getDirectionGeocode`).
+  Future<void> confirmLocation() async {
+    final lat = state.lat;
+    final lng = state.lng;
+    if (lat == null || lng == null) return;
+    state = state.copyWith(status: AssistanceStatus.loading, errorMessage: '');
+    final result = await ref.read(reverseGeocodeUseCaseProvider).call(lat, lng);
+    _apply(result, (address) => state = state.copyWith(
+      address: address,
+      status: AssistanceStatus.idle,
+    ));
+  }
+
   void setAddress(String address) => state = state.copyWith(address: address, suggestions: const []);
 
   Future<void> create() async {
@@ -197,6 +250,8 @@ class AssistanceNotifier extends Notifier<AssistanceState> {
       serviceId: serviceId,
       accountId: accountId,
       address: state.address,
+      latitude: state.lat?.toString() ?? '0',
+      longitude: state.lng?.toString() ?? '0',
       answers: answers,
     );
     result.fold(

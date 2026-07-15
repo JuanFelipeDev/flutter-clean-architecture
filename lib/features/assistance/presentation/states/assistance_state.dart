@@ -22,6 +22,8 @@ class AssistanceState {
     this.answers = const {},
     this.suggestions = const [],
     this.address = '',
+    this.lat,
+    this.lng,
     this.createdAssistanceId,
     this.status = AssistanceStatus.idle,
     this.errorMessage,
@@ -40,6 +42,8 @@ class AssistanceState {
   final Map<String, String> answers;
   final List<PlaceSuggestion> suggestions;
   final String address;
+  final double? lat;
+  final double? lng;
   final String? createdAssistanceId;
   final AssistanceStatus status;
   final String? errorMessage;
@@ -58,6 +62,8 @@ class AssistanceState {
     Map<String, String>? answers,
     List<PlaceSuggestion>? suggestions,
     String? address,
+    double? lat,
+    double? lng,
     String? createdAssistanceId,
     AssistanceStatus? status,
     String? errorMessage,
@@ -76,6 +82,8 @@ class AssistanceState {
       answers: answers ?? this.answers,
       suggestions: suggestions ?? this.suggestions,
       address: address ?? this.address,
+      lat: lat ?? this.lat,
+      lng: lng ?? this.lng,
       createdAssistanceId: createdAssistanceId ?? this.createdAssistanceId,
       status: status ?? this.status,
       errorMessage: errorMessage,

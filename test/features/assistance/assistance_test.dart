@@ -33,6 +33,8 @@ class _FakeAssistanceRepository implements AssistanceRepository {
     required String serviceId,
     required String accountId,
     required String address,
+    required String latitude,
+    required String longitude,
     required List<CoverageAnswer> answers,
   }) async =>
       const Success(Assistance(id: 'assist-1', serviceId: 'svc1', status: 'created'));

@@ -15,6 +15,6 @@
   "URL_SOCKET": "https://www.seguimientooperativo.site/seguros-roble/",
   "SOCKET_PATH": "/soaang-notifier/wss/",
   "SENTRY_DSN": "",
-  "MAPS_API_KEY": "",
+  "MAPS_API_KEY": "AIzaSyD2tyAog8KgS8qKjUBP3OxSmsiQbDDZtZU",
   "ENV_SWITCHER": true
 }

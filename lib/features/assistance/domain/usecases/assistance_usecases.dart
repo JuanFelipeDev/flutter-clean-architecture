@@ -47,6 +47,8 @@ class CreateAssistanceUseCase {
     required String serviceId,
     required String accountId,
     required String address,
+    required String latitude,
+    required String longitude,
     required List<CoverageAnswer> answers,
   }) async {
     return _repository.createAssistance(
@@ -54,6 +56,8 @@ class CreateAssistanceUseCase {
       serviceId: serviceId,
       accountId: accountId,
       address: address,
+      latitude: latitude,
+      longitude: longitude,
       answers: answers,
     );
   }
@@ -63,4 +67,17 @@ class AutocompletePlacesUseCase {
   AutocompletePlacesUseCase(this._repository);
   final PlacesRepository _repository;
   Future<Result<List<PlaceSuggestion>>> call(String query) => _repository.autocomplete(query);
+}
+
+class PlaceDetailsUseCase {
+  PlaceDetailsUseCase(this._repository);
+  final PlacesRepository _repository;
+  Future<Result<PlaceLocation>> call(String placeId) => _repository.placeDetails(placeId);
+}
+
+class ReverseGeocodeUseCase {
+  ReverseGeocodeUseCase(this._repository);
+  final PlacesRepository _repository;
+  Future<Result<String>> call(double lat, double lng) =>
+      _repository.reverseGeocode(lat, lng);
 }

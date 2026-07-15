@@ -5,6 +5,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../../core/widgets/loading.dart';
 import '../../../../core/widgets/toast.dart';
@@ -113,10 +114,13 @@ class _AssistancePageState extends ConsumerState<AssistancePage> {
         return _AddressStep(
           suggestions: state.suggestions,
           address: state.address,
+          lat: state.lat,
+          lng: state.lng,
+          status: state.status,
           onChanged: notifier.autocompleteAddress,
-          onPicked: (s) {
-            notifier.setAddress(s.description);
-          },
+          onPicked: notifier.selectSuggestion,
+          onMapMoved: notifier.onMapMoved,
+          onConfirm: notifier.confirmLocation,
           onCreate: notifier.create,
         );
       case AssistanceStep.done:
@@ -252,19 +256,32 @@ class _QuestionTile extends StatelessWidget {
   }
 }
 
+/// AFILIADO `SelectLocationDialog` parity: a Google Map with a centered pin,
+/// a search field backed by Places autocomplete, and a "confirm" action that
+/// reverse-geocodes the camera target before requesting the assistance.
 class _AddressStep extends StatefulWidget {
   const _AddressStep({
     required this.suggestions,
     required this.address,
+    required this.lat,
+    required this.lng,
+    required this.status,
     required this.onChanged,
     required this.onPicked,
+    required this.onMapMoved,
+    required this.onConfirm,
     required this.onCreate,
   });
 
   final List<PlaceSuggestion> suggestions;
   final String address;
+  final double? lat;
+  final double? lng;
+  final AssistanceStatus status;
   final Future<void> Function(String) onChanged;
-  final void Function(PlaceSuggestion) onPicked;
+  final Future<void> Function(PlaceSuggestion) onPicked;
+  final void Function(double lat, double lng) onMapMoved;
+  final Future<void> Function() onConfirm;
   final Future<void> Function() onCreate;
 
   @override
@@ -272,12 +289,39 @@ class _AddressStep extends StatefulWidget {
 }
 
 class _AddressStepState extends State<_AddressStep> {
+  static const _default = LatLng(4.624335, -74.063644); // Bogotá fallback
   late final TextEditingController _controller;
+  GoogleMapController? _mapController;
+  LatLng? _lastTarget;
+  bool _animating = false;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.address);
+  }
+
+  @override
+  void didUpdateWidget(covariant _AddressStep old) {
+    super.didUpdateWidget(old);
+    // Animate the camera only when the notified lat/lng differs from where
+    // the map already is (i.e. a suggestion was picked). User drags update
+    // state to the same target the map already shows, so this stays a no-op
+    // and avoids a feedback loop.
+    final lat = widget.lat;
+    final lng = widget.lng;
+    if (lat == null || lng == null || _animating) return;
+    final last = _lastTarget;
+    if (last == null ||
+        (last.latitude != lat || last.longitude != lng)) {
+      _animateTo(lat, lng);
+    }
+  }
+
+  Future<void> _animateTo(double lat, double lng) async {
+    _animating = true;
+    await _mapController?.animateCamera(CameraUpdate.newLatLng(LatLng(lat, lng)));
+    _animating = false;
   }
 
   @override
@@ -288,20 +332,34 @@ class _AddressStepState extends State<_AddressStep> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          TextField(
+    final initial = (widget.lat != null && widget.lng != null)
+        ? LatLng(widget.lat!, widget.lng!)
+        : _default;
+    final busy = widget.status == AssistanceStatus.loading;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
+          child: TextField(
             controller: _controller,
-            decoration: const InputDecoration(labelText: 'Address'),
+            decoration: const InputDecoration(
+              labelText: 'Buscar dirección',
+              prefixIcon: Icon(Icons.search),
+              border: OutlineInputBorder(),
+            ),
             onChanged: (value) => widget.onChanged(value),
           ),
-          const SizedBox(height: 8),
-          if (widget.suggestions.isNotEmpty)
-            Expanded(
+        ),
+        if (widget.suggestions.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Material(
+              elevation: 2,
+              borderRadius: BorderRadius.circular(8),
               child: ListView(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 children: [
                   for (final s in widget.suggestions)
                     ListTile(
@@ -313,12 +371,62 @@ class _AddressStepState extends State<_AddressStep> {
                     ),
                 ],
               ),
-            )
-          else
-            const Spacer(),
-          FilledButton(onPressed: () => widget.onCreate(), child: const Text('Request assistance')),
-        ],
-      ),
+            ),
+          ),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: Stack(
+                children: [
+                  GoogleMap(
+                    initialCameraPosition: CameraPosition(target: initial, zoom: 14),
+                    myLocationButtonEnabled: false,
+                    onMapCreated: (controller) => _mapController = controller,
+                    onCameraMove: (pos) => _lastTarget = pos.target,
+                    onCameraIdle: () {
+                      final target = _lastTarget;
+                      if (target != null) widget.onMapMoved(target.latitude, target.longitude);
+                    },
+                  ),
+                  // Centered pin (AFILIADO style): the chosen point is always
+                  // the camera target, so a fixed center marker represents it.
+                  const Center(
+                    child: Icon(Icons.location_pin, size: 44, color: Colors.red),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        if (widget.address.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Text(widget.address,
+                style: Theme.of(context).textTheme.bodyMedium,
+                textAlign: TextAlign.center),
+          ),
+        Padding(
+          padding: const EdgeInsets.all(12),
+          child: FilledButton.icon(
+            onPressed: busy
+                ? null
+                : () async {
+                    await widget.onConfirm();
+                    await widget.onCreate();
+                  },
+            icon: busy
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.send),
+            label: const Text('Solicitar asistencia'),
+          ),
+        ),
+      ],
     );
   }
 }
