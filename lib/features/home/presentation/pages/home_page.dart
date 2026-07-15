@@ -1,7 +1,8 @@
 /// Home shell — reproduces AFILIADO's `DrawerActivity`:
-/// bottom nav (Asistencias | Notificaciones | Seguimiento | Inicio) + a
-/// drawer with items gated by `configuraciones_app_afiliado/` flags
-/// (profile, beneficiaries, vehicles, shop, settings).
+/// bottom nav with 4 tabs (Asistencias | Notificaciones | Servicios Activos |
+/// Menú). No side drawer — the "Menú" tab shows the options list (perfil,
+/// beneficiarios, vehículos, historial, tienda, configuración), matching
+/// AFILIADO's `GenericFragment` (VIEW_CONFIGURATIONS).
 library;
 
 import 'package:flutter/material.dart';
@@ -28,32 +29,29 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Afiliado')),
-      drawer: _Drawer(),
       body: TabBarView(
         controller: _tab,
         children: const [
           _AssistanceTab(),
           _NotificationsTab(),
           _TrackingTab(),
-          _HomeTab(),
+          _MenuTab(),
         ],
       ),
       bottomNavigationBar: TabBar(
         controller: _tab,
-        labelPadding: const EdgeInsets.symmetric(vertical: 4),
         tabs: const [
           Tab(icon: Icon(Icons.handshake_outlined), text: 'Asistencias'),
           Tab(icon: Icon(Icons.notifications_outlined), text: 'Notificaciones'),
-          Tab(icon: Icon(Icons.map_outlined), text: 'Seguimiento'),
-          Tab(icon: Icon(Icons.home_outlined), text: 'Inicio'),
+          Tab(icon: Icon(Icons.map_outlined), text: 'Servicios'),
+          Tab(icon: Icon(Icons.menu), text: 'Menú'),
         ],
       ),
     );
   }
 }
 
-/// Tab 1 — Asistencias: opens the assistance wizard (AFILIADO `assistance`).
+/// Tab 1 — Asistencias: opens the assistance request wizard.
 class _AssistanceTab extends StatelessWidget {
   const _AssistanceTab();
   @override
@@ -62,7 +60,7 @@ class _AssistanceTab extends StatelessWidget {
   }
 }
 
-/// Tab 2 — Notificaciones (AFILIADO `notification`).
+/// Tab 2 — Notificaciones.
 class _NotificationsTab extends StatelessWidget {
   const _NotificationsTab();
   @override
@@ -71,7 +69,7 @@ class _NotificationsTab extends StatelessWidget {
   }
 }
 
-/// Tab 3 — Seguimiento (AFILIADO `tracing`).
+/// Tab 3 — Servicios Activos (seguimiento).
 class _TrackingTab extends StatelessWidget {
   const _TrackingTab();
   @override
@@ -80,14 +78,46 @@ class _TrackingTab extends StatelessWidget {
   }
 }
 
-/// Tab 4 — Inicio: a hub with quick access to the drawer items (AFILIADO
-/// `main` fragment). The drawer also has these items.
-class _HomeTab extends StatelessWidget {
-  const _HomeTab();
+/// Tab 4 — Menú: the options list (AFILIADO's `GenericFragment` /
+/// VIEW_CONFIGURATIONS). Each option navigates to its route. In AFILIADO
+/// these are gated by `configuraciones_app_afiliado/` flags — the flags
+/// wiring follows when the settings feature loads the AppConfiguration.
+class _MenuTab extends StatelessWidget {
+  const _MenuTab();
+
+  static final _options = <_MenuOption>[
+    _MenuOption(icon: Icons.person_outline, label: 'Perfil', route: AppRoute.profile.path),
+    _MenuOption(icon: Icons.groups_outlined, label: 'Beneficiarios', route: AppRoute.beneficiary.path),
+    _MenuOption(icon: Icons.directions_car_outlined, label: 'Vehículos', route: AppRoute.vehicle.path),
+    _MenuOption(icon: Icons.shopping_cart_outlined, label: 'Tienda', route: AppRoute.payment.path),
+    _MenuOption(icon: Icons.history, label: 'Historial', route: AppRoute.history.path),
+    _MenuOption(icon: Icons.settings_outlined, label: 'Configuración', route: AppRoute.settings.path),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    return _OpenTab(label: 'Inicio', route: AppRoute.settings.path);
+    return ListView.separated(
+      padding: const EdgeInsets.all(16),
+      itemCount: _options.length,
+      separatorBuilder: (_, _) => const Divider(height: 1),
+      itemBuilder: (context, i) {
+        final opt = _options[i];
+        return ListTile(
+          leading: Icon(opt.icon, color: Theme.of(context).colorScheme.primary),
+          title: Text(opt.label),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: () => context.push(opt.route),
+        );
+      },
+    );
   }
+}
+
+class _MenuOption {
+  const _MenuOption({required this.icon, required this.label, required this.route});
+  final IconData icon;
+  final String label;
+  final String route;
 }
 
 /// A simple tab that shows a button to open the corresponding route.
@@ -110,51 +140,6 @@ class _OpenTab extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-/// Drawer with the gated items (AFILIADO drawer: profile, beneficiaries,
-/// vehicles, shop, settings). Each item navigates to its route.
-class _Drawer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-          DrawerHeader(
-            decoration: BoxDecoration(color: Theme.of(context).colorScheme.primaryContainer),
-            child: const Text('Afiliado', style: TextStyle(fontSize: 24)),
-          ),
-          _DrawerItem(icon: Icons.person_outline, label: 'Perfil', route: AppRoute.profile.path),
-          _DrawerItem(icon: Icons.groups_outlined, label: 'Beneficiarios', route: AppRoute.beneficiary.path),
-          _DrawerItem(icon: Icons.directions_car_outlined, label: 'Vehículos', route: AppRoute.vehicle.path),
-          _DrawerItem(icon: Icons.shopping_cart_outlined, label: 'Tienda', route: AppRoute.payment.path),
-          _DrawerItem(icon: Icons.history, label: 'Historial', route: AppRoute.history.path),
-          const Divider(),
-          _DrawerItem(icon: Icons.settings_outlined, label: 'Configuración', route: AppRoute.settings.path),
-        ],
-      ),
-    );
-  }
-}
-
-class _DrawerItem extends StatelessWidget {
-  const _DrawerItem({required this.icon, required this.label, required this.route});
-  final IconData icon;
-  final String label;
-  final String route;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(icon),
-      title: Text(label),
-      onTap: () {
-        Navigator.of(context).pop(); // close drawer
-        context.push(route);
-      },
     );
   }
 }
