@@ -144,27 +144,27 @@ class FlavorConfig {
         'REGISTER_FIELDS',
         defaultValue: 'email,phone,name,lastname',
       ).split(',').where((s) => s.isNotEmpty).toList(),
-      clientId: const String.fromEnvironment('CLIENT_ID', defaultValue: ''),
+      clientId: const String.fromEnvironment('CLIENT_ID', defaultValue: 'basenewsoa'),
       country: const String.fromEnvironment('COUNTRY', defaultValue: 'CO'),
       urlServerDev: const String.fromEnvironment(
         'URL_SERVER_DEV',
-        defaultValue: 'https://dev.sistemaoperaciones.com',
+        defaultValue: 'https://api.sistemaoperaciones.com/',
       ),
       urlServerQa: const String.fromEnvironment(
         'URL_SERVER_QA',
-        defaultValue: 'https://qa.sistemaoperaciones.com',
+        defaultValue: 'https://api-qa.sistemaoperaciones.com/',
       ),
       urlServerProd: const String.fromEnvironment(
         'URL_SERVER_PROD',
-        defaultValue: 'https://prod.sistemaoperaciones.com',
+        defaultValue: 'https://app.sistemaoperaciones.com/',
       ),
       urlServerPreprod: const String.fromEnvironment(
         'URL_SERVER_PREPROD',
-        defaultValue: 'https://preprod.sistemaoperaciones.com',
+        defaultValue: 'https://api-preprod.sistemaoperaciones.com/',
       ),
       urlSocket: const String.fromEnvironment(
         'URL_SOCKET',
-        defaultValue: 'https://dev.sistemaoperaciones.com',
+        defaultValue: 'https://api.sistemaoperaciones.com/',
       ),
       socketPath: const String.fromEnvironment(
         'SOCKET_PATH',
@@ -172,7 +172,7 @@ class FlavorConfig {
       ),
       sentryDsn: const String.fromEnvironment('SENTRY_DSN', defaultValue: ''),
       mapsApiKey: const String.fromEnvironment('MAPS_API_KEY', defaultValue: ''),
-      envSwitcherEnabled: const bool.fromEnvironment('ENV_SWITCHER', defaultValue: false),
+      envSwitcherEnabled: const bool.fromEnvironment('ENV_SWITCHER', defaultValue: true),
     );
   }
 
