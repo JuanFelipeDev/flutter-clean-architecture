@@ -72,6 +72,11 @@ class LoginNotifier extends Notifier<LoginState> {
 
     result.fold(
       onSuccess: (session) {
+        // ignore: avoid_print
+        print('[LOGIN] success: requiresTwoFactor=${session.requiresTwoFactor} '
+            'twoFactorsAuth=${session.twoFactorsAuth} '
+            'user=${session.user?.id} userName=${session.userName} '
+            'affKey=${session.affKey} access=${session.accessToken.isNotEmpty}');
         if (session.requiresTwoFactor) {
           state = state.copyWith(
             status: LoginStatus.requiresTwoFactor,
@@ -82,6 +87,8 @@ class LoginNotifier extends Notifier<LoginState> {
         }
       },
       onFailure: (failure) {
+        // ignore: avoid_print
+        print('[LOGIN] failure: ${failure.message} (${failure.kind})');
         state = state.copyWith(status: LoginStatus.failure, errorMessage: failure.message);
       },
     );

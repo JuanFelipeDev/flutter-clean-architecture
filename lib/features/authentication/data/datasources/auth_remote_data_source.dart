@@ -24,6 +24,9 @@ class AuthRemoteDataSource {
       data: form,
       options: Options(contentType: Headers.formUrlEncodedContentType),
     );
+    // Debug: log the raw response so we can see what the backend returned.
+    // ignore: avoid_print
+    print('[LOGIN] status=${response.statusCode} data=${response.data}');
     return _parse(response.data, _tokenPath);
   }
 
