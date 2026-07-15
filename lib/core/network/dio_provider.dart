@@ -79,10 +79,11 @@ class _TokenRefresherImpl implements TokenRefresher {
   }
 }
 
-/// The app's configured [Dio]. Rebuilds when the locale/base URL/session
+/// The app's configured [Dio]. Rebuilds when the locale/base URL/env/session
 /// change so interceptors pick up new values.
 final dioProvider = Provider<Dio>((ref) {
   final flavor = ref.watch(flavorConfigProvider);
+  final env = ref.watch(currentEnvironmentProvider);
   final storage = ref.watch(secureStorageProvider);
   final telemetry = ref.watch(telemetryProvider);
   final languageTag = ref.watch(languageTagProvider);
@@ -97,7 +98,7 @@ final dioProvider = Provider<Dio>((ref) {
     UploadProgressInterceptor(uploadSink),
     LanguageInterceptor(_LocaleAccessor(languageTag)),
     HostSelectionInterceptor(
-      _BaseUrlAccessor(flavor.urlServer),
+      _BaseUrlAccessor(flavor.urlServerFor(env)),
       skipHosts: const ['googleapis.com', 'google.com'],
     ),
     AuthInterceptor(
@@ -109,5 +110,5 @@ final dioProvider = Provider<Dio>((ref) {
   ];
 
   logger.debug('Dio built for ${flavor.flavor.name} → ${flavor.urlServer}');
-  return createDio(flavor, interceptors);
+  return createDio(flavor, env, interceptors);
 });

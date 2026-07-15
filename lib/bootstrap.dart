@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'app.dart';
+import 'core/config/config_providers.dart';
+import 'core/config/flavor_config.dart';
 import 'core/error/global_error_handler.dart';
 import 'core/logging/logging_providers.dart';
 import 'core/session/session_data.dart';
@@ -22,6 +24,19 @@ Future<void> bootstrap() async {
   final telemetry = container.read(telemetryProvider);
   await telemetry.init();
   installGlobalErrorHandlers(telemetry);
+
+  // Seed the runtime environment override from persisted prefs (AFILIADO
+  // `TYPE_ENVIROMENT`), falling back to the compile-time flavor env.
+  try {
+    final prefs = await container.read(prefsServiceProvider.future);
+    final savedEnv = prefs.getString('TYPE_ENVIROMENT');
+    if (savedEnv != null && savedEnv.isNotEmpty) {
+      container.read(currentEnvironmentProvider.notifier).state =
+          Environment.fromName(savedEnv);
+    }
+  } on Object {
+    // Prefs not available yet — fall back to compile-time env (already set).
+  }
 
   // Seed auth state + cached session from persisted storage (AFILIADO
   // `OpenApp` token-vs-login decision).

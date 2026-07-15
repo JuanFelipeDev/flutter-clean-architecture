@@ -18,7 +18,8 @@ import 'session_repository_impl.dart';
 final authDioProvider = Provider<Dio>((ref) {
   final flavor = ref.watch(flavorConfigProvider);
   final telemetry = ref.watch(telemetryProvider);
-  return createDio(flavor, [LoggingInterceptor(telemetry: telemetry, verbose: false)]);
+  final env = ref.watch(currentEnvironmentProvider);
+  return createDio(flavor, env, [LoggingInterceptor(telemetry: telemetry, verbose: false)]);
 });
 
 final authApiServiceProvider = Provider<AuthApiService>((ref) {

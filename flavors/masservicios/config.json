@@ -15,5 +15,6 @@
   "URL_SOCKET": "https://ekus.masservicios.com.mx/",
   "SOCKET_PATH": "/soaang-notifier/wss/",
   "SENTRY_DSN": "",
-  "MAPS_API_KEY": ""
+  "MAPS_API_KEY": "",
+  "ENV_SWITCHER": true
 }

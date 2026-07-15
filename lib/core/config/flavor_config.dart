@@ -77,6 +77,7 @@ class FlavorConfig {
     required this.socketPath,
     required this.sentryDsn,
     required this.mapsApiKey,
+    required this.envSwitcherEnabled,
   });
 
   final Flavor flavor;
@@ -97,10 +98,14 @@ class FlavorConfig {
   final String sentryDsn;
   final String mapsApiKey;
 
-  /// Base server URL for the active environment (runtime switchable later via
-  /// the env picker, AFILIADO's `setTypeEnviroment`).
-  String get urlServer {
-    switch (environment) {
+  /// Whether the login screen exposes the dev/qa/prod/preprod env picker
+  /// (AFILIADO gates it to certain flavors via `IS_IKATECH` /
+  /// `IS_MASSERVICIOS_PERSONALIZADA`). Per flavor via `--dart-define`.
+  final bool envSwitcherEnabled;
+
+  /// Base server URL for a given environment.
+  String urlServerFor(Environment env) {
+    switch (env) {
       case Environment.dev:
         return urlServerDev;
       case Environment.qa:
@@ -111,6 +116,10 @@ class FlavorConfig {
         return urlServerPreprod;
     }
   }
+
+  /// Base server URL for the compile-time active environment (default before a
+  /// runtime override via the env picker, AFILIADO's `setTypeEnviroment`).
+  String get urlServer => urlServerFor(environment);
 
   bool get isProduction => environment == Environment.prod;
 
@@ -163,6 +172,7 @@ class FlavorConfig {
       ),
       sentryDsn: const String.fromEnvironment('SENTRY_DSN', defaultValue: ''),
       mapsApiKey: const String.fromEnvironment('MAPS_API_KEY', defaultValue: ''),
+      envSwitcherEnabled: const bool.fromEnvironment('ENV_SWITCHER', defaultValue: false),
     );
   }
 

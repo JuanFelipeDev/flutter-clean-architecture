@@ -12,3 +12,10 @@ import 'flavor_config.dart';
 final flavorConfigProvider = Provider<FlavorConfig>((ref) {
   return FlavorConfig.fromEnvironment();
 });
+
+/// Runtime environment override (the login env picker, AFILIADO
+/// `setTypeEnviroment`). Seeded from the compile-time flavor env; persisted in
+/// `bootstrap` from prefs so the choice survives launches.
+final currentEnvironmentProvider = StateProvider<Environment>((ref) {
+  return ref.watch(flavorConfigProvider).environment;
+});

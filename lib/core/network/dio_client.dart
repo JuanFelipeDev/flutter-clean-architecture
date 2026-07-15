@@ -1,5 +1,5 @@
-/// Builds a configured [Dio] instance for a flavor with a given interceptor
-/// chain. Pure construction — no DI. The [dioProvider] wires real interceptors.
+/// Builds a configured [Dio] instance with a given interceptor chain. Pure
+/// construction — no DI. The [dioProvider] wires real interceptors.
 library;
 
 import 'package:dio/dio.dart';
@@ -7,12 +7,13 @@ import 'package:dio/dio.dart';
 import '../config/app_constants.dart';
 import '../config/flavor_config.dart';
 
-/// Creates a [Dio] configured with base URL, timeouts, and the provided
-/// interceptors (order-sensitive, matching PRESTADOR's `NetworkModule`).
-Dio createDio(FlavorConfig flavor, List<Interceptor> interceptors) {
+/// Creates a [Dio] configured with base URL ([flavor.urlServerFor] of [env]),
+/// timeouts, and the provided interceptors (order-sensitive, matching
+/// PRESTADOR's `NetworkModule`).
+Dio createDio(FlavorConfig flavor, Environment env, List<Interceptor> interceptors) {
   final dio = Dio(
     BaseOptions(
-      baseUrl: flavor.urlServer,
+      baseUrl: flavor.urlServerFor(env),
       connectTimeout: NetworkLimits.defaultTimeout,
       sendTimeout: NetworkLimits.defaultTimeout,
       receiveTimeout: NetworkLimits.defaultTimeout,

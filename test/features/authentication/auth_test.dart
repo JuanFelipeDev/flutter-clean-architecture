@@ -118,6 +118,7 @@ void main() {
             socketPath: '',
             sentryDsn: '',
             mapsApiKey: '',
+            envSwitcherEnabled: false,
           ),
         ),
         authRepositoryProvider.overrideWithValue(
@@ -158,6 +159,7 @@ void main() {
             socketPath: '',
             sentryDsn: '',
             mapsApiKey: '',
+            envSwitcherEnabled: false,
           ),
         ),
         authRepositoryProvider.overrideWithValue(
