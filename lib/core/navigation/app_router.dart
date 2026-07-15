@@ -28,25 +28,40 @@ import '../../features/vehicle/presentation/pages/vehicle_page.dart';
 import '../session/session_state_provider.dart';
 import 'app_routes.dart';
 
-/// Bridges auth-state changes to GoRouter's `refreshListenable`.
-class _RouterRefreshNotifier extends ChangeNotifier {
-  void notify() => notifyListeners();
+/// Holds the current auth state and notifies GoRouter to re-run its redirect.
+/// The redirect reads the **current** value dynamically (not a captured
+/// variable from provider creation), so flipping `isAuthenticated` from
+/// `false` → `true` at login time correctly redirects to home.
+class _AuthRefreshNotifier extends ChangeNotifier {
+  _AuthRefreshNotifier(this._isAuthenticated);
+  bool _isAuthenticated;
+  bool get isAuthenticated => _isAuthenticated;
+
+  void update(bool value) {
+    if (_isAuthenticated != value) {
+      _isAuthenticated = value;
+      notifyListeners();
+    }
+  }
 }
 
-/// The app's [GoRouter]. Re-routes on auth flips and on locale/env changes.
+/// The app's [GoRouter]. Created ONCE; the redirect reads auth state
+/// dynamically from [_AuthRefreshNotifier] so it always sees the latest value.
 final appRouterProvider = Provider<GoRouter>((ref) {
-  final refresh = _RouterRefreshNotifier();
-  ref.listen<bool>(isAuthenticatedProvider, (_, _) => refresh.notify());
-  ref.onDispose(refresh.dispose);
+  final notifier = _AuthRefreshNotifier(ref.read(isAuthenticatedProvider));
 
-  final isAuthenticated = ref.read(isAuthenticatedProvider);
+  ref.listen<bool>(isAuthenticatedProvider, (_, next) {
+    notifier.update(next);
+  });
+  ref.onDispose(notifier.dispose);
 
   return GoRouter(
     initialLocation: AppRoute.splash.path,
-    refreshListenable: refresh,
+    refreshListenable: notifier,
     debugLogDiagnostics: kDebugMode,
     redirect: (context, state) {
       final to = state.matchedLocation;
+      final isAuthenticated = notifier.isAuthenticated; // dynamic read
       final goingToProtected = AppRoute.values
           .where((r) => r.isProtected)
           .any((r) => to.startsWith(r.path));
@@ -132,7 +147,6 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoute.home.path,
         builder: (_, _) => const HomePage(),
       ),
-      // Remaining routes are wired in Phase 5 alongside their features.
     ],
   );
 });

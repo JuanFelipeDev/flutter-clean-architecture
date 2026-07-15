@@ -37,7 +37,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   void _onStateChanged(LoginState? previous, LoginState next) {
     switch (next.status) {
       case LoginStatus.success:
-        context.go(AppRoute.home.path);
+        // The GoRouter redirect handles home navigation when
+        // isAuthenticatedProvider flips to true (set by AuthRepositoryImpl).
+        // Nothing to do here.
+        break;
       case LoginStatus.requiresTwoFactor:
         context.go(AppRoute.twoFactor.path);
       case LoginStatus.failure:
