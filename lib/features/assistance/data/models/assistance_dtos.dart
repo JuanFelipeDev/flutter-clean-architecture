@@ -53,9 +53,11 @@ class FamilyDto {
   final String? id;
   final String? name;
 
-  /// AFILIADO: GetAffiliateFamilyListDataResponse {pk, fmId, fmDescription, fpLogo}
+  /// AFILIADO: GetAffiliateFamilyListDataResponse {pk, fmId, fmDescription, fpLogo}.
+  /// The services endpoint expects `fmId` as `idfamilia` (see ItemFamilyFragment ->
+  /// ItemServiceFragment.getAffiliateServices), so prefer it over `pk`.
   factory FamilyDto.fromJson(Map<String, dynamic> json) => FamilyDto(
-        id: json['pk']?.toString() ?? json['fmId']?.toString() ?? json['id']?.toString(),
+        id: json['fmId']?.toString() ?? json['pk']?.toString() ?? json['id']?.toString(),
         name: json['fmDescription']?.toString() ?? json['family_name']?.toString() ??
             json['name']?.toString() ?? json['familia']?.toString(),
       );
