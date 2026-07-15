@@ -14,6 +14,7 @@ class LoginSessionDto {
     this.cltId,
     this.affKey,
     this.user,
+    this.twoFactorsAuth,
   });
 
   final String? access;
@@ -22,15 +23,27 @@ class LoginSessionDto {
   final String? cltId;
   final String? affKey;
   final Map<String, dynamic>? user;
+  final bool? twoFactorsAuth;
 
   factory LoginSessionDto.fromJson(Map<String, dynamic> json) {
+    // AFILIADO `LoginSession.affKey` is a List<String>; take the first as the
+    // active affiliate key (the app operates on one affKey at a time).
+    final rawAffKey = json['affKey'] ?? json['aff_key'];
+    String? affKey;
+    if (rawAffKey is List && rawAffKey.isNotEmpty) {
+      affKey = rawAffKey.first?.toString();
+    } else if (rawAffKey is String) {
+      affKey = rawAffKey;
+    }
+
     return LoginSessionDto(
       access: json['access']?.toString(),
       refresh: json['refresh']?.toString(),
       userName: json['userName']?.toString() ?? json['username']?.toString(),
       cltId: json['cltId']?.toString() ?? json['client_id']?.toString(),
-      affKey: json['affKey']?.toString() ?? json['aff_key']?.toString(),
+      affKey: affKey,
       user: json['user'] is Map<String, dynamic> ? json['user'] as Map<String, dynamic> : null,
+      twoFactorsAuth: json['twoFactorsAuth'] is bool ? json['twoFactorsAuth'] as bool : null,
     );
   }
 
@@ -63,6 +76,7 @@ class LoginSessionMapper {
       clientId: dto.cltId,
       affKey: dto.affKey,
       user: user,
+      twoFactorsAuth: dto.twoFactorsAuth ?? false,
     );
   }
 }

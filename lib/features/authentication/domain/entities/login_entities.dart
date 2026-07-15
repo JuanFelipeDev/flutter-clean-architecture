@@ -24,6 +24,7 @@ class LoginSession {
     this.clientId,
     this.affKey,
     this.user,
+    this.twoFactorsAuth = false,
   });
 
   final String accessToken;
@@ -32,10 +33,13 @@ class LoginSession {
   final String? clientId;
   final String? affKey;
   final AffiliateUser? user;
+  final bool twoFactorsAuth;
 
-  /// AFILIADO 2FA rule: response without `user` but with `userName` requires
-  /// two-factor verification.
+  /// AFILIADO 2FA rule: the backend sets `twoFactorsAuth: true` on the
+  /// response when a code must be verified; fall back to inferring from a
+  /// missing `user` + present `userName` for older responses.
   bool get requiresTwoFactor {
+    if (twoFactorsAuth) return true;
     final name = userName;
     return user == null && name != null && name.isNotEmpty;
   }

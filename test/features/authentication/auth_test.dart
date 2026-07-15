@@ -71,6 +71,20 @@ void main() {
       expect(entity.clientId, '42');
       expect(entity.user?.id, '1');
     });
+
+    test('parses affKey list -> first element + twoFactorsAuth flag', () {
+      final dto = LoginSessionDto.fromJson(<String, dynamic>{
+        'access': 'tok',
+        'refresh': 'ref',
+        'username': 'bob',
+        'affKey': <String>['aff-1', 'aff-2'],
+        'twoFactorsAuth': true,
+      });
+      const mapper = LoginSessionMapper();
+      final entity = mapper.toEntity(dto);
+      expect(entity.affKey, 'aff-1');
+      expect(entity.requiresTwoFactor, isTrue);
+    });
   });
 
   group('RobleCredentials', () {
