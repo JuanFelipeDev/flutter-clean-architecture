@@ -16,11 +16,17 @@ class AccountDto {
   final String? name;
   final String? number;
 
-  factory AccountDto.fromJson(Map<String, dynamic> json) => AccountDto(
-        id: json['idaccount']?.toString() ?? json['id']?.toString(),
-        name: json['name']?.toString() ?? json['numero_cuenta']?.toString(),
-        number: json['numero_cuenta']?.toString(),
-      );
+  /// AFILIADO: each response item is {account: {acId, acName, acPilotNumber, ...}, accountLogo: [...]}
+  factory AccountDto.fromJson(Map<String, dynamic> json) {
+    final account = json['account'] is Map
+        ? Map<String, dynamic>.from(json['account'] as Map)
+        : json;
+    return AccountDto(
+      id: account['acId']?.toString() ?? account['id']?.toString(),
+      name: account['acName']?.toString() ?? account['name']?.toString(),
+      number: account['acPilotNumber']?.toString(),
+    );
+  }
 }
 
 class PlanDto {
@@ -29,20 +35,29 @@ class PlanDto {
   final String? name;
   final String? description;
 
-  factory PlanDto.fromJson(Map<String, dynamic> json) => PlanDto(
-        id: json['idplan']?.toString() ?? json['id']?.toString(),
-        name: json['name']?.toString() ?? json['plan']?.toString(),
-        description: json['description']?.toString(),
-      );
+  /// AFILIADO: each response item is {plan: {plId, plName, plIsVip, plStatus, ...}, plan_logo: [...]}
+  factory PlanDto.fromJson(Map<String, dynamic> json) {
+    final plan = json['plan'] is Map
+        ? Map<String, dynamic>.from(json['plan'] as Map)
+        : json;
+    return PlanDto(
+      id: plan['plId']?.toString() ?? plan['id']?.toString(),
+      name: plan['plName']?.toString() ?? plan['name']?.toString(),
+      description: plan['plIsVip'] == true ? 'VIP' : null,
+    );
+  }
 }
 
 class FamilyDto {
   const FamilyDto({this.id, this.name});
   final String? id;
   final String? name;
+
+  /// AFILIADO: GetAffiliateFamilyListDataResponse {pk, fmId, fmDescription, fpLogo}
   factory FamilyDto.fromJson(Map<String, dynamic> json) => FamilyDto(
-        id: json['idfamilia']?.toString() ?? json['id']?.toString(),
-        name: json['name']?.toString() ?? json['familia']?.toString(),
+        id: json['pk']?.toString() ?? json['fmId']?.toString() ?? json['id']?.toString(),
+        name: json['fmDescription']?.toString() ?? json['family_name']?.toString() ??
+            json['name']?.toString() ?? json['familia']?.toString(),
       );
 }
 
@@ -53,11 +68,13 @@ class ServiceDto {
   final String? description;
   final String? familyId;
 
+  /// AFILIADO: GetDataServicesResponse {spId, familyId, spLabelForUser, spConditionsDescription, ssId, ...}
   factory ServiceDto.fromJson(Map<String, dynamic> json) => ServiceDto(
-        id: json['idService']?.toString() ?? json['id']?.toString() ?? json['ssid']?.toString(),
-        name: json['name']?.toString() ?? json['servicio']?.toString(),
-        description: json['description']?.toString(),
-        familyId: json['idfamilia']?.toString(),
+        id: json['ssId']?.toString() ?? json['spId']?.toString() ?? json['id']?.toString(),
+        name: json['spLabelForUser']?.toString() ?? json['name']?.toString() ??
+            json['servicio']?.toString() ?? 'Service ${json['spId'] ?? ''}',
+        description: json['spConditionsDescription']?.toString() ?? json['description']?.toString(),
+        familyId: json['familyId']?.toString() ?? json['idfamilia']?.toString(),
       );
 }
 
@@ -175,10 +192,10 @@ class AssistanceMapper {
 // -- List parsing helpers --------------------------------------------------
 
 
-List<AccountDto> parseAccounts(dynamic body) => parseJsonList(body, AccountDto.fromJson, 'accounts');
-List<PlanDto> parsePlans(dynamic body) => parseJsonList(body, PlanDto.fromJson, 'plans');
-List<FamilyDto> parseFamilies(dynamic body) => parseJsonList(body, FamilyDto.fromJson, 'families');
-List<ServiceDto> parseServices(dynamic body) => parseJsonList(body, ServiceDto.fromJson, 'services');
+List<AccountDto> parseAccounts(dynamic body) => parseJsonList(body, AccountDto.fromJson, 'response');
+List<PlanDto> parsePlans(dynamic body) => parseJsonList(body, PlanDto.fromJson, 'response');
+List<FamilyDto> parseFamilies(dynamic body) => parseJsonList(body, FamilyDto.fromJson, 'response');
+List<ServiceDto> parseServices(dynamic body) => parseJsonList(body, ServiceDto.fromJson, 'response');
 List<CoverageQuestionDto> parseQuestions(dynamic body) =>
     parseJsonList(body, CoverageQuestionDto.fromJson, 'questions');
 List<PlaceSuggestionDto> parseSuggestions(dynamic body) =>

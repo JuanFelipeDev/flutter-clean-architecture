@@ -59,7 +59,11 @@ void main() {
     });
     test('parses account list from a keyed map', () {
       final list = parseAccounts(<String, dynamic>{
-        'accounts': <dynamic>[<String, dynamic>{'idaccount': '1', 'name': 'X'}],
+        'response': <dynamic>[
+          <String, dynamic>{
+            'account': <String, dynamic>{'acId': 1, 'acName': 'X'},
+          },
+        ],
       });
       expect(list, hasLength(1));
       expect(list.first.id, '1');
