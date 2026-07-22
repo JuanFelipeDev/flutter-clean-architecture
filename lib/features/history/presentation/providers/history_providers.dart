@@ -1,5 +1,4 @@
 /// Riverpod wiring for the history feature. [HistoryNotifier] loads the
-/// first page and supports paginated "load more" (AFILIADO
 /// `ServiceHistoryFragment` + `list-afiliate-assistances`).
 library;
 
@@ -14,7 +13,9 @@ import '../../domain/repositories/history_repository.dart';
 import '../../domain/usecases/history_usecases.dart';
 import '../states/history_state.dart';
 
-final historyRemoteDataSourceProvider = Provider<HistoryRemoteDataSource>((ref) {
+final historyRemoteDataSourceProvider = Provider<HistoryRemoteDataSource>((
+  ref,
+) {
   return HistoryRemoteDataSource(ref.watch(dioProvider));
 });
 
@@ -38,11 +39,20 @@ class HistoryNotifier extends Notifier<HistoryState> {
   Future<void> load() async {
     final affKey = _affKey;
     if (affKey == null) {
-      state = state.copyWith(status: HistoryStatus.failure, errorMessage: 'No session');
+      state = state.copyWith(
+        status: HistoryStatus.failure,
+        errorMessage: 'No session',
+      );
       return;
     }
-    state = state.copyWith(status: HistoryStatus.loading, page: 1, errorMessage: '');
-    final result = await ref.read(getHistoryUseCaseProvider).call(affKey, page: 1);
+    state = state.copyWith(
+      status: HistoryStatus.loading,
+      page: 1,
+      errorMessage: '',
+    );
+    final result = await ref
+        .read(getHistoryUseCaseProvider)
+        .call(affKey, page: 1);
     final items = result.getOrNull() ?? const [];
     state = state.copyWith(
       items: items,
@@ -55,10 +65,15 @@ class HistoryNotifier extends Notifier<HistoryState> {
 
   Future<void> loadMore() async {
     final affKey = _affKey;
-    if (affKey == null || !state.hasMore || state.status == HistoryStatus.loading) return;
+    if (affKey == null ||
+        !state.hasMore ||
+        state.status == HistoryStatus.loading)
+      return;
     final nextPage = state.page + 1;
     state = state.copyWith(status: HistoryStatus.loading, errorMessage: '');
-    final result = await ref.read(getHistoryUseCaseProvider).call(affKey, page: nextPage);
+    final result = await ref
+        .read(getHistoryUseCaseProvider)
+        .call(affKey, page: nextPage);
     final newItems = result.getOrNull() ?? const [];
     state = state.copyWith(
       items: [...state.items, ...newItems],
@@ -70,5 +85,6 @@ class HistoryNotifier extends Notifier<HistoryState> {
   }
 }
 
-final historyProvider =
-    NotifierProvider<HistoryNotifier, HistoryState>(HistoryNotifier.new);
+final historyProvider = NotifierProvider<HistoryNotifier, HistoryState>(
+  HistoryNotifier.new,
+);

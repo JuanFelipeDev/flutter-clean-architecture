@@ -1,4 +1,3 @@
-/// Remote data source for history (AFILIADO
 /// `soaang-assistances/api/assistances/list-afiliate-assistances`).
 library;
 

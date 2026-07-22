@@ -1,5 +1,4 @@
 /// Authentication state used by route guards. Seeded during [bootstrap] after
-/// checking secure storage for a persisted session (AFILIADO `OpenApp`
 /// token-vs-login decision).
 library;
 

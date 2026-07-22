@@ -1,6 +1,5 @@
 /// Typed failure hierarchy. One [Failure] per recoverable error category,
 /// translated from HTTP/transport errors by [ErrorMapper] and surfaced to the
-/// UI as friendly messages. Mirrors PRESTADOR's `ErrorResponse`/`ErrorBody`/
 /// `HttpStatusCode` but as a sealed hierarchy.
 library;
 
@@ -24,14 +23,13 @@ sealed class Failure {
   @override
   String toString() => '$runtimeType($code): $message';
 
-  // -- Factories ----------------------------------------------------------
-
   static Failure network(
     String message, {
     int? code,
     Object? cause,
     StackTrace? stackTrace,
-  }) => NetworkFailure(message, code: code, cause: cause, stackTrace: stackTrace);
+  }) =>
+      NetworkFailure(message, code: code, cause: cause, stackTrace: stackTrace);
 
   static Failure timeout({
     int code = 9999,
@@ -70,27 +68,41 @@ sealed class Failure {
   static Failure validation(String message, {String? field}) =>
       ValidationFailure(message, field: field);
 
-  static Failure offline(String message, {Object? cause, StackTrace? stackTrace}) =>
-      OfflineFailure(message, cause: cause, stackTrace: stackTrace);
+  static Failure offline(
+    String message, {
+    Object? cause,
+    StackTrace? stackTrace,
+  }) => OfflineFailure(message, cause: cause, stackTrace: stackTrace);
 
   /// Wraps an arbitrary thrown object; passes through if already a [Failure].
   static Failure unknown(Object error, [StackTrace? stackTrace]) {
     if (error is Failure) return error;
-    return UnknownFailure(error.toString(), cause: error, stackTrace: stackTrace);
+    return UnknownFailure(
+      error.toString(),
+      cause: error,
+      stackTrace: stackTrace,
+    );
   }
 }
 
-/// No network connectivity (AFILIADO `CONECTED_TO_INTERNET=false` /
-/// PRESTADOR `NoInternetException`).
 final class NetworkFailure extends Failure {
-  const NetworkFailure(super.message, {super.code, super.cause, super.stackTrace});
+  const NetworkFailure(
+    super.message, {
+    super.code,
+    super.cause,
+    super.stackTrace,
+  });
   @override
   String get kind => 'network';
 }
 
-/// Request timed out (PRESTADOR `CODE_TIMEOUT = 9999`).
 final class TimeoutFailure extends Failure {
-  const TimeoutFailure(super.message, {super.code, super.cause, super.stackTrace});
+  const TimeoutFailure(
+    super.message, {
+    super.code,
+    super.cause,
+    super.stackTrace,
+  });
   @override
   String get kind => 'timeout';
 }
@@ -106,7 +118,6 @@ final class ServerFailure extends Failure {
     super.stackTrace,
   });
 
-  /// `ErrorBody.detail` from the backend (PRESTADOR `ErrorBody`).
   final String? detail;
 
   /// `flag_panel` — whether the backend wants a modal panel shown.
@@ -134,14 +145,24 @@ final class ValidationFailure extends Failure {
 
 /// Operation was cancelled (e.g. offline grace period elapsed).
 final class OfflineFailure extends Failure {
-  const OfflineFailure(super.message, {super.code, super.cause, super.stackTrace});
+  const OfflineFailure(
+    super.message, {
+    super.code,
+    super.cause,
+    super.stackTrace,
+  });
   @override
   String get kind => 'offline';
 }
 
 /// Anything not covered above.
 final class UnknownFailure extends Failure {
-  const UnknownFailure(super.message, {super.code, super.cause, super.stackTrace});
+  const UnknownFailure(
+    super.message, {
+    super.code,
+    super.cause,
+    super.stackTrace,
+  });
   @override
   String get kind => 'unknown';
 }

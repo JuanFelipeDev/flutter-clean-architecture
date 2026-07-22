@@ -1,5 +1,4 @@
 /// Rewrites the request base URL at runtime so the environment picker can
-/// switch the server (AFILIADO `setTypeEnviroment`, PRESTADOR inline
 /// `hostSelectionInterceptor`). Skips third-party absolute hosts (Google).
 library;
 

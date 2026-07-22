@@ -1,6 +1,5 @@
 /// Riverpod wiring for the beneficiary feature. [BeneficiaryNotifier] loads the
 /// list + relationships and subscribes to the beneficiary socket channel for
-/// live coordinates/state (AFILIADO `MapsBeneficiariesActivity` SocketEvents).
 library;
 
 import 'dart:async';
@@ -19,9 +18,10 @@ import '../../domain/repositories/beneficiary_repository.dart';
 import '../../domain/usecases/beneficiary_usecases.dart';
 import '../states/beneficiary_state.dart';
 
-final beneficiaryRemoteDataSourceProvider = Provider<BeneficiaryRemoteDataSource>((ref) {
-  return BeneficiaryRemoteDataSource(ref.watch(dioProvider));
-});
+final beneficiaryRemoteDataSourceProvider =
+    Provider<BeneficiaryRemoteDataSource>((ref) {
+      return BeneficiaryRemoteDataSource(ref.watch(dioProvider));
+    });
 
 final beneficiaryRepositoryProvider = Provider<BeneficiaryRepository>((ref) {
   return BeneficiaryRepositoryImpl(
@@ -30,23 +30,33 @@ final beneficiaryRepositoryProvider = Provider<BeneficiaryRepository>((ref) {
   );
 });
 
-final getBeneficiariesUseCaseProvider = Provider<GetBeneficiariesUseCase>((ref) {
+final getBeneficiariesUseCaseProvider = Provider<GetBeneficiariesUseCase>((
+  ref,
+) {
   return GetBeneficiariesUseCase(ref.watch(beneficiaryRepositoryProvider));
 });
 
-final createBeneficiaryUseCaseProvider = Provider<CreateBeneficiaryUseCase>((ref) {
+final createBeneficiaryUseCaseProvider = Provider<CreateBeneficiaryUseCase>((
+  ref,
+) {
   return CreateBeneficiaryUseCase(ref.watch(beneficiaryRepositoryProvider));
 });
 
-final updateBeneficiaryUseCaseProvider = Provider<UpdateBeneficiaryUseCase>((ref) {
+final updateBeneficiaryUseCaseProvider = Provider<UpdateBeneficiaryUseCase>((
+  ref,
+) {
   return UpdateBeneficiaryUseCase(ref.watch(beneficiaryRepositoryProvider));
 });
 
-final deleteBeneficiaryUseCaseProvider = Provider<DeleteBeneficiaryUseCase>((ref) {
+final deleteBeneficiaryUseCaseProvider = Provider<DeleteBeneficiaryUseCase>((
+  ref,
+) {
   return DeleteBeneficiaryUseCase(ref.watch(beneficiaryRepositoryProvider));
 });
 
-final getRelationshipsUseCaseProvider = Provider<GetRelationshipsUseCase>((ref) {
+final getRelationshipsUseCaseProvider = Provider<GetRelationshipsUseCase>((
+  ref,
+) {
   return GetRelationshipsUseCase(ref.watch(beneficiaryRepositoryProvider));
 });
 
@@ -64,12 +74,19 @@ class BeneficiaryNotifier extends Notifier<BeneficiaryState> {
   Future<void> load() async {
     final affKey = _affKey;
     if (affKey == null) {
-      state = state.copyWith(status: BeneficiaryStatus.failure, errorMessage: 'No session');
+      state = state.copyWith(
+        status: BeneficiaryStatus.failure,
+        errorMessage: 'No session',
+      );
       return;
     }
     state = state.copyWith(status: BeneficiaryStatus.loading, errorMessage: '');
-    final beneficiaries = await ref.read(getBeneficiariesUseCaseProvider).call(affKey);
-    final relationships = await ref.read(getRelationshipsUseCaseProvider).call();
+    final beneficiaries = await ref
+        .read(getBeneficiariesUseCaseProvider)
+        .call(affKey);
+    final relationships = await ref
+        .read(getRelationshipsUseCaseProvider)
+        .call();
 
     state = state.copyWith(
       beneficiaries: beneficiaries.getOrNull() ?? const [],
@@ -77,11 +94,15 @@ class BeneficiaryNotifier extends Notifier<BeneficiaryState> {
       status: BeneficiaryStatus.idle,
     );
 
-    // Subscribe to live beneficiary coordinates/state (AFILIADO SocketEvents).
     final socketManager = ref.read(socketManagerProvider);
-    await socketManager.connect(SocketChannel.beneficiary, auth: {'affkey': affKey});
+    await socketManager.connect(
+      SocketChannel.beneficiary,
+      auth: {'affkey': affKey},
+    );
     _socketSub = socketManager.events.listen((event) {
-      if (event is! RawSocketEvent || event.channel != SocketChannel.beneficiary) return;
+      if (event is! RawSocketEvent ||
+          event.channel != SocketChannel.beneficiary)
+        return;
       final coords = const BeneficiaryMapper().parseCoordinates(event.payload);
       if (coords.beneficiaryId.isEmpty) return;
       final next = Map<String, BeneficiaryCoordinate>.from(state.coordinates);
@@ -94,7 +115,9 @@ class BeneficiaryNotifier extends Notifier<BeneficiaryState> {
     final affKey = _affKey;
     if (affKey == null) return;
     state = state.copyWith(status: BeneficiaryStatus.saving, errorMessage: '');
-    final result = await ref.read(createBeneficiaryUseCaseProvider).call(affKey, beneficiary);
+    final result = await ref
+        .read(createBeneficiaryUseCaseProvider)
+        .call(affKey, beneficiary);
     result.fold(
       onSuccess: (created) => state = state.copyWith(
         beneficiaries: [...state.beneficiaries, created],
@@ -109,7 +132,9 @@ class BeneficiaryNotifier extends Notifier<BeneficiaryState> {
 
   Future<void> edit(Beneficiary beneficiary) async {
     state = state.copyWith(status: BeneficiaryStatus.saving, errorMessage: '');
-    final result = await ref.read(updateBeneficiaryUseCaseProvider).call(beneficiary);
+    final result = await ref
+        .read(updateBeneficiaryUseCaseProvider)
+        .call(beneficiary);
     result.fold(
       onSuccess: (updated) => state = state.copyWith(
         beneficiaries: state.beneficiaries
@@ -125,10 +150,14 @@ class BeneficiaryNotifier extends Notifier<BeneficiaryState> {
   }
 
   Future<void> remove(String beneficiaryId) async {
-    final result = await ref.read(deleteBeneficiaryUseCaseProvider).call(beneficiaryId);
+    final result = await ref
+        .read(deleteBeneficiaryUseCaseProvider)
+        .call(beneficiaryId);
     result.fold(
       onSuccess: (_) => state = state.copyWith(
-        beneficiaries: state.beneficiaries.where((b) => b.id != beneficiaryId).toList(),
+        beneficiaries: state.beneficiaries
+            .where((b) => b.id != beneficiaryId)
+            .toList(),
       ),
       onFailure: (failure) => state = state.copyWith(
         status: BeneficiaryStatus.failure,
@@ -141,4 +170,6 @@ class BeneficiaryNotifier extends Notifier<BeneficiaryState> {
 }
 
 final beneficiaryProvider =
-    NotifierProvider<BeneficiaryNotifier, BeneficiaryState>(BeneficiaryNotifier.new);
+    NotifierProvider<BeneficiaryNotifier, BeneficiaryState>(
+      BeneficiaryNotifier.new,
+    );

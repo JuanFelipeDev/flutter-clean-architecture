@@ -22,5 +22,6 @@ class ValidateScheduleUseCase {
 class ScheduleUseCase {
   ScheduleUseCase(this._repository);
   final SchedulingRepository _repository;
-  Future<Result<void>> call(ScheduleRequest request) => _repository.schedule(request);
+  Future<Result<void>> call(ScheduleRequest request) =>
+      _repository.schedule(request);
 }

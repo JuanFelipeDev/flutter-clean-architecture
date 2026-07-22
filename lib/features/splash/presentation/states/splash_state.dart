@@ -15,12 +15,10 @@ class SplashLoading extends SplashState {
   const SplashLoading();
 }
 
-/// Device is rooted/jailbroken (release gating, AFILIADO `security_root`).
 class SplashRooted extends SplashState {
   const SplashRooted();
 }
 
-/// A newer version is published — force update (AFILIADO publisher channel
 /// / `info-version-app`).
 class SplashUpdateRequired extends SplashState {
   const SplashUpdateRequired(this.latestVersion);

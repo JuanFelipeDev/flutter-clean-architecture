@@ -1,4 +1,3 @@
-/// Notifications UI state (AFILIADO `NotificationsActivity` + counter badge).
 library;
 
 import '../../domain/entities/notification_entities.dart';

@@ -1,6 +1,5 @@
 /// Riverpod wiring for the video call feature. [VideoCallNotifier] checks
 /// schedule, joins via the [VideoCallService] seam, and manages recording
-/// (AFILIADO `VideoCallActivity`/`VideoCallViewModel`).
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +14,9 @@ import '../../domain/services/video_call_service.dart';
 import '../../domain/usecases/videocall_usecases.dart';
 import '../states/videocall_state.dart';
 
-final videoCallRemoteDataSourceProvider = Provider<VideoCallRemoteDataSource>((ref) {
+final videoCallRemoteDataSourceProvider = Provider<VideoCallRemoteDataSource>((
+  ref,
+) {
   return VideoCallRemoteDataSource(ref.watch(dioProvider));
 });
 
@@ -46,8 +47,10 @@ final stopRecordingUseCaseProvider = Provider<StopRecordingUseCase>((ref) {
 
 final requestRecordingPermissionUseCaseProvider =
     Provider<RequestRecordingPermissionUseCase>((ref) {
-  return RequestRecordingPermissionUseCase(ref.watch(videoCallRepositoryProvider));
-});
+      return RequestRecordingPermissionUseCase(
+        ref.watch(videoCallRepositoryProvider),
+      );
+    });
 
 class VideoCallNotifier extends Notifier<VideoCallState> {
   VideoCallSession? _session;
@@ -63,10 +66,18 @@ class VideoCallNotifier extends Notifier<VideoCallState> {
   }) async {
     state = state.copyWith(callStatus: CallStatus.joining, errorMessage: '');
 
-    final schedule = await ref.read(checkScheduleUseCaseProvider).call(assistanceId);
-    final allowed = schedule.fold(onSuccess: (s) => s.allowed, onFailure: (_) => false);
+    final schedule = await ref
+        .read(checkScheduleUseCaseProvider)
+        .call(assistanceId);
+    final allowed = schedule.fold(
+      onSuccess: (s) => s.allowed,
+      onFailure: (_) => false,
+    );
     if (!allowed) {
-      final message = schedule.fold(onSuccess: (s) => s.message, onFailure: (_) => null);
+      final message = schedule.fold(
+        onSuccess: (s) => s.message,
+        onFailure: (_) => null,
+      );
       state = state.copyWith(
         callStatus: CallStatus.error,
         errorMessage: message ?? 'Call not available now',
@@ -105,12 +116,21 @@ class VideoCallNotifier extends Notifier<VideoCallState> {
       state = state.copyWith(recording: RecordingStatus.requesting);
       final result = await ref.read(stopRecordingUseCaseProvider).call();
       result.fold(
-        onSuccess: (_) => state = state.copyWith(recording: RecordingStatus.stopped),
-        onFailure: (failure) => state = state.copyWith(recording: RecordingStatus.recording, errorMessage: failure.message),
+        onSuccess: (_) =>
+            state = state.copyWith(recording: RecordingStatus.stopped),
+        onFailure: (failure) => state = state.copyWith(
+          recording: RecordingStatus.recording,
+          errorMessage: failure.message,
+        ),
       );
     } else {
-      final permission = await ref.read(requestRecordingPermissionUseCaseProvider).call();
-      final granted = permission.fold(onSuccess: (g) => g, onFailure: (_) => false);
+      final permission = await ref
+          .read(requestRecordingPermissionUseCaseProvider)
+          .call();
+      final granted = permission.fold(
+        onSuccess: (g) => g,
+        onFailure: (_) => false,
+      );
       if (!granted) {
         state = state.copyWith(recording: RecordingStatus.denied);
         return;
@@ -118,12 +138,17 @@ class VideoCallNotifier extends Notifier<VideoCallState> {
       state = state.copyWith(recording: RecordingStatus.requesting);
       final result = await ref.read(startRecordingUseCaseProvider).call();
       result.fold(
-        onSuccess: (_) => state = state.copyWith(recording: RecordingStatus.recording),
-        onFailure: (failure) => state = state.copyWith(recording: RecordingStatus.idle, errorMessage: failure.message),
+        onSuccess: (_) =>
+            state = state.copyWith(recording: RecordingStatus.recording),
+        onFailure: (failure) => state = state.copyWith(
+          recording: RecordingStatus.idle,
+          errorMessage: failure.message,
+        ),
       );
     }
   }
 }
 
-final videoCallProvider =
-    NotifierProvider<VideoCallNotifier, VideoCallState>(VideoCallNotifier.new);
+final videoCallProvider = NotifierProvider<VideoCallNotifier, VideoCallState>(
+  VideoCallNotifier.new,
+);

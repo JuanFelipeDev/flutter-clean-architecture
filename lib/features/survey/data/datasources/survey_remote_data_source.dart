@@ -1,4 +1,3 @@
-/// Remote data source for survey (AFILIADO `quality-survey/{idAssistance}/`
 /// GET/PUT + `poll-assist-create`).
 library;
 
@@ -17,7 +16,10 @@ class SurveyRemoteDataSource {
     return parseQuestions(res.data);
   }
 
-  Future<void> submit(String assistanceId, List<Map<String, dynamic>> answers) async {
+  Future<void> submit(
+    String assistanceId,
+    List<Map<String, dynamic>> answers,
+  ) async {
     await _dio.put<dynamic>(
       'soaang-quality-assurance/api/assistances-quality-questions/quality-survey/$assistanceId/',
       data: {'answers': answers},

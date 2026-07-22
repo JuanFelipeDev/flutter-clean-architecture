@@ -19,7 +19,9 @@ final authDioProvider = Provider<Dio>((ref) {
   final flavor = ref.watch(flavorConfigProvider);
   final telemetry = ref.watch(telemetryProvider);
   final env = ref.watch(currentEnvironmentProvider);
-  return createDio(flavor, env, [LoggingInterceptor(telemetry: telemetry, verbose: false)]);
+  return createDio(flavor, env, [
+    LoggingInterceptor(telemetry: telemetry, verbose: false),
+  ]);
 });
 
 final authApiServiceProvider = Provider<AuthApiService>((ref) {
@@ -38,7 +40,6 @@ final sessionRepositoryProvider = Provider<SessionRepository>((ref) {
 final cachedSessionProvider = StateProvider<SessionData?>((ref) => null);
 
 /// Google Maps API key used at runtime. Prefers the per-client key resolved
-/// from the login response (`user.clients[0].cltInfoApiKey`, AFILIADO's
 /// runtime key) and falls back to the compile-time flavor key. Powers Places
 /// autocomplete + Geocoding.
 final mapsApiKeyProvider = Provider<String>((ref) {

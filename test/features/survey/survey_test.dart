@@ -9,34 +9,49 @@ import 'package:flutter_test/flutter_test.dart';
 
 class _FakeSurveyRepository implements SurveyRepository {
   @override
-  Future<Result<List<SurveyQuestion>>> questions(String assistanceId) async => const Success([
-        SurveyQuestion(id: 'q1', text: 'Rate the service', options: ['Good', 'Bad']),
+  Future<Result<List<SurveyQuestion>>> questions(String assistanceId) async =>
+      const Success([
+        SurveyQuestion(
+          id: 'q1',
+          text: 'Rate the service',
+          options: ['Good', 'Bad'],
+        ),
         SurveyQuestion(id: 'q2', text: 'On time?', options: ['Yes', 'No']),
       ]);
   @override
-  Future<Result<void>> submit(String assistanceId, List<SurveyAnswer> answers) async =>
-      Result<void>.guard(() {});
+  Future<Result<void>> submit(
+    String assistanceId,
+    List<SurveyAnswer> answers,
+  ) async => Result<void>.guard(() {});
 }
 
 void main() {
   group('SurveyMapper', () {
     const mapper = SurveyMapper();
     test('maps a question dto', () {
-      final q = mapper.toEntity(const SurveyQuestionDto(
-        id: 'q1', text: 'Rate', options: ['Good', 'Bad'],
-      ));
+      final q = mapper.toEntity(
+        const SurveyQuestionDto(
+          id: 'q1',
+          text: 'Rate',
+          options: ['Good', 'Bad'],
+        ),
+      );
       expect(q.options, ['Good', 'Bad']);
     });
     test('builds an answer body', () {
-      final body = mapper.answerToBody(const SurveyAnswer(questionId: 'q1', answer: 'Good'));
+      final body = mapper.answerToBody(
+        const SurveyAnswer(questionId: 'q1', answer: 'Good'),
+      );
       expect(body['answer'], 'Good');
     });
   });
 
   group('SurveyNotifier', () {
-    ProviderContainer makeContainer() => ProviderContainer(overrides: [
-          surveyRepositoryProvider.overrideWithValue(_FakeSurveyRepository()),
-        ]);
+    ProviderContainer makeContainer() => ProviderContainer(
+      overrides: [
+        surveyRepositoryProvider.overrideWithValue(_FakeSurveyRepository()),
+      ],
+    );
 
     test('load fetches questions', () async {
       final container = makeContainer();

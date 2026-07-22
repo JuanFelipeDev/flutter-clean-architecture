@@ -5,7 +5,6 @@ library;
 
 import '../config/flavor_config.dart';
 
-/// Result of a root/jailbreak check (AFILIADO `RootBeer` /
 /// `presentation/security_root`).
 enum RootStatus { secure, rooted, unknown }
 
@@ -18,18 +17,14 @@ abstract class BiometricService {
   Future<bool> authenticate({String reason = ''});
 }
 
-/// Certificate pinning configuration per flavor (PRESTADOR
 /// `getCertificatedPin`).
 abstract class CertificatePinningService {
   List<String> pinsFor(FlavorConfig flavor);
 }
 
-/// Android APK signature verification (AFILIADO `AppSignatures`, release only).
 abstract class SignatureVerifyService {
   Future<bool> verify();
 }
-
-// -- Phase 3 no-op implementations ---------------------------------------
 
 class NoopRootDetection implements RootDetectionService {
   @override

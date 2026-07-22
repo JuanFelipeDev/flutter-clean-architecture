@@ -1,4 +1,3 @@
-/// Remote data source for authentication (AFILIADO `Webservice.java` token +
 /// twoFactorAuth endpoints).
 library;
 
@@ -24,7 +23,6 @@ class AuthRemoteDataSource {
       data: form,
       options: Options(contentType: Headers.formUrlEncodedContentType),
     );
-    // Debug: log the raw response so we can see what the backend returned.
     // ignore: avoid_print
     print('[LOGIN] status=${response.statusCode} data=${response.data}');
     return _parse(response.data, _tokenPath);
@@ -39,7 +37,10 @@ class AuthRemoteDataSource {
     return _parse(response.data, _twoFactorPath);
   }
 
-  Map<String, dynamic> _buildForm(LoginCredentials credentials, {String? deviceToken}) {
+  Map<String, dynamic> _buildForm(
+    LoginCredentials credentials, {
+    String? deviceToken,
+  }) {
     final base = <String, dynamic>{
       'DialDevice': 'android',
       'DeviceToken': deviceToken ?? '',
@@ -53,14 +54,14 @@ class AuthRemoteDataSource {
       case StandardCredentials(:final username, :final password):
         return base..addAll({'username': username, 'password': password});
       case EoCredentials(:final phone, :final name, :final password):
-        return base..addAll({'username': phone, 'name': name, 'password': password});
-      case RobleCredentials(:final nit, :final placa, :final dpi):
         return base
-          ..addAll({
-            if (nit != null && nit.isNotEmpty) 'nit': nit,
-            if (placa != null && placa.isNotEmpty) 'placa': placa,
-            if (dpi != null && dpi.isNotEmpty) 'dpi': dpi,
-          });
+          ..addAll({'username': phone, 'name': name, 'password': password});
+      case RobleCredentials(:final nit, :final placa, :final dpi):
+        return base..addAll({
+          if (nit != null && nit.isNotEmpty) 'nit': nit,
+          if (placa != null && placa.isNotEmpty) 'placa': placa,
+          if (dpi != null && dpi.isNotEmpty) 'dpi': dpi,
+        });
     }
   }
 

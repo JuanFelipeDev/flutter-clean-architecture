@@ -1,4 +1,3 @@
-/// Vehicle UI state (AFILIADO `VehiclesActivity` + `AddVehicleActivity` +
 /// `ListBrandsActivity` / `ListModelsActivity` cascade).
 library;
 

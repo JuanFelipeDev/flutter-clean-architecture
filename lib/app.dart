@@ -40,9 +40,11 @@ class AffiliateApp extends ConsumerWidget {
       ],
       routerConfig: router,
       builder: (context, child) {
-        // Force RTL layout for Arabic (AFILIADO `forceLayoutDirection`).
         final direction = isRtl(locale) ? TextDirection.rtl : TextDirection.ltr;
-        return Directionality(textDirection: direction, child: child ?? const SizedBox());
+        return Directionality(
+          textDirection: direction,
+          child: child ?? const SizedBox(),
+        );
       },
     );
   }

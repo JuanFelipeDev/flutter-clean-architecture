@@ -1,4 +1,3 @@
-/// Remote data source for profile (AFILIADO `get-profile/`,
 /// `edit-profile/{affkey}/`, `edit-password/{affkey}/`, document types,
 /// companies).
 library;
@@ -45,12 +44,16 @@ class ProfileRemoteDataSource {
   }
 
   Future<List<DocumentTypeDto>> fetchDocumentTypes() async {
-    final res = await _dio.get<dynamic>('soaang-catalogs/api/parameters/types/5/');
+    final res = await _dio.get<dynamic>(
+      'soaang-catalogs/api/parameters/types/5/',
+    );
     return parseDocumentTypes(res.data);
   }
 
   Future<List<CompanyDto>> fetchCompanies() async {
-    final res = await _dio.get<dynamic>('soaang-catalogs/api/companies/list-company-soa');
+    final res = await _dio.get<dynamic>(
+      'soaang-catalogs/api/companies/list-company-soa',
+    );
     return parseCompanies(res.data);
   }
 }

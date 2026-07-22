@@ -1,4 +1,3 @@
-/// Tracking repository contract (AFILIADO `list-afiliate-active-assistances`,
 /// `stage-update`, `assistance-app-panic`).
 library;
 

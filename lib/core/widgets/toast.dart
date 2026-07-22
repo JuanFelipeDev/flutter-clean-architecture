@@ -1,4 +1,3 @@
-/// Lightweight toast helper (AFILIADO/PRESTADOR `ToastMessage`).
 library;
 
 import 'package:flutter/material.dart';

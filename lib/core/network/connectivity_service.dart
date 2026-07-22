@@ -1,5 +1,4 @@
 /// Connectivity observation. Wraps `connectivity_plus` and adds active
-/// reachability semantics used by the offline-first logic (PRESTADOR
 /// `NetworkUtils` — `isReachable`, `isLowConnection`, `shouldSaveInDb`).
 library;
 

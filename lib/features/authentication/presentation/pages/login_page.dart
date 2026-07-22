@@ -1,5 +1,4 @@
 /// Login screen — three strategies (standard / EO / Roble) selected per
-/// flavor, 2FA hand-off, and navigation to home on success (AFILIADO
 /// `LoginActivity`).
 library;
 
@@ -37,14 +36,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   void _onStateChanged(LoginState? previous, LoginState next) {
     switch (next.status) {
       case LoginStatus.success:
-        // The GoRouter redirect handles home navigation when
-        // isAuthenticatedProvider flips to true (set by AuthRepositoryImpl).
-        // Nothing to do here.
         break;
       case LoginStatus.requiresTwoFactor:
         context.go(AppRoute.twoFactor.path);
       case LoginStatus.failure:
-        context.showToast(next.errorMessage ?? context.l10n.errorGeneric, kind: ToastKind.error);
+        context.showToast(
+          next.errorMessage ?? context.l10n.errorGeneric,
+          kind: ToastKind.error,
+        );
       case LoginStatus.idle:
       case LoginStatus.loading:
         break;
@@ -64,21 +63,30 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           if (flavor.envSwitcherEnabled)
             PopupMenuButton<Environment>(
               tooltip: 'Environment',
-              icon: Icon(Icons.dns_outlined, color: Theme.of(context).colorScheme.primary),
+              icon: Icon(
+                Icons.dns_outlined,
+                color: Theme.of(context).colorScheme.primary,
+              ),
               onSelected: (value) {
                 ref.read(currentEnvironmentProvider.notifier).state = value;
-                // Persist the env choice (AFILIADO `TYPE_ENVIROMENT`).
-                ref.read(prefsServiceProvider.future).then((p) => p.setString('TYPE_ENVIROMENT', value.name));
+                ref
+                    .read(prefsServiceProvider.future)
+                    .then((p) => p.setString('TYPE_ENVIROMENT', value.name));
               },
               itemBuilder: (_) => [
                 for (final e in Environment.values)
                   PopupMenuItem(
                     value: e,
-                    child: Row(children: [
-                      Icon(e == env ? Icons.check_circle : Icons.circle_outlined, size: 18),
-                      const SizedBox(width: 8),
-                      Text(e.name.toUpperCase()),
-                    ]),
+                    child: Row(
+                      children: [
+                        Icon(
+                          e == env ? Icons.check_circle : Icons.circle_outlined,
+                          size: 18,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(e.name.toUpperCase()),
+                      ],
+                    ),
                   ),
               ],
             ),

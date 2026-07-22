@@ -28,19 +28,28 @@ void main() {
   group('HistoryMapper', () {
     const mapper = HistoryMapper();
     test('maps a DTO', () {
-      final item = mapper.toEntity(const HistoryItemDto(
-        id: '1', serviceId: 's', serviceName: 'Tow', status: 'done',
-      ));
+      final item = mapper.toEntity(
+        const HistoryItemDto(
+          id: '1',
+          serviceId: 's',
+          serviceName: 'Tow',
+          status: 'done',
+        ),
+      );
       expect(item.serviceName, 'Tow');
       expect(item.status, 'done');
     });
   });
 
   group('HistoryNotifier', () {
-    ProviderContainer makeContainer(int pages) => ProviderContainer(overrides: [
-          cachedSessionProvider.overrideWith((_) => session),
-          historyRepositoryProvider.overrideWithValue(_FakeHistoryRepository(pages)),
-        ]);
+    ProviderContainer makeContainer(int pages) => ProviderContainer(
+      overrides: [
+        cachedSessionProvider.overrideWith((_) => session),
+        historyRepositoryProvider.overrideWithValue(
+          _FakeHistoryRepository(pages),
+        ),
+      ],
+    );
 
     test('load first page', () async {
       final container = makeContainer(2);
@@ -57,9 +66,9 @@ void main() {
       addTearDown(container.dispose);
       final notifier = container.read(historyProvider.notifier);
       await notifier.load();
-      await notifier.loadMore(); // page 2
+      await notifier.loadMore();
       expect(container.read(historyProvider).items, hasLength(4));
-      await notifier.loadMore(); // page 3 -> empty
+      await notifier.loadMore();
       expect(container.read(historyProvider).items, hasLength(4));
       expect(container.read(historyProvider).hasMore, isFalse);
     });
@@ -69,7 +78,7 @@ void main() {
       addTearDown(container.dispose);
       final notifier = container.read(historyProvider.notifier);
       await notifier.load();
-      await notifier.loadMore(); // page 2 empty -> hasMore false
+      await notifier.loadMore();
       expect(container.read(historyProvider).hasMore, isFalse);
     });
   });

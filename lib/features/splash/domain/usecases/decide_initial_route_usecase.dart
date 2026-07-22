@@ -1,5 +1,4 @@
 /// Decides the initial route after splash: home if a session exists, login
-/// otherwise, or deep-link login when a card id is provided (AFILIADO
 /// `OpenApp` + `SplashActivity.login`).
 library;
 

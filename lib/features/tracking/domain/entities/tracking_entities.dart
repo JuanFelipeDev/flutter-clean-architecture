@@ -1,8 +1,6 @@
-/// Tracking entities (AFILIADO `TrackingResponse` /
 /// `TrackingMapResponse` + socket payloads).
 library;
 
-/// An active assistance being tracked (AFILIADO
 /// `list-afiliate-active-assistances`).
 class ActiveAssistance {
   const ActiveAssistance({
@@ -19,17 +17,19 @@ class ActiveAssistance {
   final String? providerName;
 }
 
-/// Live provider coordinates for an assistance (AFILIADO `mSocketCoordinates`
 /// / `REGEX_SOCKET_CORDINATES`).
 class ProviderCoordinates {
-  const ProviderCoordinates({required this.assistanceId, required this.lat, required this.lng});
+  const ProviderCoordinates({
+    required this.assistanceId,
+    required this.lat,
+    required this.lng,
+  });
   final String assistanceId;
   final double lat;
   final double lng;
 }
 
 /// Tracking lifecycle event types received on the tracking socket channel
-/// (AFILIADO `SocketTrackingEvents` `Type`).
 enum TrackingEventType {
   cancelRequest,
   updateRequest,

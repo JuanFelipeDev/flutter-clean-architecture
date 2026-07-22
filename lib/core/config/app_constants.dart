@@ -1,8 +1,6 @@
-/// App-wide constants sourced from AFILIADO/PRESTADOR socket paths and
 /// notification channels. Pure constants — no behavior.
 library;
 
-/// Socket.IO paths (AFILIADO `ConfigUtils` PATH_* / PRESTADOR `SocketManager`).
 class SocketPaths {
   const SocketPaths();
 
@@ -10,11 +8,9 @@ class SocketPaths {
   static const String coordinates = '/soaang-coordinates/wss/';
   static const String publisher = '/soaang-publisher/wss/';
 
-  /// Global publisher event name (AFILIADO `EVENT_GLOBAL`).
   static const String publisherEvent = 'soaang-application-alerts';
 }
 
-/// Notification channels (AFILIADO `NotificationPushServices`).
 class NotificationChannels {
   const NotificationChannels();
 
@@ -33,7 +29,6 @@ class HttpHeaders {
   static const String username = 'username';
 }
 
-/// Network grace period before an offline call is cancelled (PRESTADOR
 /// `NETWORK_GRACE_PERIOD_MS`).
 class NetworkLimits {
   const NetworkLimits();
@@ -45,7 +40,6 @@ class NetworkLimits {
   static const Duration offlineGracePeriod = Duration(seconds: 10);
 }
 
-/// Synthetic codes used by the error mapper (PRESTADOR `RetrofitUtils`).
 class ApiCodes {
   const ApiCodes();
 
@@ -53,7 +47,6 @@ class ApiCodes {
   static const int noInternet = 900;
 }
 
-/// Secure storage keys (AFILIADO `EncryptedPreferences`).
 class StorageKeys {
   const StorageKeys();
 

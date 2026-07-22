@@ -1,5 +1,3 @@
-/// No-connection dialog with retry (PRESTADOR `NotHasConnectionDialog` /
-/// AFILIADO `displayErrorDisconnect`).
 library;
 
 import 'package:flutter/material.dart';
@@ -14,9 +12,7 @@ class NoConnectionDialog extends StatelessWidget {
     return AlertDialog(
       icon: const Icon(Icons.cloud_off),
       title: const Text('No internet connection'),
-      content: const Text(
-        'Please check your network and try again.',
-      ),
+      content: const Text('Please check your network and try again.'),
       actions: [
         if (onRetry != null)
           FilledButton(onPressed: onRetry, child: const Text('Retry')),

@@ -1,6 +1,5 @@
 /// Tracking screen — list of active assistances with live provider
 /// coordinates (from the coordinates socket) and the tracking lifecycle event
-/// banner. Actions: confirm arrival / final, send panic (AFILIADO
 /// `TrackingFragment` + `TrackingMapActivity` confirmation dialogs).
 ///
 /// The full Google Maps view (google_maps_flutter) lands in Phase 6 polish;
@@ -116,7 +115,9 @@ class _AssistanceTile extends ConsumerWidget {
               padding: const EdgeInsets.only(top: 4),
               child: Text(
                 '📍 ${coordinates!.lat.toStringAsFixed(5)}, ${coordinates!.lng.toStringAsFixed(5)}',
-                style: const TextStyle(fontFeatures: [FontFeature.tabularFigures()]),
+                style: const TextStyle(
+                  fontFeatures: [FontFeature.tabularFigures()],
+                ),
               ),
             ),
           const SizedBox(height: 8),
@@ -132,11 +133,13 @@ class _AssistanceTile extends ConsumerWidget {
                 child: const Text('Confirm end'),
               ),
               FilledButton(
-                onPressed: () => context.push(AppRoute.chat.path, extra: assistance.id),
+                onPressed: () =>
+                    context.push(AppRoute.chat.path, extra: assistance.id),
                 child: const Text('Chat'),
               ),
               FilledButton.tonal(
-                onPressed: () => context.push(AppRoute.videoCall.path, extra: assistance.id),
+                onPressed: () =>
+                    context.push(AppRoute.videoCall.path, extra: assistance.id),
                 child: const Text('Video'),
               ),
               OutlinedButton(

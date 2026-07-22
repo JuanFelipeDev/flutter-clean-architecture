@@ -1,8 +1,6 @@
-/// Vehicle entities (AFILIADO `vehicle/` `VehicleRegister` / `CreateVehicle` /
 /// `BrandsVehicleResponse` / `ModelsVehicleResponse`).
 library;
 
-/// An affiliate vehicle (AFILIADO `GetVehiclesResponseNew`).
 class Vehicle {
   const Vehicle({
     required this.id,
@@ -24,16 +22,18 @@ class Vehicle {
   final String? type;
 }
 
-/// A vehicle brand (AFILIADO `soaang-catalogs/api/parameters/brands/`).
 class Brand {
   const Brand({required this.id, required this.name});
   final String id;
   final String name;
 }
 
-/// A vehicle model under a brand (AFILIADO `soaang-catalogs/api/parameters/models`).
 class VehicleModel {
-  const VehicleModel({required this.id, required this.brandId, required this.name});
+  const VehicleModel({
+    required this.id,
+    required this.brandId,
+    required this.name,
+  });
   final String id;
   final String brandId;
   final String name;

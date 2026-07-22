@@ -1,4 +1,3 @@
-/// Theme mode provider. Persisted via [PrefsService] (AFILIADO has no dark
 /// mode; this is a Flutter improvement).
 library;
 

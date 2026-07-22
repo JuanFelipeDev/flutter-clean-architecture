@@ -19,8 +19,6 @@ void main() {
     });
 
     test('parseColor accepts 0xFF and # forms', () {
-      // Constructed via fromEnvironment; just sanity-check the parsed color is
-      // a valid ARGB int.
       final config = FlavorConfig.fromEnvironment();
       expect(config.primaryColor, greaterThan(0));
       expect(config.accentColor, greaterThan(0));

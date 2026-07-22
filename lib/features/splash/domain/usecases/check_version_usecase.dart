@@ -1,4 +1,3 @@
-/// Checks the published app version against the running one (AFILIADO
 /// `info-version-app`).
 library;
 

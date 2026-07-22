@@ -1,7 +1,6 @@
 /// Splash feature entities. Pure Dart — no Flutter/Dio deps.
 library;
 
-/// Result of a version check (AFILIADO `ResponseValidateUpdate` /
 /// `info-version-app`).
 class VersionCheck {
   const VersionCheck({
@@ -16,7 +15,8 @@ class VersionCheck {
 
   /// True when the published version is newer than the running one, or the
   /// backend explicitly forces an update.
-  bool get isOutdated => updateRequired || _isNewer(latestVersion, currentVersion);
+  bool get isOutdated =>
+      updateRequired || _isNewer(latestVersion, currentVersion);
 
   /// Compares dotted version strings (e.g. "1.2.3" > "1.2.0").
   static bool _isNewer(String a, String b) {
@@ -32,7 +32,6 @@ class VersionCheck {
   }
 }
 
-/// Where the splash should route to (AFILIADO `OpenApp` decision +
 /// deep-link login from another app).
 sealed class SplashRoute {
   const SplashRoute();
@@ -46,7 +45,6 @@ class HomeRoute extends SplashRoute {
   const HomeRoute();
 }
 
-/// Deep-link login carrying the affiliate card id (AFILIADO
 /// `login(cardId)` from `scheme_app_login`).
 class DeepLinkLoginRoute extends SplashRoute {
   const DeepLinkLoginRoute(this.cardId);

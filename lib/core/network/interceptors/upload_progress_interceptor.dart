@@ -1,4 +1,3 @@
-/// Tracks upload byte progress for multipart requests (PRESTADOR
 /// `UploadProgressInterceptor`). Emits a typed [UploadProgress] stream that
 /// UI can subscribe to.
 library;
@@ -26,7 +25,8 @@ class UploadProgressInterceptor extends Interceptor {
     if (options.method.toUpperCase() == 'POST' ||
         options.method.toUpperCase() == 'PUT') {
       options.onSendProgress = (sent, total) {
-        if (!_sink.isClosed) _sink.add(UploadProgress(sent: sent, total: total));
+        if (!_sink.isClosed)
+          _sink.add(UploadProgress(sent: sent, total: total));
       };
     }
     handler.next(options);

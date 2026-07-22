@@ -12,7 +12,10 @@ import '../datasources/beneficiary_remote_data_source.dart';
 import '../models/beneficiary_dtos.dart';
 
 class BeneficiaryRepositoryImpl implements BeneficiaryRepository {
-  BeneficiaryRepositoryImpl({required this.remoteDataSource, required this.mapper});
+  BeneficiaryRepositoryImpl({
+    required this.remoteDataSource,
+    required this.mapper,
+  });
 
   final BeneficiaryRemoteDataSource remoteDataSource;
   final BeneficiaryMapper mapper;
@@ -30,7 +33,10 @@ class BeneficiaryRepositoryImpl implements BeneficiaryRepository {
   }
 
   @override
-  Future<Result<Beneficiary>> detail(String affKey, String beneficiaryId) async {
+  Future<Result<Beneficiary>> detail(
+    String affKey,
+    String beneficiaryId,
+  ) async {
     try {
       final dto = await remoteDataSource.fetchDetail(affKey, beneficiaryId);
       return Success(mapper.toEntity(dto));
@@ -42,9 +48,15 @@ class BeneficiaryRepositoryImpl implements BeneficiaryRepository {
   }
 
   @override
-  Future<Result<Beneficiary>> create(String affKey, Beneficiary beneficiary) async {
+  Future<Result<Beneficiary>> create(
+    String affKey,
+    Beneficiary beneficiary,
+  ) async {
     try {
-      final dto = await remoteDataSource.create(affKey, mapper.toDto(beneficiary));
+      final dto = await remoteDataSource.create(
+        affKey,
+        mapper.toDto(beneficiary),
+      );
       return Success(mapper.toEntity(dto));
     } on DioException catch (e) {
       return Err(mapDioError(e));

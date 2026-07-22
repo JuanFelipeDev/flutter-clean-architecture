@@ -35,10 +35,12 @@ class AuthRepositoryImpl implements AuthRepository {
     String? deviceToken,
   }) async {
     try {
-      final dto = await remoteDataSource.login(credentials, deviceToken: deviceToken);
+      final dto = await remoteDataSource.login(
+        credentials,
+        deviceToken: deviceToken,
+      );
       final session = _mapper.toEntity(dto);
 
-      // 2FA required -> do not persist; surface for the UI to collect the code.
       if (session.requiresTwoFactor) {
         return Success(session);
       }
@@ -52,7 +54,10 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Result<LoginSession>> verifyTwoFactor(String userName, String code) async {
+  Future<Result<LoginSession>> verifyTwoFactor(
+    String userName,
+    String code,
+  ) async {
     try {
       final dto = await remoteDataSource.verifyTwoFactor(userName, code);
       final session = _mapper.toEntity(dto);

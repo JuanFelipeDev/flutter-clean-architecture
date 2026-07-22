@@ -1,7 +1,5 @@
-/// History entities (AFILIADO `history/model/AssistanceHistoryResponse`).
 library;
 
-/// A past assistance in the history (AFILIADO `list-afiliate-assistances`).
 class HistoryItem {
   const HistoryItem({
     required this.id,

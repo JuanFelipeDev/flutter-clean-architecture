@@ -1,5 +1,4 @@
 /// Spacing & radii design tokens. Centralized so widgets stay consistent
-/// (PRESTADOR keeps theme in `presentation/ui/theme`).
 library;
 
 class Spacing {

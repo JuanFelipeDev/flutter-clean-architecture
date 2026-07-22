@@ -1,4 +1,3 @@
-/// History UI state (AFILIADO `ServiceHistoryFragment` + pagination).
 library;
 
 import '../../domain/entities/history_entities.dart';

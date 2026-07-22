@@ -1,5 +1,4 @@
 /// Typed analytics event names. Centralized so callers don't pass magic
-/// strings; mirrors how PRESTADOR keeps `Constants` for cross-cutting keys.
 library;
 
 class AnalyticsEvents {

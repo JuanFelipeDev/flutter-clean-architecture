@@ -57,11 +57,13 @@ class PaymentRepositoryImpl implements PaymentRepository {
   Future<Result<PaymentResult>> pay(List<Purchase> cart) async {
     try {
       final items = cart
-          .map((p) => <String, dynamic>{
-                'item_type': p.itemType.name,
-                'item_id': p.itemId,
-                'quantity': p.quantity,
-              })
+          .map(
+            (p) => <String, dynamic>{
+              'item_type': p.itemType.name,
+              'item_id': p.itemId,
+              'quantity': p.quantity,
+            },
+          )
           .toList();
       final dto = await remoteDataSource.pay(items);
       return Success(mapper.toResult(dto));

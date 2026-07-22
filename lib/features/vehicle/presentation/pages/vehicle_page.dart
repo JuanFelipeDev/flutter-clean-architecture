@@ -1,4 +1,3 @@
-/// Vehicle screen — list + add (brand -> model cascade) + disable (AFILIADO
 /// `VehiclesActivity` / `AddVehicleActivity` / `ListBrandsActivity`).
 library;
 
@@ -57,14 +56,17 @@ class _VehiclePageState extends ConsumerState<VehiclePage> {
                     return ListTile(
                       leading: const Icon(Icons.directions_car_outlined),
                       title: Text(v.brand ?? 'Vehicle ${v.id}'),
-                      subtitle: Text([
-                        if (v.model != null) v.model!,
-                        if (v.plate != null) v.plate!,
-                        if (v.color != null) v.color!,
-                      ].join(' · ')),
+                      subtitle: Text(
+                        [
+                          if (v.model != null) v.model!,
+                          if (v.plate != null) v.plate!,
+                          if (v.color != null) v.color!,
+                        ].join(' · '),
+                      ),
                       trailing: IconButton(
                         icon: const Icon(Icons.delete_outline),
-                        onPressed: () => ref.read(vehicleProvider.notifier).remove(v.id),
+                        onPressed: () =>
+                            ref.read(vehicleProvider.notifier).remove(v.id),
                       ),
                     );
                   },
@@ -80,7 +82,8 @@ class _VehiclePageState extends ConsumerState<VehiclePage> {
       isScrollControlled: true,
       builder: (_) => VehicleFormSheet(
         brands: ref.read(vehicleProvider).brands,
-        onModelsForBrand: (brandId) => ref.read(vehicleProvider.notifier).selectBrand(brandId),
+        onModelsForBrand: (brandId) =>
+            ref.read(vehicleProvider.notifier).selectBrand(brandId),
         models: ref.read(vehicleProvider).models,
         onSubmit: (vehicle) => ref.read(vehicleProvider.notifier).add(vehicle),
       ),

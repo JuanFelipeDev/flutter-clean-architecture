@@ -15,5 +15,6 @@ class GetNotificationsUseCase {
 class GetUnreadCountUseCase {
   GetUnreadCountUseCase(this._repository);
   final NotificationsRepository _repository;
-  Future<Result<int>> call(String username) => _repository.unreadCount(username);
+  Future<Result<int>> call(String username) =>
+      _repository.unreadCount(username);
 }

@@ -1,4 +1,3 @@
-/// Two-factor verification screen (AFILIADO `DoubleFactAuthActivity`).
 library;
 
 import 'package:flutter/material.dart';
@@ -41,7 +40,10 @@ class _TwoFactorPageState extends ConsumerState<TwoFactorPage> {
       case LoginStatus.success:
         context.go(AppRoute.home.path);
       case LoginStatus.failure:
-        context.showToast(next.errorMessage ?? context.l10n.errorGeneric, kind: ToastKind.error);
+        context.showToast(
+          next.errorMessage ?? context.l10n.errorGeneric,
+          kind: ToastKind.error,
+        );
       case LoginStatus.idle:
       case LoginStatus.loading:
       case LoginStatus.requiresTwoFactor:
@@ -77,8 +79,9 @@ class _TwoFactorPageState extends ConsumerState<TwoFactorPage> {
                 ),
                 const SizedBox(height: 24),
                 FilledButton(
-                  onPressed: () =>
-                      ref.read(loginProvider.notifier).submitTwoFactor(_code.text),
+                  onPressed: () => ref
+                      .read(loginProvider.notifier)
+                      .submitTwoFactor(_code.text),
                   child: const Text('Verify'),
                 ),
               ],

@@ -30,7 +30,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
   }
 
   @override
-  Future<Result<AffiliateProfile>> updateProfile(AffiliateProfile profile) async {
+  Future<Result<AffiliateProfile>> updateProfile(
+    AffiliateProfile profile,
+  ) async {
     try {
       final dto = await remoteDataSource.updateProfile(mapper.toDto(profile));
       return Success(mapper.toEntity(dto));

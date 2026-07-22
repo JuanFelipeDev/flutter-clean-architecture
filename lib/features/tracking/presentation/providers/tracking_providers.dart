@@ -1,6 +1,5 @@
 /// Riverpod wiring for the tracking feature. The [TrackingNotifier] loads the
 /// active-assistance list and subscribes to the [SocketManager] event stream,
-/// mapping tracking + coordinates channels into state updates (AFILIADO
 /// `TrackingFragment`/`TrackingMapActivity` sockets).
 library;
 
@@ -20,7 +19,9 @@ import '../../domain/repositories/tracking_repository.dart';
 import '../../domain/usecases/tracking_usecases.dart';
 import '../states/tracking_state.dart';
 
-final trackingRemoteDataSourceProvider = Provider<TrackingRemoteDataSource>((ref) {
+final trackingRemoteDataSourceProvider = Provider<TrackingRemoteDataSource>((
+  ref,
+) {
   return TrackingRemoteDataSource(ref.watch(dioProvider));
 });
 
@@ -31,9 +32,10 @@ final trackingRepositoryProvider = Provider<TrackingRepository>((ref) {
   );
 });
 
-final getActiveAssistancesUseCaseProvider = Provider<GetActiveAssistancesUseCase>((ref) {
-  return GetActiveAssistancesUseCase(ref.watch(trackingRepositoryProvider));
-});
+final getActiveAssistancesUseCaseProvider =
+    Provider<GetActiveAssistancesUseCase>((ref) {
+      return GetActiveAssistancesUseCase(ref.watch(trackingRepositoryProvider));
+    });
 
 final confirmArrivalUseCaseProvider = Provider<ConfirmArrivalUseCase>((ref) {
   return ConfirmArrivalUseCase(ref.watch(trackingRepositoryProvider));
@@ -62,14 +64,22 @@ class TrackingNotifier extends Notifier<TrackingState> {
   Future<void> start() async {
     final affKey = _affKey;
     if (affKey == null) {
-      state = state.copyWith(status: TrackingStatus.failure, errorMessage: 'No session');
+      state = state.copyWith(
+        status: TrackingStatus.failure,
+        errorMessage: 'No session',
+      );
       return;
     }
     state = state.copyWith(status: TrackingStatus.loading, errorMessage: '');
-    final result = await ref.read(getActiveAssistancesUseCaseProvider).call(affKey);
+    final result = await ref
+        .read(getActiveAssistancesUseCaseProvider)
+        .call(affKey);
     result.fold(
       onSuccess: (assistances) {
-        state = state.copyWith(assistances: assistances, status: TrackingStatus.idle);
+        state = state.copyWith(
+          assistances: assistances,
+          status: TrackingStatus.idle,
+        );
         _connectSockets(affKey);
       },
       onFailure: (failure) => state = state.copyWith(
@@ -86,8 +96,6 @@ class TrackingNotifier extends Notifier<TrackingState> {
 
     const mapper = TrackingMapper();
     _subscription = socketManager.events.listen((event) {
-      // The real SocketIoSocketManager emits [RawSocketEvent] for every
-      // channel; typed variants are produced by feature mappers from it.
       if (event is! RawSocketEvent) return;
       final payload = event.payload;
 
@@ -98,18 +106,20 @@ class TrackingNotifier extends Notifier<TrackingState> {
             state = state.copyWith(lastEvent: parsed.type);
             return;
           }
-          // Record relevant lifecycle events.
           if (parsed.type != TrackingEventType.unknown) {
             state = state.copyWith(lastEvent: parsed.type);
           }
         case SocketChannel.coordinates:
-          final assistanceId = payload['assistance_id']?.toString() ??
+          final assistanceId =
+              payload['assistance_id']?.toString() ??
               payload['idasistencia']?.toString() ??
               payload['assistanceId']?.toString();
           if (assistanceId != null && assistanceId.isNotEmpty) {
             final coords = mapper.parseCoordinates(assistanceId, payload);
             if (coords != null) {
-              final next = Map<String, ProviderCoordinates>.from(state.coordinates);
+              final next = Map<String, ProviderCoordinates>.from(
+                state.coordinates,
+              );
               next[assistanceId] = coords;
               state = state.copyWith(coordinates: next);
             }
@@ -135,5 +145,6 @@ class TrackingNotifier extends Notifier<TrackingState> {
   Future<void> refresh() async => start();
 }
 
-final trackingProvider =
-    NotifierProvider<TrackingNotifier, TrackingState>(TrackingNotifier.new);
+final trackingProvider = NotifierProvider<TrackingNotifier, TrackingState>(
+  TrackingNotifier.new,
+);

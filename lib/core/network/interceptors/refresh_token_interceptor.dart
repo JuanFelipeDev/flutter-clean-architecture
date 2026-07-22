@@ -1,13 +1,10 @@
 /// Handles HTTP 401 by refreshing the access token (with a mutex to avoid
 /// concurrent refreshes) and retrying the original request once. Skips auth
-/// endpoints to prevent refresh loops. Mirrors PRESTADOR's `AuthInterceptor` +
-/// AFILIADO's `TokenIsValidatedListener`/`TOKEN_REFRESH_IN_PROGRESS` guard.
 library;
 
 import 'dart:async';
 
 import 'package:dio/dio.dart';
-
 
 /// Performs the refresh and returns the new access token (persisted by the
 /// session layer). Implemented by the session layer.
@@ -28,7 +25,6 @@ class RefreshTokenInterceptor extends Interceptor {
 
   final TokenRefresher _refresher;
 
-  // Mutex: ensures only one refresh runs at a time; queued callers reuse it.
   Future<String>? _pendingRefresh;
 
   @override
@@ -59,7 +55,6 @@ class RefreshTokenInterceptor extends Interceptor {
   }
 
   Future<Response<dynamic>> _retry(DioException err, String token) async {
-    // A clean Dio (no interceptors) avoids re-triggering the refresh chain.
     final retryDio = Dio(BaseOptions());
     err.requestOptions.headers['Authorization'] = 'Bearer $token';
     final response = await retryDio.fetch<dynamic>(err.requestOptions);

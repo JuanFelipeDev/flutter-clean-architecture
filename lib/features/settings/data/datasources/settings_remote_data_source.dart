@@ -1,4 +1,3 @@
-/// Remote data source for settings (AFILIADO `application_settings/` +
 /// `soaang-users/api/logout/`).
 library;
 

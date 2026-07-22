@@ -1,4 +1,3 @@
-/// Remote data source for video call (AFILIADO `VideoCallApi` recording +
 /// schedule endpoints).
 library;
 
@@ -27,7 +26,9 @@ class VideoCallRemoteDataSource {
   }
 
   Future<bool> requestRecordingPermission() async {
-    final res = await _dio.get<dynamic>('api/schedule/check_permission_recording/');
+    final res = await _dio.get<dynamic>(
+      'api/schedule/check_permission_recording/',
+    );
     final data = res.data;
     if (data is Map) {
       return data['allowed'] is bool ? data['allowed'] as bool : true;

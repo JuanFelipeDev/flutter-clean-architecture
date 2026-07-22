@@ -1,6 +1,4 @@
 /// Adds `Authorization`, `client-id` and `username` headers to every request,
-/// skipping auth endpoints. Mirrors PRESTADOR's inline `authorizationInterceptor`
-/// + AFILIADO's `ConfigUtils.TOKEN_BEARER`.
 library;
 
 import 'dart:async';
@@ -44,18 +42,20 @@ class AuthInterceptor extends Interceptor {
     if (username != null) options.headers[HttpHeaders.username] = username;
 
     unawaited(
-      _credentials.accessToken().then((token) {
-        if (token != null && token.isNotEmpty) {
-          options.headers[HttpHeaders.authorization] = 'Bearer $token';
-        }
-        handler.next(options);
-      }).catchError((Object _) {
-        handler.next(options);
-        return null;
-      }),
+      _credentials
+          .accessToken()
+          .then((token) {
+            if (token != null && token.isNotEmpty) {
+              options.headers[HttpHeaders.authorization] = 'Bearer $token';
+            }
+            handler.next(options);
+          })
+          .catchError((Object _) {
+            handler.next(options);
+            return null;
+          }),
     );
   }
 
-  bool _shouldSkip(String path) =>
-      skipPaths.any((skip) => path.contains(skip));
+  bool _shouldSkip(String path) => skipPaths.any((skip) => path.contains(skip));
 }

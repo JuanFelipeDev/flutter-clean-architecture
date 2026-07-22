@@ -1,4 +1,3 @@
-/// Survey UI state (AFILIADO `SurveyActivity`/`SurveyScreen`).
 library;
 
 import '../../domain/entities/survey_entities.dart';

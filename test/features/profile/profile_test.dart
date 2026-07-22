@@ -14,26 +14,34 @@ class _FakeProfileRepository implements ProfileRepository {
   PassChange? changed;
 
   @override
-  Future<Result<AffiliateProfile>> getProfile(String affKey) async => Success(AffiliateProfile(
-        affKey: affKey,
-        firstName: 'Jane',
-        firstSurname: 'Doe',
-        email: 'jane@x.com',
-        documentTypeId: '1',
-      ));
+  Future<Result<AffiliateProfile>> getProfile(String affKey) async => Success(
+    AffiliateProfile(
+      affKey: affKey,
+      firstName: 'Jane',
+      firstSurname: 'Doe',
+      email: 'jane@x.com',
+      documentTypeId: '1',
+    ),
+  );
   @override
-  Future<Result<AffiliateProfile>> updateProfile(AffiliateProfile profile) async {
+  Future<Result<AffiliateProfile>> updateProfile(
+    AffiliateProfile profile,
+  ) async {
     saved = profile;
     return Success(profile);
   }
+
   @override
   Future<Result<void>> changePassword(String affKey, PassChange change) async {
     changed = change;
     return Result<void>.guard(() {});
   }
+
   @override
-  Future<Result<List<DocumentType>>> documentTypes() async =>
-      const Success([DocumentType(id: '1', name: 'CC'), DocumentType(id: '2', name: 'NIT')]);
+  Future<Result<List<DocumentType>>> documentTypes() async => const Success([
+    DocumentType(id: '1', name: 'CC'),
+    DocumentType(id: '2', name: 'NIT'),
+  ]);
   @override
   Future<Result<List<Company>>> companies() async =>
       const Success([Company(id: 'c1', name: 'Co')]);
@@ -45,7 +53,11 @@ void main() {
   group('ProfileMapper', () {
     const mapper = ProfileMapper();
     test('round-trips profile entity <-> dto', () {
-      const profile = AffiliateProfile(affKey: 'a', firstName: 'J', email: 'j@x.com');
+      const profile = AffiliateProfile(
+        affKey: 'a',
+        firstName: 'J',
+        email: 'j@x.com',
+      );
       final dto = mapper.toDto(profile);
       final back = mapper.toEntity(dto);
       expect(back.affKey, 'a');
@@ -53,7 +65,10 @@ void main() {
       expect(back.email, 'j@x.com');
     });
     test('maps document type + company', () {
-      expect(mapper.toDocumentType(const DocumentTypeDto(id: '1', name: 'CC')).name, 'CC');
+      expect(
+        mapper.toDocumentType(const DocumentTypeDto(id: '1', name: 'CC')).name,
+        'CC',
+      );
       expect(mapper.toCompany(const CompanyDto(id: 'c', name: 'Co')).id, 'c');
     });
   });
@@ -61,10 +76,12 @@ void main() {
   group('ProfileNotifier', () {
     ProviderContainer makeContainer() {
       final repo = _FakeProfileRepository();
-      return ProviderContainer(overrides: [
-        cachedSessionProvider.overrideWith((_) => session),
-        profileRepositoryProvider.overrideWithValue(repo),
-      ]);
+      return ProviderContainer(
+        overrides: [
+          cachedSessionProvider.overrideWith((_) => session),
+          profileRepositoryProvider.overrideWithValue(repo),
+        ],
+      );
     }
 
     test('loads profile, document types, companies', () async {
@@ -95,9 +112,9 @@ void main() {
       final notifier = container.read(profileProvider.notifier);
       await notifier.load();
       await notifier.changePassword('old', 'new');
-      final repo = (container
-              .read(profileRepositoryProvider) as dynamic)
-          as _FakeProfileRepository;
+      final repo =
+          (container.read(profileRepositoryProvider) as dynamic)
+              as _FakeProfileRepository;
       expect(repo.changed?.newPassword, 'new');
       expect(container.read(profileProvider).status, ProfileStatus.success);
     });

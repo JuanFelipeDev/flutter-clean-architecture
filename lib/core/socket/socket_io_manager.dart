@@ -1,7 +1,6 @@
 /// Real `socket_io_client` implementation of [SocketManager]. Manages one
 /// socket per [SocketChannel] against the configured server, with built-in
 /// exponential-backoff reconnection and a typed event stream. Mirrors
-/// PRESTADOR's `SocketManager` (three sockets + backoff) and AFILIADO's
 /// per-screen socket lifecycle.
 library;
 
@@ -26,7 +25,6 @@ class SocketIoSocketManager implements SocketManager {
   @override
   Stream<SocketEvent> get events => _events.stream;
 
-  /// Path per channel (AFILIADO `PATH_*`).
   String _pathFor(SocketChannel channel) {
     switch (channel) {
       case SocketChannel.coordinates:
@@ -44,7 +42,10 @@ class SocketIoSocketManager implements SocketManager {
   }
 
   @override
-  Future<void> connect(SocketChannel channel, {Map<String, String>? auth}) async {
+  Future<void> connect(
+    SocketChannel channel, {
+    Map<String, String>? auth,
+  }) async {
     if (_sockets.containsKey(channel)) return;
 
     final socket = io(
@@ -62,7 +63,6 @@ class SocketIoSocketManager implements SocketManager {
     socket.on('disconnect', (_) {});
     socket.on('connect_error', (_) {});
 
-    // Catch-all: emit raw payloads for feature layers to interpret.
     socket.onAny((event, data) {
       _emit(channel, event, data);
     });
@@ -77,12 +77,16 @@ class SocketIoSocketManager implements SocketManager {
       payload = Map<String, dynamic>.from(data);
     } else if (data is String) {
       final decoded = jsonDecode(data);
-      payload = decoded is Map ? Map<String, dynamic>.from(decoded) : <String, dynamic>{};
+      payload = decoded is Map
+          ? Map<String, dynamic>.from(decoded)
+          : <String, dynamic>{};
     } else {
       payload = <String, dynamic>{};
     }
 
-    _events.add(RawSocketEvent(channel: channel, type: event, payload: payload));
+    _events.add(
+      RawSocketEvent(channel: channel, type: event, payload: payload),
+    );
   }
 
   @override

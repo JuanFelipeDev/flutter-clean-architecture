@@ -1,5 +1,3 @@
-/// Connectivity banner shown when the device goes offline (AFILIADO
-/// `displayErrorDisconnect`, PRESTADOR `NotHasConnectionDialog`).
 library;
 
 import 'package:flutter/material.dart';
@@ -29,7 +27,10 @@ class ConnectivityBanner extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Row(
               children: [
-                Icon(Icons.cloud_off, color: theme.colorScheme.onErrorContainer),
+                Icon(
+                  Icons.cloud_off,
+                  color: theme.colorScheme.onErrorContainer,
+                ),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(

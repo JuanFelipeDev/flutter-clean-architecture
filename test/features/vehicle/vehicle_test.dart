@@ -13,7 +13,8 @@ class _FakeVehicleRepository implements VehicleRepository {
   String? lastModelsBrandId;
 
   @override
-  Future<Result<List<Vehicle>>> list(String affKey) async => Success(List.of(store));
+  Future<Result<List<Vehicle>>> list(String affKey) async =>
+      Success(List.of(store));
   @override
   Future<Result<Vehicle>> create(String affKey, Vehicle vehicle) async {
     final created = Vehicle(
@@ -26,16 +27,18 @@ class _FakeVehicleRepository implements VehicleRepository {
     store.add(created);
     return Success(created);
   }
+
   @override
   Future<Result<void>> disable(String vehicleId) async {
     store = store.where((v) => v.id != vehicleId).toList();
     return Result<void>.guard(() {});
   }
+
   @override
   Future<Result<List<Brand>>> brands() async => const Success([
-        Brand(id: 'b1', name: 'Toyota'),
-        Brand(id: 'b2', name: 'Honda'),
-      ]);
+    Brand(id: 'b1', name: 'Toyota'),
+    Brand(id: 'b2', name: 'Honda'),
+  ]);
   @override
   Future<Result<List<VehicleModel>>> models(String brandId) async {
     lastModelsBrandId = brandId;
@@ -52,14 +55,30 @@ void main() {
   group('VehicleMapper', () {
     const mapper = VehicleMapper();
     test('round-trips entity <-> dto', () {
-      const v = Vehicle(id: '1', plate: 'ABC', brandId: 'b1', modelId: 'm1', color: 'red');
+      const v = Vehicle(
+        id: '1',
+        plate: 'ABC',
+        brandId: 'b1',
+        modelId: 'm1',
+        color: 'red',
+      );
       final back = mapper.toEntity(mapper.toDto(v));
       expect(back.plate, 'ABC');
       expect(back.brandId, 'b1');
     });
     test('maps brand + model', () {
-      expect(mapper.toBrand(const BrandDto(id: 'b', name: 'Toyota')).name, 'Toyota');
-      expect(mapper.toModel(const VehicleModelDto(id: 'm', brandId: 'b', name: 'Corolla')).name, 'Corolla');
+      expect(
+        mapper.toBrand(const BrandDto(id: 'b', name: 'Toyota')).name,
+        'Toyota',
+      );
+      expect(
+        mapper
+            .toModel(
+              const VehicleModelDto(id: 'm', brandId: 'b', name: 'Corolla'),
+            )
+            .name,
+        'Corolla',
+      );
     });
   });
 
@@ -69,10 +88,12 @@ void main() {
     ProviderContainer makeContainer() {
       repo = _FakeVehicleRepository();
       repo.store.add(const Vehicle(id: 'v1', plate: 'XYZ', brand: 'Toyota'));
-      return ProviderContainer(overrides: [
-        cachedSessionProvider.overrideWith((_) => session),
-        vehicleRepositoryProvider.overrideWithValue(repo),
-      ]);
+      return ProviderContainer(
+        overrides: [
+          cachedSessionProvider.overrideWith((_) => session),
+          vehicleRepositoryProvider.overrideWithValue(repo),
+        ],
+      );
     }
 
     test('loads vehicles + brands', () async {
@@ -100,7 +121,9 @@ void main() {
       addTearDown(container.dispose);
       final notifier = container.read(vehicleProvider.notifier);
       await notifier.load();
-      await notifier.add(const Vehicle(id: '', brandId: 'b1', modelId: 'm1', plate: 'NEW'));
+      await notifier.add(
+        const Vehicle(id: '', brandId: 'b1', modelId: 'm1', plate: 'NEW'),
+      );
       expect(container.read(vehicleProvider).vehicles, hasLength(2));
     });
 

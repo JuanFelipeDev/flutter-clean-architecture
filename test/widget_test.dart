@@ -1,8 +1,3 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in a test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures to a widget and verify that the UI responds as expected.
 import 'package:affiliate_app/app.dart';
 import 'package:affiliate_app/core/config/flavor_config.dart';
 import 'package:affiliate_app/core/error/result.dart';
@@ -19,8 +14,15 @@ import 'package:flutter_test/flutter_test.dart';
 
 class _FakeAppConfigRepository implements AppConfigRepository {
   @override
-  Future<Result<VersionCheck>> checkVersion({required String currentVersion}) async {
-    return Success(VersionCheck(currentVersion: currentVersion, latestVersion: currentVersion));
+  Future<Result<VersionCheck>> checkVersion({
+    required String currentVersion,
+  }) async {
+    return Success(
+      VersionCheck(
+        currentVersion: currentVersion,
+        latestVersion: currentVersion,
+      ),
+    );
   }
 }
 
@@ -36,14 +38,20 @@ class _FakeSessionRepository implements SessionRepository {
 }
 
 void main() {
-  testWidgets('AffiliateApp boots and navigates splash to login', (tester) async {
+  testWidgets('AffiliateApp boots and navigates splash to login', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
-          flavorConfigProvider.overrideWithValue(FlavorConfig.fromEnvironment()),
+          flavorConfigProvider.overrideWithValue(
+            FlavorConfig.fromEnvironment(),
+          ),
           isAuthenticatedProvider.overrideWith((_) => false),
           sessionRepositoryProvider.overrideWithValue(_FakeSessionRepository()),
-          appConfigRepositoryProvider.overrideWithValue(_FakeAppConfigRepository()),
+          appConfigRepositoryProvider.overrideWithValue(
+            _FakeAppConfigRepository(),
+          ),
         ],
         child: const AffiliateApp(),
       ),
@@ -52,7 +60,6 @@ void main() {
     await tester.pump();
     await tester.pumpAndSettle(const Duration(seconds: 2));
 
-    // Splash resolves → routes to login.
     expect(find.byType(Scaffold), findsWidgets);
   });
 }

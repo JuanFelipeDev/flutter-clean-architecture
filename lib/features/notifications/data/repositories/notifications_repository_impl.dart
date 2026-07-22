@@ -12,7 +12,10 @@ import '../datasources/notifications_remote_data_source.dart';
 import '../models/notification_dtos.dart';
 
 class NotificationsRepositoryImpl implements NotificationsRepository {
-  NotificationsRepositoryImpl({required this.remoteDataSource, required this.mapper});
+  NotificationsRepositoryImpl({
+    required this.remoteDataSource,
+    required this.mapper,
+  });
 
   final NotificationsRemoteDataSource remoteDataSource;
   final NotificationsMapper mapper;

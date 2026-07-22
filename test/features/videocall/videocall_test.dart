@@ -12,12 +12,20 @@ class _FakeVideoCallRepository implements VideoCallRepository {
   final bool allowed;
 
   @override
-  Future<Result<ScheduleAvailability>> checkSchedule(String assistanceId) async =>
-      Success(ScheduleAvailability(allowed: allowed, message: allowed ? null : 'No quote'));
+  Future<Result<ScheduleAvailability>> checkSchedule(
+    String assistanceId,
+  ) async => Success(
+    ScheduleAvailability(
+      allowed: allowed,
+      message: allowed ? null : 'No quote',
+    ),
+  );
   @override
-  Future<Result<bool>> requestRecordingPermission() async => const Success(true);
+  Future<Result<bool>> requestRecordingPermission() async =>
+      const Success(true);
   @override
-  Future<Result<void>> updateRecordingPermission(bool granted) async => Result<void>.guard(() {});
+  Future<Result<void>> updateRecordingPermission(bool granted) async =>
+      Result<void>.guard(() {});
   @override
   Future<Result<void>> startRecording() async => Result<void>.guard(() {});
   @override
@@ -32,6 +40,7 @@ class _JoinSpy implements VideoCallService {
     joined = true;
     return CallStatus.joined;
   }
+
   @override
   Future<void> leave() async => left = true;
   @override
@@ -55,9 +64,13 @@ void main() {
 
   group('VideoCallNotifier', () {
     test('join blocked by schedule sets error', () async {
-      final container = ProviderContainer(overrides: [
-        videoCallRepositoryProvider.overrideWithValue(_FakeVideoCallRepository(allowed: false)),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          videoCallRepositoryProvider.overrideWithValue(
+            _FakeVideoCallRepository(allowed: false),
+          ),
+        ],
+      );
       addTearDown(container.dispose);
       final notifier = container.read(videoCallProvider.notifier);
       await notifier.join(assistanceId: 'a1', sessionName: 's');
@@ -66,10 +79,14 @@ void main() {
 
     test('join proceeds when allowed and reaches joined', () async {
       final spy = _JoinSpy();
-      final container = ProviderContainer(overrides: [
-        videoCallRepositoryProvider.overrideWithValue(_FakeVideoCallRepository(allowed: true)),
-        videoCallServiceProvider.overrideWithValue(spy),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          videoCallRepositoryProvider.overrideWithValue(
+            _FakeVideoCallRepository(allowed: true),
+          ),
+          videoCallServiceProvider.overrideWithValue(spy),
+        ],
+      );
       addTearDown(container.dispose);
       final notifier = container.read(videoCallProvider.notifier);
       await notifier.join(assistanceId: 'a1', sessionName: 's', userName: 'u');
@@ -78,23 +95,37 @@ void main() {
     });
 
     test('toggleRecording starts then stops', () async {
-      final container = ProviderContainer(overrides: [
-        videoCallRepositoryProvider.overrideWithValue(_FakeVideoCallRepository(allowed: true)),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          videoCallRepositoryProvider.overrideWithValue(
+            _FakeVideoCallRepository(allowed: true),
+          ),
+        ],
+      );
       addTearDown(container.dispose);
       final notifier = container.read(videoCallProvider.notifier);
       await notifier.toggleRecording();
-      expect(container.read(videoCallProvider).recording, RecordingStatus.recording);
+      expect(
+        container.read(videoCallProvider).recording,
+        RecordingStatus.recording,
+      );
       await notifier.toggleRecording();
-      expect(container.read(videoCallProvider).recording, RecordingStatus.stopped);
+      expect(
+        container.read(videoCallProvider).recording,
+        RecordingStatus.stopped,
+      );
     });
 
     test('leave sets ended', () async {
       final spy = _JoinSpy();
-      final container = ProviderContainer(overrides: [
-        videoCallRepositoryProvider.overrideWithValue(_FakeVideoCallRepository(allowed: true)),
-        videoCallServiceProvider.overrideWithValue(spy),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          videoCallRepositoryProvider.overrideWithValue(
+            _FakeVideoCallRepository(allowed: true),
+          ),
+          videoCallServiceProvider.overrideWithValue(spy),
+        ],
+      );
       addTearDown(container.dispose);
       final notifier = container.read(videoCallProvider.notifier);
       await notifier.join(assistanceId: 'a1', sessionName: 's');

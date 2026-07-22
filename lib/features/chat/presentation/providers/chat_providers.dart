@@ -63,17 +63,22 @@ class ChatNotifier extends Notifier<ChatState> {
   /// socket + connectivity listeners.
   Future<void> start(String assistanceId) async {
     if (assistanceId.isEmpty) return;
-    // Reset any previous chat binding.
     stop();
     _assistanceId = assistanceId;
     state = state.copyWith(messages: const [], status: ChatStatus.loading);
 
     final socketManager = ref.read(socketManagerProvider);
-    await socketManager.connect(SocketChannel.chat, auth: {'assistanceId': assistanceId});
+    await socketManager.connect(
+      SocketChannel.chat,
+      auth: {'assistanceId': assistanceId},
+    );
     _socketSub = socketManager.events.listen((event) {
-      if (event is! RawSocketEvent || event.channel != SocketChannel.chat) return;
+      if (event is! RawSocketEvent || event.channel != SocketChannel.chat)
+        return;
       final message = const ChatMapper().toEntityFromSocket(event.payload);
-      if (message != null && message.assistanceId == assistanceId && !message.isOwn) {
+      if (message != null &&
+          message.assistanceId == assistanceId &&
+          !message.isOwn) {
         state = state.copyWith(messages: [...state.messages, message]);
       }
     });
@@ -88,7 +93,10 @@ class ChatNotifier extends Notifier<ChatState> {
     final result = await ref.read(getHistoryUseCaseProvider).call(assistanceId);
     result.fold(
       onSuccess: (messages) {
-        state = state.copyWith(messages: _dedupe(messages), status: ChatStatus.idle);
+        state = state.copyWith(
+          messages: _dedupe(messages),
+          status: ChatStatus.idle,
+        );
       },
       onFailure: (failure) => state = state.copyWith(
         status: ChatStatus.failure,
@@ -110,7 +118,6 @@ class ChatNotifier extends Notifier<ChatState> {
   Future<void> send(String content) async {
     final assistanceId = _assistanceId;
     if (assistanceId == null || content.trim().isEmpty) return;
-    // Optimistic: show the outgoing message immediately.
     final optimistic = ChatMessage(
       id: 'local-${DateTime.now().millisecondsSinceEpoch}',
       assistanceId: assistanceId,
@@ -124,7 +131,9 @@ class ChatNotifier extends Notifier<ChatState> {
       status: ChatStatus.sending,
     );
 
-    final result = await ref.read(sendMessageUseCaseProvider).call(assistanceId, content);
+    final result = await ref
+        .read(sendMessageUseCaseProvider)
+        .call(assistanceId, content);
     result.fold(
       onSuccess: (_) => state = state.copyWith(status: ChatStatus.idle),
       onFailure: (failure) => state = state.copyWith(
@@ -140,5 +149,6 @@ class ChatNotifier extends Notifier<ChatState> {
   }
 }
 
-final chatProvider =
-    NotifierProvider<ChatNotifier, ChatState>(ChatNotifier.new);
+final chatProvider = NotifierProvider<ChatNotifier, ChatState>(
+  ChatNotifier.new,
+);

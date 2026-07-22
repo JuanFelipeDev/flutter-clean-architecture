@@ -1,4 +1,3 @@
-/// History repository contract (AFILIADO
 /// `soaang-assistances/api/assistances/list-afiliate-assistances`).
 library;
 

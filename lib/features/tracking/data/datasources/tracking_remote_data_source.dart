@@ -1,4 +1,3 @@
-/// Remote data source for tracking (AFILIADO `list-afiliate-active-assistances`,
 /// `stage-update/{assId}/` PATCH, `assistance-app-panic/`).
 library;
 
@@ -19,13 +18,17 @@ class TrackingRemoteDataSource {
     if (data is List) {
       return data
           .whereType<Map<dynamic, dynamic>>()
-          .map((e) => ActiveAssistanceDto.fromJson(Map<String, dynamic>.from(e)))
+          .map(
+            (e) => ActiveAssistanceDto.fromJson(Map<String, dynamic>.from(e)),
+          )
           .toList();
     }
     if (data is Map<String, dynamic> && data['assistances'] is List) {
       return (data['assistances'] as List)
           .whereType<Map<dynamic, dynamic>>()
-          .map((e) => ActiveAssistanceDto.fromJson(Map<String, dynamic>.from(e)))
+          .map(
+            (e) => ActiveAssistanceDto.fromJson(Map<String, dynamic>.from(e)),
+          )
           .toList();
     }
     return <ActiveAssistanceDto>[];

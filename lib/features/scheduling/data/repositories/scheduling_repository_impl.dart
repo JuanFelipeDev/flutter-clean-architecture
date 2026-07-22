@@ -12,15 +12,22 @@ import '../datasources/scheduling_remote_data_source.dart';
 import '../models/scheduling_dtos.dart';
 
 class SchedulingRepositoryImpl implements SchedulingRepository {
-  SchedulingRepositoryImpl({required this.remoteDataSource, required this.mapper});
+  SchedulingRepositoryImpl({
+    required this.remoteDataSource,
+    required this.mapper,
+  });
 
   final SchedulingRemoteDataSource remoteDataSource;
   final SchedulingMapper mapper;
 
   @override
-  Future<Result<List<TimeSlot>>> timeSlots(String serviceId, DateTime date) async {
+  Future<Result<List<TimeSlot>>> timeSlots(
+    String serviceId,
+    DateTime date,
+  ) async {
     try {
-      final dateIso = '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+      final dateIso =
+          '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
       final dtos = await remoteDataSource.fetchSlots(serviceId, dateIso);
       return Success(dtos.map(mapper.toEntity).toList());
     } on DioException catch (e) {
@@ -33,7 +40,9 @@ class SchedulingRepositoryImpl implements SchedulingRepository {
   @override
   Future<Result<ScheduleValidation>> validate(ScheduleRequest request) async {
     try {
-      final dto = await remoteDataSource.validate(mapper.requestToBody(request));
+      final dto = await remoteDataSource.validate(
+        mapper.requestToBody(request),
+      );
       return Success(mapper.toValidation(dto));
     } on DioException catch (e) {
       return Err(mapDioError(e));

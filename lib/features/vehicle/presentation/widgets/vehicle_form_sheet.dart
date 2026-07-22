@@ -1,4 +1,3 @@
-/// Bottom sheet form to add a vehicle with a brand -> model cascade (AFILIADO
 /// `ListBrandsActivity` / `ListModelsActivity`).
 library;
 
@@ -54,13 +53,15 @@ class _VehicleFormSheetState extends State<VehicleFormSheet> {
           ? widget.models.first
           : const VehicleModel(id: '', brandId: '', name: ''),
     );
-    widget.onSubmit(Vehicle(
-      id: '',
-      plate: _plate.text.trim().isEmpty ? null : _plate.text.trim(),
-      brandId: _brandId,
-      modelId: model.id.isEmpty ? null : model.id,
-      color: _color.text.trim().isEmpty ? null : _color.text.trim(),
-    ));
+    widget.onSubmit(
+      Vehicle(
+        id: '',
+        plate: _plate.text.trim().isEmpty ? null : _plate.text.trim(),
+        brandId: _brandId,
+        modelId: model.id.isEmpty ? null : model.id,
+        color: _color.text.trim().isEmpty ? null : _color.text.trim(),
+      ),
+    );
     Navigator.of(context).pop();
   }
 
@@ -84,7 +85,8 @@ class _VehicleFormSheetState extends State<VehicleFormSheet> {
             initialValue: _brandId,
             decoration: const InputDecoration(labelText: 'Brand'),
             items: [
-              for (final b in widget.brands) DropdownMenuItem(value: b.id, child: Text(b.name)),
+              for (final b in widget.brands)
+                DropdownMenuItem(value: b.id, child: Text(b.name)),
             ],
             onChanged: _pickBrand,
           ),
@@ -94,14 +96,21 @@ class _VehicleFormSheetState extends State<VehicleFormSheet> {
             initialValue: _modelId,
             decoration: const InputDecoration(labelText: 'Model'),
             items: [
-              for (final m in widget.models) DropdownMenuItem(value: m.id, child: Text(m.name)),
+              for (final m in widget.models)
+                DropdownMenuItem(value: m.id, child: Text(m.name)),
             ],
             onChanged: (value) => setState(() => _modelId = value),
           ),
           const SizedBox(height: 12),
-          TextField(controller: _plate, decoration: const InputDecoration(labelText: 'Plate')),
+          TextField(
+            controller: _plate,
+            decoration: const InputDecoration(labelText: 'Plate'),
+          ),
           const SizedBox(height: 12),
-          TextField(controller: _color, decoration: const InputDecoration(labelText: 'Color')),
+          TextField(
+            controller: _color,
+            decoration: const InputDecoration(labelText: 'Color'),
+          ),
           const SizedBox(height: 24),
           FilledButton(onPressed: _submit, child: const Text('Save')),
         ],

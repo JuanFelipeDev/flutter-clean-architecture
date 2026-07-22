@@ -12,13 +12,18 @@ import '../datasources/tracking_remote_data_source.dart';
 import '../models/tracking_dtos.dart';
 
 class TrackingRepositoryImpl implements TrackingRepository {
-  TrackingRepositoryImpl({required this.remoteDataSource, required this.mapper});
+  TrackingRepositoryImpl({
+    required this.remoteDataSource,
+    required this.mapper,
+  });
 
   final TrackingRemoteDataSource remoteDataSource;
   final TrackingMapper mapper;
 
   @override
-  Future<Result<List<ActiveAssistance>>> activeAssistances(String affKey) async {
+  Future<Result<List<ActiveAssistance>>> activeAssistances(
+    String affKey,
+  ) async {
     try {
       final dtos = await remoteDataSource.fetchActive(affKey);
       return Success(dtos.map(mapper.toEntity).toList());
@@ -54,7 +59,11 @@ class TrackingRepositoryImpl implements TrackingRepository {
   }
 
   @override
-  Future<Result<void>> sendPanic(String assistanceId, double lat, double lng) async {
+  Future<Result<void>> sendPanic(
+    String assistanceId,
+    double lat,
+    double lng,
+  ) async {
     try {
       await remoteDataSource.panic(assistanceId, lat, lng);
       return Result<void>.guard(() {});

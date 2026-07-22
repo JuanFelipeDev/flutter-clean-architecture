@@ -1,4 +1,3 @@
-/// Structured HTTP logging + breadcrumb reporting. Replaces PRESTADOR's
 /// `SentryBreadcrumbInterceptor` + `HttpLoggingInterceptor`. In debug it logs
 /// request/response lines; in all builds it records breadcrumbs to telemetry.
 library;
@@ -28,7 +27,10 @@ class LoggingInterceptor extends Interceptor {
   }
 
   @override
-  void onResponse(Response<dynamic> response, ResponseInterceptorHandler handler) {
+  void onResponse(
+    Response<dynamic> response,
+    ResponseInterceptorHandler handler,
+  ) {
     if (verbose) {
       // ignore: avoid_print
       print('← ${response.statusCode} ${response.requestOptions.uri}');

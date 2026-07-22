@@ -1,5 +1,4 @@
 /// Beneficiary screen — list with live coordinates/state + add/edit/delete
-/// (AFILIADO `BeneficiaryFragment` + `MapsBeneficiariesActivity`). The full
 /// map view (google_maps_flutter) is Phase 6 polish; live coordinates render
 /// per beneficiary so the realtime behavior is verifiable.
 library;
@@ -60,12 +59,14 @@ class _BeneficiaryPageState extends ConsumerState<BeneficiaryPage> {
                     final coords = state.coordinates[b.id];
                     return ListTile(
                       title: Text(b.name),
-                      subtitle: Text([
-                        if (b.relationship != null) b.relationship!,
-                        if (b.state != null) b.state!,
-                        if (coords?.lat != null)
-                          '📍 ${coords!.lat!.toStringAsFixed(4)}, ${coords.lng!.toStringAsFixed(4)}',
-                      ].join(' · ')),
+                      subtitle: Text(
+                        [
+                          if (b.relationship != null) b.relationship!,
+                          if (b.state != null) b.state!,
+                          if (coords?.lat != null)
+                            '📍 ${coords!.lat!.toStringAsFixed(4)}, ${coords.lng!.toStringAsFixed(4)}',
+                        ].join(' · '),
+                      ),
                       trailing: PopupMenuButton<String>(
                         onSelected: (action) {
                           if (action == 'edit') {
@@ -99,12 +100,14 @@ class _BeneficiaryPageState extends ConsumerState<BeneficiaryPage> {
           if (existing == null) {
             notifier.add(beneficiary);
           } else {
-            notifier.edit(Beneficiary(
-              id: existing.id,
-              name: beneficiary.name,
-              relationship: beneficiary.relationship,
-              documentNumber: beneficiary.documentNumber,
-            ));
+            notifier.edit(
+              Beneficiary(
+                id: existing.id,
+                name: beneficiary.name,
+                relationship: beneficiary.relationship,
+                documentNumber: beneficiary.documentNumber,
+              ),
+            );
           }
         },
       ),

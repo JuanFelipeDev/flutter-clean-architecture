@@ -1,4 +1,3 @@
-/// App config repository contract (AFILIADO `configurationapp` +
 /// version check). Implemented by the data layer.
 library;
 

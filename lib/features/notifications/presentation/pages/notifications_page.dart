@@ -1,5 +1,3 @@
-/// Notifications screen — list with the typed AFILIADO notification kinds + an
-/// unread counter badge (AFILIADO `NotificationsActivity`).
 library;
 
 import 'package:flutter/material.dart';
@@ -36,9 +34,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
           if (state.unreadCount > 0)
             Padding(
               padding: const EdgeInsets.all(12),
-              child: Center(
-                child: Badge(label: Text('${state.unreadCount}')),
-              ),
+              child: Center(child: Badge(label: Text('${state.unreadCount}'))),
             ),
         ],
       ),
@@ -54,13 +50,21 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                   itemBuilder: (context, i) {
                     final n = state.notifications[i];
                     return ListTile(
-                      leading: Icon(_icon(n.type),
-                          color: n.read ? null : Theme.of(context).colorScheme.primary),
+                      leading: Icon(
+                        _icon(n.type),
+                        color: n.read
+                            ? null
+                            : Theme.of(context).colorScheme.primary,
+                      ),
                       title: Text(_title(n.type)),
                       subtitle: Text(n.message ?? ''),
                       trailing: n.read
                           ? null
-                          : const Icon(Icons.circle, size: 10, color: Colors.red),
+                          : const Icon(
+                              Icons.circle,
+                              size: 10,
+                              color: Colors.red,
+                            ),
                     );
                   },
                 ),
@@ -70,36 +74,36 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
   }
 
   IconData _icon(NotificationType type) => switch (type) {
-        NotificationType.supplierArrivalConfirmation => Icons.pin_drop_outlined,
-        NotificationType.supplierTermConfirmation => Icons.task_alt,
-        NotificationType.excedentCost1 ||
-        NotificationType.excedentCost2 ||
-        NotificationType.excedentCostManeuvers ||
-        NotificationType.excedentConnectionSoaang => Icons.attach_money,
-        NotificationType.canceledAssistance => Icons.cancel_outlined,
-        NotificationType.expiredSession => Icons.logout,
-        NotificationType.informativeBeneficiary => Icons.groups_outlined,
-        NotificationType.serviceWithoutCoverage => Icons.block,
-        NotificationType.providerAssignment ||
-        NotificationType.pendingProviderAssignment ||
-        NotificationType.reassignmentOfTheProvider => Icons.engineering_outlined,
-        NotificationType.unknown => Icons.notifications_outlined,
-      };
+    NotificationType.supplierArrivalConfirmation => Icons.pin_drop_outlined,
+    NotificationType.supplierTermConfirmation => Icons.task_alt,
+    NotificationType.excedentCost1 ||
+    NotificationType.excedentCost2 ||
+    NotificationType.excedentCostManeuvers ||
+    NotificationType.excedentConnectionSoaang => Icons.attach_money,
+    NotificationType.canceledAssistance => Icons.cancel_outlined,
+    NotificationType.expiredSession => Icons.logout,
+    NotificationType.informativeBeneficiary => Icons.groups_outlined,
+    NotificationType.serviceWithoutCoverage => Icons.block,
+    NotificationType.providerAssignment ||
+    NotificationType.pendingProviderAssignment ||
+    NotificationType.reassignmentOfTheProvider => Icons.engineering_outlined,
+    NotificationType.unknown => Icons.notifications_outlined,
+  };
 
   String _title(NotificationType type) => switch (type) {
-        NotificationType.supplierArrivalConfirmation => 'Supplier arrival',
-        NotificationType.supplierTermConfirmation => 'Service completed',
-        NotificationType.excedentCost1 => 'Excedent cost',
-        NotificationType.excedentCost2 => 'Excedent cost',
-        NotificationType.excedentCostManeuvers => 'Maneuvers excedent',
-        NotificationType.excedentConnectionSoaang => 'Connection excedent',
-        NotificationType.canceledAssistance => 'Assistance canceled',
-        NotificationType.expiredSession => 'Session expired',
-        NotificationType.informativeBeneficiary => 'Beneficiary update',
-        NotificationType.serviceWithoutCoverage => 'Without coverage',
-        NotificationType.providerAssignment => 'Provider assigned',
-        NotificationType.pendingProviderAssignment => 'Pending provider',
-        NotificationType.reassignmentOfTheProvider => 'Provider reassigned',
-        NotificationType.unknown => 'Notification',
-      };
+    NotificationType.supplierArrivalConfirmation => 'Supplier arrival',
+    NotificationType.supplierTermConfirmation => 'Service completed',
+    NotificationType.excedentCost1 => 'Excedent cost',
+    NotificationType.excedentCost2 => 'Excedent cost',
+    NotificationType.excedentCostManeuvers => 'Maneuvers excedent',
+    NotificationType.excedentConnectionSoaang => 'Connection excedent',
+    NotificationType.canceledAssistance => 'Assistance canceled',
+    NotificationType.expiredSession => 'Session expired',
+    NotificationType.informativeBeneficiary => 'Beneficiary update',
+    NotificationType.serviceWithoutCoverage => 'Without coverage',
+    NotificationType.providerAssignment => 'Provider assigned',
+    NotificationType.pendingProviderAssignment => 'Pending provider',
+    NotificationType.reassignmentOfTheProvider => 'Provider reassigned',
+    NotificationType.unknown => 'Notification',
+  };
 }

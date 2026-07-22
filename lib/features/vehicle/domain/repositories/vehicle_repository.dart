@@ -1,4 +1,3 @@
-/// Vehicle repository contract (AFILIADO `list-affiliate-vehicles`,
 /// `create-affiliate-vehicle`, `disable-affiliate-vehicle`, brands, models).
 library;
 

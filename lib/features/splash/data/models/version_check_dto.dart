@@ -1,5 +1,4 @@
 /// DTO for `soaang-configurations-external/api/domain_user/info-version-app`
-/// (AFILIADO `ResponseValidateUpdate`).
 library;
 
 import 'dart:convert';
@@ -30,7 +29,8 @@ class VersionCheckDto {
     if (body is Map<String, dynamic>) return VersionCheckDto.fromJson(body);
     if (body is String) {
       final decoded = jsonDecode(body);
-      if (decoded is Map<String, dynamic>) return VersionCheckDto.fromJson(decoded);
+      if (decoded is Map<String, dynamic>)
+        return VersionCheckDto.fromJson(decoded);
     }
     return null;
   }

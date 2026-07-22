@@ -1,5 +1,4 @@
 /// Translates transport-layer errors (Dio `DioException`, HTTP status codes)
-/// into typed [Failure]s. Mirrors PRESTADOR's `RetrofitUtils.retrofitArrow` +
 /// `GenericResponse.handleHtmlError`.
 library;
 
@@ -37,15 +36,18 @@ Failure mapDioError(DioException error) {
         stackTrace: error.stackTrace,
       );
     case DioExceptionType.badResponse:
-      return _mapResponse(error.response, cause: error, stackTrace: error.stackTrace);
+      return _mapResponse(
+        error.response,
+        cause: error,
+        stackTrace: error.stackTrace,
+      );
     case DioExceptionType.unknown:
       return Failure.unknown(error, error.stackTrace);
   }
 }
 
 /// Maps an HTTP response into a [Failure] based on status code + parsed body.
-Failure mapResponseError(Response<dynamic>? response) =>
-    _mapResponse(response);
+Failure mapResponseError(Response<dynamic>? response) => _mapResponse(response);
 
 Failure _mapResponse(
   Response<dynamic>? response, {
@@ -98,7 +100,6 @@ Failure _mapResponse(
   }
 }
 
-/// Parsed subset of the backend `ErrorBody` (PRESTADOR `GenericResponse.kt`).
 class _ErrorBody {
   const _ErrorBody({this.detail, this.error, this.flagPanel});
 
@@ -111,7 +112,9 @@ class _ErrorBody {
       return _ErrorBody(
         detail: data['detail']?.toString(),
         error: data['error']?.toString(),
-        flagPanel: data['flag_panel'] is bool ? data['flag_panel'] as bool : null,
+        flagPanel: data['flag_panel'] is bool
+            ? data['flag_panel'] as bool
+            : null,
       );
     }
     if (data is String && data.isNotEmpty) {

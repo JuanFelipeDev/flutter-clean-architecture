@@ -1,4 +1,3 @@
-/// Beneficiary repository contract (AFILIADO `obtener_beneficiarios/`,
 /// `crear_beneficiarios/`, `editar_beneficiario/`, `eliminar_beneficiario/`,
 /// `obtener_parentescos/`).
 library;

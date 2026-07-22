@@ -1,4 +1,3 @@
-/// Remote data source for payment (AFILIADO `planes`, `detalle_servicio_app/`,
 /// `listar_compras_afiliado/`, `cancelar_pago_afiliado`, paymob, upgrade).
 library;
 
@@ -11,17 +10,26 @@ class PaymentRemoteDataSource {
   final Dio _dio;
 
   Future<List<ShopPlanDto>> fetchPlans(String affKey) async {
-    final res = await _dio.get<dynamic>('planes', queryParameters: {'affkey': affKey});
+    final res = await _dio.get<dynamic>(
+      'planes',
+      queryParameters: {'affkey': affKey},
+    );
     return parsePlans(res.data);
   }
 
   Future<List<ShopServiceDto>> fetchUniqueServices(String affKey) async {
-    final res = await _dio.get<dynamic>('detalle_servicio_app/', queryParameters: {'affkey': affKey});
+    final res = await _dio.get<dynamic>(
+      'detalle_servicio_app/',
+      queryParameters: {'affkey': affKey},
+    );
     return parseServices(res.data);
   }
 
   Future<List<PurchaseDto>> fetchPurchases(String affKey) async {
-    final res = await _dio.get<dynamic>('listar_compras_afiliado/', queryParameters: {'affkey': affKey});
+    final res = await _dio.get<dynamic>(
+      'listar_compras_afiliado/',
+      queryParameters: {'affkey': affKey},
+    );
     return parsePurchases(res.data);
   }
 

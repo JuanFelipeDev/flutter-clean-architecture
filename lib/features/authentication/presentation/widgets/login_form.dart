@@ -1,5 +1,4 @@
 /// Login form that renders the fields for the active [LoginStrategy]
-/// (AFILIADO standard / EO / Roble).
 ///
 /// Controllers are created once in [initState] and persisted across rebuilds.
 /// Recreating them on every build (the naive approach) resets the
@@ -41,7 +40,6 @@ class _LoginFormState extends ConsumerState<LoginForm> {
       for (final key in _keysFor(widget.strategy))
         key: TextEditingController(text: _readField(state, key)),
     };
-    // Forward user edits to the notifier (one-way: controller -> state).
     for (final entry in _controllers.entries) {
       entry.value.addListener(() {
         ref.read(loginProvider.notifier).setField(entry.key, entry.value.text);
@@ -145,7 +143,10 @@ class _LoginFormState extends ConsumerState<LoginForm> {
         return [
           ValidatedTextField(controller: _controllers['nit']!, label: 'NIT'),
           const SizedBox(height: 12),
-          ValidatedTextField(controller: _controllers['placa']!, label: 'Placa'),
+          ValidatedTextField(
+            controller: _controllers['placa']!,
+            label: 'Placa',
+          ),
           const SizedBox(height: 12),
           ValidatedTextField(controller: _controllers['dpi']!, label: 'DPI'),
           const SizedBox(height: 8),

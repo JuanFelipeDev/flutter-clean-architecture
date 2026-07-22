@@ -1,7 +1,5 @@
-/// Chat entities (AFILIADO `MessageChat` / `HistoryChat`).
 library;
 
-/// One chat message between affiliate and provider (AFILIADO `MessageChat`).
 /// `typeUser` is `"aff"` (sent by the affiliate) or `"prov"` (provider).
 class ChatMessage {
   const ChatMessage({
@@ -20,7 +18,6 @@ class ChatMessage {
   final String typeUser;
   final DateTime? createdAt;
 
-  /// AFILIADO `ChatViewModel.onNewMessage` filters own messages
   /// (`msTypeUser == "aff"`).
   bool get isOwn => typeUser == 'aff';
 }

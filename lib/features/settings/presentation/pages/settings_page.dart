@@ -1,4 +1,3 @@
-/// Settings screen — app configuration, language picker, logout (AFILIADO
 /// `configurationapp/` + language + logout).
 library;
 
@@ -51,12 +50,18 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               for (final lang in languages)
                 ListTile(
                   title: Text(lang.name),
-                  trailing:
-                      _isActive(state.languageCode, lang.code) ? const Icon(Icons.check) : null,
-                  onTap: () => ref.read(settingsProvider.notifier).changeLanguage(lang.code),
+                  trailing: _isActive(state.languageCode, lang.code)
+                      ? const Icon(Icons.check)
+                      : null,
+                  onTap: () => ref
+                      .read(settingsProvider.notifier)
+                      .changeLanguage(lang.code),
                 ),
               const Divider(height: 32),
-              Text('App configuration', style: Theme.of(context).textTheme.titleMedium),
+              Text(
+                'App configuration',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
               const SizedBox(height: 8),
               if (state.configuration == null)
                 const Text('Not loaded')
@@ -64,7 +69,9 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 _ConfigView(configuration: state.configuration!),
               const SizedBox(height: 32),
               FilledButton(
-                style: FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error),
+                style: FilledButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                ),
                 onPressed: () => ref.read(settingsProvider.notifier).logout(),
                 child: const Text('Log out'),
               ),
@@ -91,7 +98,8 @@ class _ConfigView extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        if (configuration.logoUrl != null) Text('Logo: ${configuration.logoUrl}'),
+        if (configuration.logoUrl != null)
+          Text('Logo: ${configuration.logoUrl}'),
         Text('Beneficiaries: ${configuration.displayItemBeneficiaries}'),
         Text('Vehicles: ${configuration.displayItemVehicles}'),
         Text('Shop: ${configuration.displayShoppingList}'),

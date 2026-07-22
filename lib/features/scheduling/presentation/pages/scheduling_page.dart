@@ -1,5 +1,4 @@
 /// Scheduling screen — pick a date, choose a time slot, enter an address, then
-/// validate + confirm a scheduled assistance (AFILIADO `ProgramarActivity`).
 library;
 
 import 'dart:async';
@@ -55,7 +54,8 @@ class _SchedulingPageState extends ConsumerState<SchedulingPage> {
       body: SafeArea(
         child: LoadingOverlay(
           isLoading:
-              state.status == SchedulingStatus.loading || state.status == SchedulingStatus.validating,
+              state.status == SchedulingStatus.loading ||
+              state.status == SchedulingStatus.validating,
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: Column(
@@ -63,9 +63,11 @@ class _SchedulingPageState extends ConsumerState<SchedulingPage> {
               children: [
                 ListTile(
                   title: const Text('Date'),
-                  subtitle: Text(state.selectedDate == null
-                      ? 'Pick a date'
-                      : '${state.selectedDate!.day}/${state.selectedDate!.month}/${state.selectedDate!.year}'),
+                  subtitle: Text(
+                    state.selectedDate == null
+                        ? 'Pick a date'
+                        : '${state.selectedDate!.day}/${state.selectedDate!.month}/${state.selectedDate!.year}',
+                  ),
                   trailing: const Icon(Icons.calendar_today),
                   onTap: () async {
                     final picked = await showDatePicker(
@@ -74,13 +76,18 @@ class _SchedulingPageState extends ConsumerState<SchedulingPage> {
                       lastDate: DateTime.now().add(const Duration(days: 90)),
                     );
                     if (picked != null) {
-                      unawaited(ref.read(schedulingProvider.notifier).pickDate(picked));
+                      unawaited(
+                        ref.read(schedulingProvider.notifier).pickDate(picked),
+                      );
                     }
                   },
                 ),
                 const SizedBox(height: 8),
                 if (state.slots.isNotEmpty) ...[
-                  Text('Time slots', style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    'Time slots',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 8),
                   Wrap(
                     spacing: 8,
@@ -91,7 +98,9 @@ class _SchedulingPageState extends ConsumerState<SchedulingPage> {
                           label: Text('${slot.start} - ${slot.end}'),
                           selected: state.selectedSlot == slot,
                           onSelected: slot.available
-                              ? (_) => ref.read(schedulingProvider.notifier).selectSlot(slot)
+                              ? (_) => ref
+                                    .read(schedulingProvider.notifier)
+                                    .selectSlot(slot)
                               : null,
                         ),
                     ],
@@ -100,13 +109,16 @@ class _SchedulingPageState extends ConsumerState<SchedulingPage> {
                   TextField(
                     controller: _address,
                     decoration: const InputDecoration(labelText: 'Address'),
-                    onChanged: (v) => ref.read(schedulingProvider.notifier).setAddress(v),
+                    onChanged: (v) =>
+                        ref.read(schedulingProvider.notifier).setAddress(v),
                   ),
                   const SizedBox(height: 24),
                   FilledButton(
                     onPressed: state.selectedSlot != null
                         ? () {
-                            unawaited(ref.read(schedulingProvider.notifier).confirm());
+                            unawaited(
+                              ref.read(schedulingProvider.notifier).confirm(),
+                            );
                           }
                         : null,
                     child: const Text('Confirm'),

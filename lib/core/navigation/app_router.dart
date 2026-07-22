@@ -1,6 +1,4 @@
 /// App router (GoRouter) + reactive auth redirect. The router refreshes when
-/// [isAuthenticatedProvider] changes, reproducing AFILIADO's `OpenApp`
-/// token-vs-login routing and PRESTADOR's `NavManager` typed registry.
 library;
 
 import 'package:flutter/foundation.dart';
@@ -61,7 +59,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     debugLogDiagnostics: kDebugMode,
     redirect: (context, state) {
       final to = state.matchedLocation;
-      final isAuthenticated = notifier.isAuthenticated; // dynamic read
+      final isAuthenticated = notifier.isAuthenticated;
       final goingToProtected = AppRoute.values
           .where((r) => r.isProtected)
           .any((r) => to.startsWith(r.path));
@@ -79,10 +77,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoute.splash.path,
         builder: (_, _) => const SplashPage(),
       ),
-      GoRoute(
-        path: AppRoute.login.path,
-        builder: (_, _) => const LoginPage(),
-      ),
+      GoRoute(path: AppRoute.login.path, builder: (_, _) => const LoginPage()),
       GoRoute(
         path: AppRoute.twoFactor.path,
         builder: (_, _) => const TwoFactorPage(),
@@ -101,11 +96,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoute.chat.path,
-        builder: (context, state) => ChatPage(assistanceId: (state.extra as String?) ?? ''),
+        builder: (context, state) =>
+            ChatPage(assistanceId: (state.extra as String?) ?? ''),
       ),
       GoRoute(
         path: AppRoute.videoCall.path,
-        builder: (context, state) => VideoCallPage(assistanceId: (state.extra as String?) ?? ''),
+        builder: (context, state) =>
+            VideoCallPage(assistanceId: (state.extra as String?) ?? ''),
       ),
       GoRoute(
         path: AppRoute.payment.path,
@@ -133,20 +130,19 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoute.scheduling.path,
-        builder: (context, state) => SchedulingPage(serviceId: (state.extra as String?) ?? ''),
+        builder: (context, state) =>
+            SchedulingPage(serviceId: (state.extra as String?) ?? ''),
       ),
       GoRoute(
         path: AppRoute.survey.path,
-        builder: (context, state) => SurveyPage(assistanceId: (state.extra as String?) ?? ''),
+        builder: (context, state) =>
+            SurveyPage(assistanceId: (state.extra as String?) ?? ''),
       ),
       GoRoute(
         path: AppRoute.settings.path,
         builder: (_, _) => const SettingsPage(),
       ),
-      GoRoute(
-        path: AppRoute.home.path,
-        builder: (_, _) => const HomePage(),
-      ),
+      GoRoute(path: AppRoute.home.path, builder: (_, _) => const HomePage()),
     ],
   );
 });

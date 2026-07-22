@@ -1,4 +1,3 @@
-/// Scheduling UI state (AFILIADO `ProgramarActivity` +
 /// `ScheduleAssistanceDialog`).
 library;
 

@@ -1,4 +1,3 @@
-/// Chat UI state (AFILIADO `ChatViewModel`).
 library;
 
 import '../../domain/entities/chat_entities.dart';

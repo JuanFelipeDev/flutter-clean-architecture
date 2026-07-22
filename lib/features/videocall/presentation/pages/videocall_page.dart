@@ -1,4 +1,3 @@
-/// Video call screen — call controls + recording (AFILIADO `VideoCallScreen`).
 /// The native video surface (`zoom_videosdk`) is a Phase 6 polish; this renders
 /// the join/leave + audio/video/recording controls that drive the
 /// [VideoCallNotifier] regardless of the underlying SDK.
@@ -16,7 +15,12 @@ import '../providers/videocall_providers.dart';
 import '../states/videocall_state.dart';
 
 class VideoCallPage extends ConsumerStatefulWidget {
-  const VideoCallPage({required this.assistanceId, this.sessionName, this.userName, super.key});
+  const VideoCallPage({
+    required this.assistanceId,
+    this.sessionName,
+    this.userName,
+    super.key,
+  });
   final String assistanceId;
   final String? sessionName;
   final String? userName;
@@ -31,7 +35,9 @@ class _VideoCallPageState extends ConsumerState<VideoCallPage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.listenManual(videoCallProvider, _onChanged);
-      ref.read(videoCallProvider.notifier).join(
+      ref
+          .read(videoCallProvider.notifier)
+          .join(
             assistanceId: widget.assistanceId,
             sessionName: widget.sessionName ?? 'assist-${widget.assistanceId}',
             userName: widget.userName,
@@ -41,7 +47,10 @@ class _VideoCallPageState extends ConsumerState<VideoCallPage> {
 
   void _onChanged(VideoCallState? previous, VideoCallState next) {
     if (next.callStatus == CallStatus.error || next.errorMessage != null) {
-      context.showToast(next.errorMessage ?? 'Call error', kind: ToastKind.error);
+      context.showToast(
+        next.errorMessage ?? 'Call error',
+        kind: ToastKind.error,
+      );
     }
   }
 
@@ -57,7 +66,10 @@ class _VideoCallPageState extends ConsumerState<VideoCallPage> {
             children: [
               Expanded(
                 child: Center(
-                  child: _Surface(status: state.callStatus, recording: state.recording),
+                  child: _Surface(
+                    status: state.callStatus,
+                    recording: state.recording,
+                  ),
                 ),
               ),
               Padding(
@@ -66,24 +78,39 @@ class _VideoCallPageState extends ConsumerState<VideoCallPage> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     IconButton.filled(
-                      icon: Icon(state.audioEnabled ? Icons.mic : Icons.mic_off),
+                      icon: Icon(
+                        state.audioEnabled ? Icons.mic : Icons.mic_off,
+                      ),
                       onPressed: state.callStatus == CallStatus.joined
-                          ? () => ref.read(videoCallProvider.notifier).toggleAudio()
+                          ? () => ref
+                                .read(videoCallProvider.notifier)
+                                .toggleAudio()
                           : null,
                     ),
                     IconButton.filled(
-                      icon: Icon(state.videoEnabled ? Icons.videocam : Icons.videocam_off),
+                      icon: Icon(
+                        state.videoEnabled
+                            ? Icons.videocam
+                            : Icons.videocam_off,
+                      ),
                       onPressed: state.callStatus == CallStatus.joined
-                          ? () => ref.read(videoCallProvider.notifier).toggleVideo()
+                          ? () => ref
+                                .read(videoCallProvider.notifier)
+                                .toggleVideo()
                           : null,
                     ),
                     IconButton.filled(
-                      icon: Icon(state.recording == RecordingStatus.recording
-                          ? Icons.stop_circle
-                          : Icons.fiber_manual_record),
-                      onPressed: state.callStatus == CallStatus.joined &&
+                      icon: Icon(
+                        state.recording == RecordingStatus.recording
+                            ? Icons.stop_circle
+                            : Icons.fiber_manual_record,
+                      ),
+                      onPressed:
+                          state.callStatus == CallStatus.joined &&
                               state.recording != RecordingStatus.requesting
-                          ? () => ref.read(videoCallProvider.notifier).toggleRecording()
+                          ? () => ref
+                                .read(videoCallProvider.notifier)
+                                .toggleRecording()
                           : null,
                     ),
                     IconButton.filled(
@@ -118,7 +145,9 @@ class _Surface extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(
-          status == CallStatus.joined ? Icons.videocam : Icons.videocam_off_outlined,
+          status == CallStatus.joined
+              ? Icons.videocam
+              : Icons.videocam_off_outlined,
           size: 72,
         ),
         const SizedBox(height: 12),

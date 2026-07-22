@@ -1,4 +1,3 @@
-/// Error dialog (PRESTADOR `ErrorDialog`). Presents a [Failure] message with an
 /// optional retry action.
 library;
 
@@ -7,11 +6,7 @@ import 'package:flutter/material.dart';
 import '../../error/failures.dart';
 
 class ErrorDialog extends StatelessWidget {
-  const ErrorDialog({
-    required this.failure,
-    this.onRetry,
-    super.key,
-  });
+  const ErrorDialog({required this.failure, this.onRetry, super.key});
 
   final Failure failure;
   final VoidCallback? onRetry;

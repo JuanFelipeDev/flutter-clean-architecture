@@ -1,4 +1,3 @@
-/// Typed route registry. Mirrors PRESTADOR's `NavManagerImpl` sealed route
 /// objects — paths are constants referenced by both [AppRouter] and deep-link
 /// handling, never magic strings scattered in widgets.
 library;
@@ -63,7 +62,6 @@ enum AppRoute {
   }
 }
 
-/// Deep-link extra keys (AFILIADO intent extras carried through routes).
 class RouteExtraKeys {
   const RouteExtraKeys._();
   static const String assistanceId = 'assistanceId';

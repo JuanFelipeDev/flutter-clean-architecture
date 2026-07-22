@@ -8,7 +8,8 @@ import '../repositories/profile_repository.dart';
 class GetProfileUseCase {
   GetProfileUseCase(this._repository);
   final ProfileRepository _repository;
-  Future<Result<AffiliateProfile>> call(String affKey) => _repository.getProfile(affKey);
+  Future<Result<AffiliateProfile>> call(String affKey) =>
+      _repository.getProfile(affKey);
 }
 
 class UpdateProfileUseCase {

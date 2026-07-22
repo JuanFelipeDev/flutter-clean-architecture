@@ -1,4 +1,3 @@
-/// Video call UI state (AFILIADO `VideoCallViewModel`).
 library;
 
 import '../../domain/entities/videocall_entities.dart';

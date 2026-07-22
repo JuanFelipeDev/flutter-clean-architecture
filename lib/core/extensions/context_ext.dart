@@ -12,5 +12,6 @@ extension ContextExtensions on BuildContext {
   double get screenHeight => media.size.height;
 
   /// Pops the top route if possible.
-  void maybePop<T extends Object?>([T? result]) => Navigator.maybeOf(this)?.pop(result);
+  void maybePop<T extends Object?>([T? result]) =>
+      Navigator.maybeOf(this)?.pop(result);
 }

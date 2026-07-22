@@ -1,4 +1,3 @@
-/// DTOs + mapper for vehicle (AFILIADO `GetVehiclesResponseNew` /
 /// `BrandsVehicleResponseNew` / `ModelsVehicleResponse` / `CreateVehicle`).
 library;
 
@@ -8,7 +7,16 @@ import '../../domain/entities/vehicle_entities.dart';
 import '../../../../core/utils/json_list_parser.dart';
 
 class VehicleDto {
-  const VehicleDto({this.id, this.plate, this.brandId, this.modelId, this.brand, this.model, this.color, this.type});
+  const VehicleDto({
+    this.id,
+    this.plate,
+    this.brandId,
+    this.modelId,
+    this.brand,
+    this.model,
+    this.color,
+    this.type,
+  });
   final String? id;
   final String? plate;
   final String? brandId;
@@ -19,23 +27,32 @@ class VehicleDto {
   final String? type;
 
   factory VehicleDto.fromJson(Map<String, dynamic> json) => VehicleDto(
-        id: json['id']?.toString() ?? json['avId']?.toString() ?? json['idVehicle']?.toString(),
-        plate: json['plate']?.toString() ?? json['placa']?.toString(),
-        brandId: json['brandId']?.toString() ?? json['vbId']?.toString() ?? json['id_marca']?.toString(),
-        modelId: json['modelId']?.toString() ?? json['vmId']?.toString() ?? json['id_modelo']?.toString(),
-        brand: json['brand']?.toString() ?? json['marca']?.toString(),
-        model: json['model']?.toString() ?? json['modelo']?.toString(),
-        color: json['color']?.toString() ?? json['color']?.toString(),
-        type: json['type']?.toString() ?? json['tipo']?.toString(),
-      );
+    id:
+        json['id']?.toString() ??
+        json['avId']?.toString() ??
+        json['idVehicle']?.toString(),
+    plate: json['plate']?.toString() ?? json['placa']?.toString(),
+    brandId:
+        json['brandId']?.toString() ??
+        json['vbId']?.toString() ??
+        json['id_marca']?.toString(),
+    modelId:
+        json['modelId']?.toString() ??
+        json['vmId']?.toString() ??
+        json['id_modelo']?.toString(),
+    brand: json['brand']?.toString() ?? json['marca']?.toString(),
+    model: json['model']?.toString() ?? json['modelo']?.toString(),
+    color: json['color']?.toString() ?? json['color']?.toString(),
+    type: json['type']?.toString() ?? json['tipo']?.toString(),
+  );
 
   Map<String, dynamic> toJson() => {
-        'plate': plate,
-        'brandId': brandId,
-        'modelId': modelId,
-        'color': color,
-        'type': type,
-      };
+    'plate': plate,
+    'brandId': brandId,
+    'modelId': modelId,
+    'color': color,
+    'type': type,
+  };
 }
 
 class BrandDto {
@@ -43,9 +60,15 @@ class BrandDto {
   final String? id;
   final String? name;
   factory BrandDto.fromJson(Map<String, dynamic> json) => BrandDto(
-        id: json['vbId']?.toString() ?? json['id']?.toString() ?? json['id_marca']?.toString(),
-        name: json['vbName']?.toString() ?? json['name']?.toString() ?? json['marca']?.toString(),
-      );
+    id:
+        json['vbId']?.toString() ??
+        json['id']?.toString() ??
+        json['id_marca']?.toString(),
+    name:
+        json['vbName']?.toString() ??
+        json['name']?.toString() ??
+        json['marca']?.toString(),
+  );
 }
 
 class VehicleModelDto {
@@ -53,10 +76,17 @@ class VehicleModelDto {
   final String? id;
   final String? brandId;
   final String? name;
-  factory VehicleModelDto.fromJson(Map<String, dynamic> json) => VehicleModelDto(
-        id: json['vmId']?.toString() ?? json['id']?.toString() ?? json['id_modelo']?.toString(),
+  factory VehicleModelDto.fromJson(Map<String, dynamic> json) =>
+      VehicleModelDto(
+        id:
+            json['vmId']?.toString() ??
+            json['id']?.toString() ??
+            json['id_modelo']?.toString(),
         brandId: json['vbId']?.toString() ?? json['brandId']?.toString(),
-        name: json['vmName']?.toString() ?? json['name']?.toString() ?? json['modelo']?.toString(),
+        name:
+            json['vmName']?.toString() ??
+            json['name']?.toString() ??
+            json['modelo']?.toString(),
       );
 }
 
@@ -64,32 +94,34 @@ class VehicleMapper {
   const VehicleMapper();
 
   Vehicle toEntity(VehicleDto dto) => Vehicle(
-        id: dto.id ?? '',
-        plate: dto.plate,
-        brandId: dto.brandId,
-        modelId: dto.modelId,
-        brand: dto.brand,
-        model: dto.model,
-        color: dto.color,
-        type: dto.type,
-      );
+    id: dto.id ?? '',
+    plate: dto.plate,
+    brandId: dto.brandId,
+    modelId: dto.modelId,
+    brand: dto.brand,
+    model: dto.model,
+    color: dto.color,
+    type: dto.type,
+  );
 
   VehicleDto toDto(Vehicle vehicle) => VehicleDto(
-        id: vehicle.id,
-        plate: vehicle.plate,
-        brandId: vehicle.brandId,
-        modelId: vehicle.modelId,
-        brand: vehicle.brand,
-        model: vehicle.model,
-        color: vehicle.color,
-        type: vehicle.type,
-      );
+    id: vehicle.id,
+    plate: vehicle.plate,
+    brandId: vehicle.brandId,
+    modelId: vehicle.modelId,
+    brand: vehicle.brand,
+    model: vehicle.model,
+    color: vehicle.color,
+    type: vehicle.type,
+  );
 
   Brand toBrand(BrandDto dto) => Brand(id: dto.id ?? '', name: dto.name ?? '');
-  VehicleModel toModel(VehicleModelDto dto) =>
-      VehicleModel(id: dto.id ?? '', brandId: dto.brandId ?? '', name: dto.name ?? '');
+  VehicleModel toModel(VehicleModelDto dto) => VehicleModel(
+    id: dto.id ?? '',
+    brandId: dto.brandId ?? '',
+    name: dto.name ?? '',
+  );
 }
-
 
 T? _single<T>(dynamic body, T Function(Map<String, dynamic>) fromJson) {
   if (body is Map<String, dynamic>) return fromJson(body);
@@ -100,7 +132,10 @@ T? _single<T>(dynamic body, T Function(Map<String, dynamic>) fromJson) {
   return null;
 }
 
-List<VehicleDto> parseVehicles(dynamic body) => parseJsonList(body, VehicleDto.fromJson, 'vehicles');
-List<BrandDto> parseBrands(dynamic body) => parseJsonList(body, BrandDto.fromJson, 'brands');
-List<VehicleModelDto> parseModels(dynamic body) => parseJsonList(body, VehicleModelDto.fromJson, 'models');
+List<VehicleDto> parseVehicles(dynamic body) =>
+    parseJsonList(body, VehicleDto.fromJson, 'vehicles');
+List<BrandDto> parseBrands(dynamic body) =>
+    parseJsonList(body, BrandDto.fromJson, 'brands');
+List<VehicleModelDto> parseModels(dynamic body) =>
+    parseJsonList(body, VehicleModelDto.fromJson, 'models');
 VehicleDto? parseVehicle(dynamic body) => _single(body, VehicleDto.fromJson);

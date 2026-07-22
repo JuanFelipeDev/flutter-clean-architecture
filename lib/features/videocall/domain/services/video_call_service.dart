@@ -1,4 +1,3 @@
-/// Video call service seam for the native video SDK (AFILIADO Zoom Video SDK
 /// `joinSession`/`leaveSession`). A real `zoom_videosdk`-backed implementation
 /// lands once a compatible plugin + SDK credentials are provisioned; the
 /// default [NoopVideoCallService] keeps the app building and the rest of the

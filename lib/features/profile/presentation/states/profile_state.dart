@@ -1,4 +1,3 @@
-/// Profile UI state (AFILIADO `ProfileFragment`).
 library;
 
 import '../../domain/entities/profile_entities.dart';

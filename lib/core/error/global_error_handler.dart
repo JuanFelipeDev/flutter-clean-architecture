@@ -1,6 +1,5 @@
 /// Global error handler wiring. Captures Flutter framework errors and
 /// platform-dispatcher errors, forwarding them to telemetry
-/// (Sentry/Crashlytics). Mirrors PRESTADOR's `ProviderApp`
 /// `Thread.setDefaultUncaughtExceptionHandler` + Flutter `FlutterError.onError`.
 library;
 

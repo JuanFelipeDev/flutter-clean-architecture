@@ -1,13 +1,11 @@
 /// Authentication entities. Pure Dart.
 ///
-/// Reproduces AFILIADO `LoginSession` / `LoginActivity`:
 /// - three login strategies (standard / EO / Roble), selected per flavor;
 /// - 2FA hand-off when the token response carries no `user` but a `userName`.
 library;
 
 import '../../../../core/session/session_data.dart';
 
-/// Minimal affiliate user from the login response (AFILIADO `user` object).
 class AffiliateUser {
   const AffiliateUser({this.id, this.affKey, this.userName});
   final String? id;
@@ -33,13 +31,12 @@ class LoginSession {
   final String? userName;
   final String? clientId;
   final String? affKey;
-  /// Google Maps key from `user.clients[0].cltInfoApiKey` (AFILIADO runtime
+
   /// api key, used for Places/Geocoding). Falls back to the flavor key.
   final String? mapsApiKey;
   final AffiliateUser? user;
   final bool twoFactorsAuth;
 
-  /// AFILIADO 2FA rule: the backend sets `twoFactorsAuth: true` on the
   /// response when a code must be verified; fall back to inferring from a
   /// missing `user` + present `userName` for older responses.
   bool get requiresTwoFactor {
@@ -49,13 +46,13 @@ class LoginSession {
   }
 
   SessionData toSessionData() => SessionData(
-        accessToken: accessToken,
-        refreshToken: refreshToken,
-        clientId: clientId,
-        username: userName,
-        affKey: affKey,
-        mapsApiKey: mapsApiKey,
-      );
+    accessToken: accessToken,
+    refreshToken: refreshToken,
+    clientId: clientId,
+    username: userName,
+    affKey: affKey,
+    mapsApiKey: mapsApiKey,
+  );
 }
 
 /// Per-strategy credentials submitted to the login endpoint.
@@ -76,7 +73,6 @@ class EoCredentials extends LoginCredentials {
   final String password;
 }
 
-/// Roble: NIT + placa + DPI, at least two filled (AFILIADO `completar_dos_campos`).
 class RobleCredentials extends LoginCredentials {
   const RobleCredentials({this.nit, this.placa, this.dpi});
   final String? nit;

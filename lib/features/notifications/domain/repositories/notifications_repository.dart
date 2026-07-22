@@ -1,4 +1,3 @@
-/// Notifications repository contract (AFILIADO `soaang-notifier/notifications/
 /// affiliate/{username}/` list + `obtener_numero_notificaciones/` counter).
 library;
 

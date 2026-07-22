@@ -1,5 +1,4 @@
 /// Thin debug logger. Avoids `print` in production builds and delegates
-/// non-debug records to telemetry. Mirrors PRESTADOR's `HttpLoggingInterceptor`
 /// debug-only intent without pulling a logging framework.
 library;
 
@@ -20,7 +19,10 @@ class Logger {
   }
 
   void info(String message, {String? category}) {
-    _telemetry.addBreadcrumb(message: message, category: category ?? 'app.info');
+    _telemetry.addBreadcrumb(
+      message: message,
+      category: category ?? 'app.info',
+    );
   }
 
   void warning(String message, {String? category}) {

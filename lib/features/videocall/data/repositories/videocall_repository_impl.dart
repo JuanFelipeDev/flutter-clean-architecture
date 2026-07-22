@@ -12,13 +12,18 @@ import '../datasources/videocall_remote_data_source.dart';
 import '../models/videocall_dtos.dart';
 
 class VideoCallRepositoryImpl implements VideoCallRepository {
-  VideoCallRepositoryImpl({required this.remoteDataSource, required this.mapper});
+  VideoCallRepositoryImpl({
+    required this.remoteDataSource,
+    required this.mapper,
+  });
 
   final VideoCallRemoteDataSource remoteDataSource;
   final VideoCallMapper mapper;
 
   @override
-  Future<Result<ScheduleAvailability>> checkSchedule(String assistanceId) async {
+  Future<Result<ScheduleAvailability>> checkSchedule(
+    String assistanceId,
+  ) async {
     try {
       final dto = await remoteDataSource.checkSchedule(assistanceId);
       return Success(mapper.toEntity(dto));

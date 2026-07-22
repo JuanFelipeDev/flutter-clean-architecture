@@ -1,8 +1,6 @@
-/// Notification entities (AFILIADO `NotificationsResponse` /
 /// `NotificationsEvents` types).
 library;
 
-/// AFILIADO notification types (`NotificationsEvents` constants).
 enum NotificationType {
   supplierArrivalConfirmation,
   supplierTermConfirmation,
@@ -53,7 +51,6 @@ enum NotificationType {
   }
 }
 
-/// A notification (AFILIADO `NotificationsResponse` item).
 class AffiliateNotification {
   const AffiliateNotification({
     required this.id,

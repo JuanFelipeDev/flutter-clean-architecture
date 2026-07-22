@@ -1,4 +1,3 @@
-/// Login use case (AFILIADO `LoginViewModel.setCredentials`).
 library;
 
 import '../../../../core/error/result.dart';

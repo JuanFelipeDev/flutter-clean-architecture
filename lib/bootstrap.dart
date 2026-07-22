@@ -1,6 +1,5 @@
 /// App bootstrap. Initializes Flutter bindings, telemetry (Sentry, guarded by
 /// DSN), global error handlers, and seeds the session state from secure
-/// storage before running the app. Mirrors PRESTADOR's `ProviderApp.onCreate`.
 library;
 
 import 'package:flutter/material.dart';
@@ -25,8 +24,6 @@ Future<void> bootstrap() async {
   await telemetry.init();
   installGlobalErrorHandlers(telemetry);
 
-  // Seed the runtime environment override from persisted prefs (AFILIADO
-  // `TYPE_ENVIROMENT`), falling back to the compile-time flavor env.
   try {
     final prefs = await container.read(prefsServiceProvider.future);
     final savedEnv = prefs.getString('TYPE_ENVIROMENT');
@@ -34,18 +31,13 @@ Future<void> bootstrap() async {
       container.read(currentEnvironmentProvider.notifier).state =
           Environment.fromName(savedEnv);
     }
-  } on Object {
-    // Prefs not available yet — fall back to compile-time env (already set).
-  }
+  } on Object {}
 
-  // Seed auth state + cached session from persisted storage (AFILIADO
-  // `OpenApp` token-vs-login decision).
   final storage = container.read(secureStorageProvider);
   final session = await SessionData.load(storage);
   container.read(isAuthenticatedProvider.notifier).state = session != null;
   container.read(cachedSessionProvider.notifier).state = session;
 
-  // Keep the container alive for the app lifetime.
   runApp(
     UncontrolledProviderScope(
       container: container,

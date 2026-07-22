@@ -1,5 +1,4 @@
 /// Color schemes derived per flavor from the configured primary/accent colors
-/// (AFILIADO `PRIMARY_COLOR`/`ACCENT_COLOR` from `configuraciones_app_afiliado/`).
 /// Produces both light and dark Material 3 schemes — dark mode is a Flutter
 /// improvement (both source apps are light-only).
 library;
@@ -13,13 +12,17 @@ class AppColorSchemes {
 
   static ColorScheme light(FlavorConfig flavor) {
     final seed = Color(flavor.primaryColor);
-    return ColorScheme.fromSeed(seedColor: seed, brightness: Brightness.light)
-        .copyWith(secondary: Color(flavor.accentColor));
+    return ColorScheme.fromSeed(
+      seedColor: seed,
+      brightness: Brightness.light,
+    ).copyWith(secondary: Color(flavor.accentColor));
   }
 
   static ColorScheme dark(FlavorConfig flavor) {
     final seed = Color(flavor.primaryColor);
-    return ColorScheme.fromSeed(seedColor: seed, brightness: Brightness.dark)
-        .copyWith(secondary: Color(flavor.accentColor));
+    return ColorScheme.fromSeed(
+      seedColor: seed,
+      brightness: Brightness.dark,
+    ).copyWith(secondary: Color(flavor.accentColor));
   }
 }

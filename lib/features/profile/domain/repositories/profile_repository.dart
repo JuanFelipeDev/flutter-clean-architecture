@@ -1,4 +1,3 @@
-/// Profile repository contract (AFILIADO `get-profile/`, `edit-profile/{affkey}/`,
 /// `edit-password/{affkey}/`, document types, companies).
 library;
 

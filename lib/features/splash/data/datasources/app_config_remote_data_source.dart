@@ -1,4 +1,3 @@
-/// Remote data source for app config / version check (AFILIADO
 /// `info-version-app`).
 library;
 
@@ -10,7 +9,8 @@ class AppConfigRemoteDataSource {
   AppConfigRemoteDataSource(this._dio);
   final Dio _dio;
 
-  static const String _path = 'soaang-configurations-external/api/domain_user/info-version-app';
+  static const String _path =
+      'soaang-configurations-external/api/domain_user/info-version-app';
 
   Future<VersionCheckDto> fetchVersion() async {
     final response = await _dio.get<dynamic>(_path);

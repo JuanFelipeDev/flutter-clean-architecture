@@ -15,13 +15,15 @@ class GetActiveAssistancesUseCase {
 class ConfirmArrivalUseCase {
   ConfirmArrivalUseCase(this._repository);
   final TrackingRepository _repository;
-  Future<Result<void>> call(String assistanceId) => _repository.confirmArrival(assistanceId);
+  Future<Result<void>> call(String assistanceId) =>
+      _repository.confirmArrival(assistanceId);
 }
 
 class ConfirmFinalUseCase {
   ConfirmFinalUseCase(this._repository);
   final TrackingRepository _repository;
-  Future<Result<void>> call(String assistanceId) => _repository.confirmFinal(assistanceId);
+  Future<Result<void>> call(String assistanceId) =>
+      _repository.confirmFinal(assistanceId);
 }
 
 class SendPanicUseCase {

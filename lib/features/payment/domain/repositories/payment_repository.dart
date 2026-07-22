@@ -1,4 +1,3 @@
-/// Payment repository contract (AFILIADO `planes`, `detalle_servicio_app/`,
 /// `listar_compras_afiliado/`, `cancelar_pago_afiliado`, paymob, upgrade).
 library;
 

@@ -1,5 +1,4 @@
 /// Payment screen — plans / unique services / cart with checkout via paymob,
-/// plus past purchases and account upgrade (AFILIADO `PlansShopActivity` /
 /// `UniqueServicesActivity` / shopping list). The paymob webview handoff is a
 /// Phase 6 polish; here checkout returns a redirect URL surfaced to the user.
 library;
@@ -20,7 +19,8 @@ class PaymentPage extends ConsumerStatefulWidget {
   ConsumerState<PaymentPage> createState() => _PaymentPageState();
 }
 
-class _PaymentPageState extends ConsumerState<PaymentPage> with SingleTickerProviderStateMixin {
+class _PaymentPageState extends ConsumerState<PaymentPage>
+    with SingleTickerProviderStateMixin {
   late final TabController _tab = TabController(length: 3, vsync: this);
 
   @override
@@ -40,7 +40,10 @@ class _PaymentPageState extends ConsumerState<PaymentPage> with SingleTickerProv
 
   void _onChanged(PaymentState? previous, PaymentState next) {
     if (next.status == PaymentStatus.success) {
-      context.showToast(next.paymentUrl ?? 'Payment successful', kind: ToastKind.success);
+      context.showToast(
+        next.paymentUrl ?? 'Payment successful',
+        kind: ToastKind.success,
+      );
     } else if (next.status == PaymentStatus.failure) {
       context.showToast(next.errorMessage ?? 'Error', kind: ToastKind.error);
     }
@@ -54,7 +57,8 @@ class _PaymentPageState extends ConsumerState<PaymentPage> with SingleTickerProv
         title: const Text('Shop'),
         bottom: TabBar(
           controller: _tab,
-          onTap: (i) => ref.read(paymentProvider.notifier).setTab(PaymentTab.values[i]),
+          onTap: (i) =>
+              ref.read(paymentProvider.notifier).setTab(PaymentTab.values[i]),
           tabs: const [
             Tab(text: 'Plans'),
             Tab(text: 'Services'),
@@ -74,7 +78,10 @@ class _PaymentPageState extends ConsumerState<PaymentPage> with SingleTickerProv
           child: TabBarView(
             controller: _tab,
             children: [
-              _PlansTab(plans: state.plans, onAdd: ref.read(paymentProvider.notifier).addPlan),
+              _PlansTab(
+                plans: state.plans,
+                onAdd: ref.read(paymentProvider.notifier).addPlan,
+              ),
               _ServicesTab(
                 services: state.services,
                 onAdd: ref.read(paymentProvider.notifier).addService,
@@ -109,7 +116,10 @@ class _PlansTab extends StatelessWidget {
         return ListTile(
           title: Text(p.name),
           subtitle: Text('${p.currency ?? ''} ${p.price.toStringAsFixed(2)}'),
-          trailing: IconButton.filled(icon: const Icon(Icons.add), onPressed: () => onAdd(p)),
+          trailing: IconButton.filled(
+            icon: const Icon(Icons.add),
+            onPressed: () => onAdd(p),
+          ),
         );
       },
     );
@@ -132,7 +142,10 @@ class _ServicesTab extends StatelessWidget {
         return ListTile(
           title: Text(s.name),
           subtitle: Text('${s.currency ?? ''} ${s.price.toStringAsFixed(2)}'),
-          trailing: IconButton.filled(icon: const Icon(Icons.add), onPressed: () => onAdd(s)),
+          trailing: IconButton.filled(
+            icon: const Icon(Icons.add),
+            onPressed: () => onAdd(s),
+          ),
         );
       },
     );
@@ -160,10 +173,13 @@ class _CartTab extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Total: ${state.cartTotal.toStringAsFixed(2)}',
-                  style: Theme.of(context).textTheme.titleMedium),
+              Text(
+                'Total: ${state.cartTotal.toStringAsFixed(2)}',
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
               FilledButton(
-                onPressed: state.cart.isEmpty || state.status == PaymentStatus.paying
+                onPressed:
+                    state.cart.isEmpty || state.status == PaymentStatus.paying
                     ? null
                     : () => onCheckout(),
                 child: const Text('Checkout'),
@@ -180,7 +196,9 @@ class _CartTab extends StatelessWidget {
                     for (final p in state.cart)
                       ListTile(
                         title: Text(p.name),
-                        subtitle: Text('${p.total.toStringAsFixed(2)} x${p.quantity}'),
+                        subtitle: Text(
+                          '${p.total.toStringAsFixed(2)} x${p.quantity}',
+                        ),
                         trailing: IconButton(
                           icon: const Icon(Icons.delete_outline),
                           onPressed: () => onRemove(p.id),

@@ -14,21 +14,38 @@ class _FakePaymentRepository implements PaymentRepository {
   final bool paymentSuccess;
 
   @override
-  Future<Result<List<ShopPlan>>> plans(String affKey) async =>
-      const Success([ShopPlan(id: 'p1', name: 'Plan 1', price: 10, currency: 'USD')]);
+  Future<Result<List<ShopPlan>>> plans(String affKey) async => const Success([
+    ShopPlan(id: 'p1', name: 'Plan 1', price: 10, currency: 'USD'),
+  ]);
   @override
   Future<Result<List<ShopService>>> uniqueServices(String affKey) async =>
-      const Success([ShopService(id: 's1', name: 'Service 1', price: 5, currency: 'USD')]);
+      const Success([
+        ShopService(id: 's1', name: 'Service 1', price: 5, currency: 'USD'),
+      ]);
   @override
   Future<Result<List<Purchase>>> purchases(String affKey) async =>
-      const Success([Purchase(id: 'old1', itemType: PaymentItemType.plan, itemId: 'p1', name: 'Old', price: 10)]);
+      const Success([
+        Purchase(
+          id: 'old1',
+          itemType: PaymentItemType.plan,
+          itemId: 'p1',
+          name: 'Old',
+          price: 10,
+        ),
+      ]);
   @override
-  Future<Result<PaymentResult>> pay(List<Purchase> cart) async =>
-      Success(PaymentResult(success: paymentSuccess, paymentUrl: paymentSuccess ? 'https://pay' : null));
+  Future<Result<PaymentResult>> pay(List<Purchase> cart) async => Success(
+    PaymentResult(
+      success: paymentSuccess,
+      paymentUrl: paymentSuccess ? 'https://pay' : null,
+    ),
+  );
   @override
-  Future<Result<void>> cancelPurchase(String purchaseId) async => Result<void>.guard(() {});
+  Future<Result<void>> cancelPurchase(String purchaseId) async =>
+      Result<void>.guard(() {});
   @override
-  Future<Result<void>> upgradeAccount(String affKey) async => Result<void>.guard(() {});
+  Future<Result<void>> upgradeAccount(String affKey) async =>
+      Result<void>.guard(() {});
 }
 
 void main() {
@@ -37,21 +54,43 @@ void main() {
   group('PaymentMapper', () {
     const mapper = PaymentMapper();
     test('maps plan, service, purchase, result', () {
-      expect(mapper.toPlan(const ShopPlanDto(id: '1', name: 'P', price: 9)).price, 9);
-      expect(mapper.toService(const ShopServiceDto(id: 's', name: 'S', price: 3)).name, 'S');
-      final purchase = mapper.toPurchase(const PurchaseDto(id: 'x', itemType: 'service', itemId: 's', name: 'S', price: 3));
+      expect(
+        mapper.toPlan(const ShopPlanDto(id: '1', name: 'P', price: 9)).price,
+        9,
+      );
+      expect(
+        mapper
+            .toService(const ShopServiceDto(id: 's', name: 'S', price: 3))
+            .name,
+        'S',
+      );
+      final purchase = mapper.toPurchase(
+        const PurchaseDto(
+          id: 'x',
+          itemType: 'service',
+          itemId: 's',
+          name: 'S',
+          price: 3,
+        ),
+      );
       expect(purchase.itemType, PaymentItemType.service);
-      final result = mapper.toResult(const PaymentResultDto(success: true, paymentUrl: 'https://pay'));
+      final result = mapper.toResult(
+        const PaymentResultDto(success: true, paymentUrl: 'https://pay'),
+      );
       expect(result.paymentUrl, 'https://pay');
     });
   });
 
   group('PaymentNotifier', () {
     ProviderContainer makeContainer({bool paymentSuccess = true}) {
-      return ProviderContainer(overrides: [
-        cachedSessionProvider.overrideWith((_) => session),
-        paymentRepositoryProvider.overrideWithValue(_FakePaymentRepository(paymentSuccess: paymentSuccess)),
-      ]);
+      return ProviderContainer(
+        overrides: [
+          cachedSessionProvider.overrideWith((_) => session),
+          paymentRepositoryProvider.overrideWithValue(
+            _FakePaymentRepository(paymentSuccess: paymentSuccess),
+          ),
+        ],
+      );
     }
 
     test('loads plans, services and purchases', () async {

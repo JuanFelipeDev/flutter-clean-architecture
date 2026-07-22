@@ -8,7 +8,8 @@ import '../repositories/settings_repository.dart';
 class GetAppConfigurationUseCase {
   GetAppConfigurationUseCase(this._repository);
   final SettingsRepository _repository;
-  Future<Result<AppConfiguration>> call(String affKey) => _repository.appConfiguration(affKey);
+  Future<Result<AppConfiguration>> call(String affKey) =>
+      _repository.appConfiguration(affKey);
 }
 
 class LogoutUseCase {

@@ -1,4 +1,3 @@
-/// Prevents duplicate taps / double-submits (PRESTADOR
 /// `MultipleEventsCutter`).
 library;
 

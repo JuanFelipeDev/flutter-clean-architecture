@@ -1,5 +1,4 @@
 /// [ChatRepository] implementation with an offline outbox fallback
-/// (improvement over AFILIADO which drops offline sends). Uses the drift
 /// `ChatOutboxDao` to enqueue sends that fail due to no network, then flushes
 /// them when connectivity is restored.
 library;
@@ -30,9 +29,15 @@ class ChatRepositoryImpl implements ChatRepository {
   final ConnectivityService connectivity;
 
   @override
-  Future<Result<List<ChatMessage>>> history(String assistanceId, {int page = 1}) async {
+  Future<Result<List<ChatMessage>>> history(
+    String assistanceId, {
+    int page = 1,
+  }) async {
     try {
-      final dtos = await remoteDataSource.fetchHistory(assistanceId, page: page);
+      final dtos = await remoteDataSource.fetchHistory(
+        assistanceId,
+        page: page,
+      );
       return Success(dtos.map(mapper.toEntity).toList());
     } on DioException catch (e) {
       return Err(mapDioError(e));
@@ -47,8 +52,8 @@ class ChatRepositoryImpl implements ChatRepository {
       await remoteDataSource.send(assistanceId, content);
       return Result<void>.guard(() {});
     } on DioException catch (e) {
-      // Offline / network failure -> enqueue in the outbox and flush later.
-      if (await connectivity.isConnected == false || e.type == DioExceptionType.connectionError) {
+      if (await connectivity.isConnected == false ||
+          e.type == DioExceptionType.connectionError) {
         await database.chatOutboxDao.enqueue(
           ChatOutboxEntriesCompanion.insert(
             assistanceId: assistanceId,

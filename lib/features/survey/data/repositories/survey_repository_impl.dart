@@ -30,7 +30,10 @@ class SurveyRepositoryImpl implements SurveyRepository {
   }
 
   @override
-  Future<Result<void>> submit(String assistanceId, List<SurveyAnswer> answers) async {
+  Future<Result<void>> submit(
+    String assistanceId,
+    List<SurveyAnswer> answers,
+  ) async {
     try {
       final body = answers.map(mapper.answerToBody).toList();
       await remoteDataSource.submit(assistanceId, body);

@@ -27,11 +27,15 @@ void main() {
 
     test('fold routes success and failure', () {
       expect(
-        const Success<int>(1).fold(onSuccess: (v) => 'ok:$v', onFailure: (_) => 'err'),
+        const Success<int>(
+          1,
+        ).fold(onSuccess: (v) => 'ok:$v', onFailure: (_) => 'err'),
         'ok:1',
       );
       expect(
-        Err<int>(Failure.timeout()).fold(onSuccess: (v) => 'ok:$v', onFailure: (_) => 'err'),
+        Err<int>(
+          Failure.timeout(),
+        ).fold(onSuccess: (v) => 'ok:$v', onFailure: (_) => 'err'),
         'err',
       );
     });

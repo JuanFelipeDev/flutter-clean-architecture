@@ -1,8 +1,6 @@
 /// Typed result channel for all async operations.
 ///
-/// Replaces PRESTADOR's `arrow.core.Either<ErrorResponse, SuccessResponse<T>>`
 /// with an idiomatic Dart sealed type. This is the single error channel used
-/// across the app (AFILIADO's mixed `GenericResponse`/exception/toast handling
 /// is unified here).
 library;
 

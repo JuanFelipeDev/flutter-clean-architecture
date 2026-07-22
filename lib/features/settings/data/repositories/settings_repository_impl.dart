@@ -40,9 +40,7 @@ class SettingsRepositoryImpl implements SettingsRepository {
   Future<Result<void>> logout() async {
     try {
       await remoteDataSource.logout();
-    } on Object {
-      // Best-effort: clear locally even if the server call fails.
-    }
+    } on Object {}
     try {
       await storage.clearSession();
       return Result<void>.guard(() {});

@@ -1,4 +1,3 @@
-/// Remote data source for beneficiary (AFILIADO `obtener_beneficiarios/`,
 /// `crear_beneficiarios/`, `editar_beneficiario/`, `eliminar_beneficiario/`,
 /// `obtener_parentescos/`).
 library;
@@ -19,7 +18,10 @@ class BeneficiaryRemoteDataSource {
     return parseBeneficiaries(res.data);
   }
 
-  Future<BeneficiaryDto> fetchDetail(String affKey, String beneficiaryId) async {
+  Future<BeneficiaryDto> fetchDetail(
+    String affKey,
+    String beneficiaryId,
+  ) async {
     final res = await _dio.get<dynamic>(
       'obtener_detalle_beneficiario/',
       queryParameters: {'affkey': affKey, 'id': beneficiaryId},

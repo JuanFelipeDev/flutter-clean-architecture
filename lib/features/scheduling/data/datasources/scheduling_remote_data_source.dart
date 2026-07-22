@@ -1,4 +1,3 @@
-/// Remote data source for scheduling (AFILIADO `obtener_franja_horario_servicio`,
 /// `validar_servicio_programadas`, scheduled assistance creation).
 library;
 

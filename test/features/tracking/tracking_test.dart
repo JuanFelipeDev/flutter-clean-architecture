@@ -15,25 +15,37 @@ import 'package:flutter_test/flutter_test.dart';
 
 class _FakeTrackingRepository implements TrackingRepository {
   @override
-  Future<Result<List<ActiveAssistance>>> activeAssistances(String affKey) async =>
-      const Success([ActiveAssistance(id: 'a1', serviceId: 's1', status: 'active')]);
+  Future<Result<List<ActiveAssistance>>> activeAssistances(
+    String affKey,
+  ) async => const Success([
+    ActiveAssistance(id: 'a1', serviceId: 's1', status: 'active'),
+  ]);
   @override
-  Future<Result<void>> confirmArrival(String assistanceId) async => Result<void>.guard(() {});
-  @override
-  Future<Result<void>> confirmFinal(String assistanceId) async => Result<void>.guard(() {});
-  @override
-  Future<Result<void>> sendPanic(String assistanceId, double lat, double lng) async =>
+  Future<Result<void>> confirmArrival(String assistanceId) async =>
       Result<void>.guard(() {});
+  @override
+  Future<Result<void>> confirmFinal(String assistanceId) async =>
+      Result<void>.guard(() {});
+  @override
+  Future<Result<void>> sendPanic(
+    String assistanceId,
+    double lat,
+    double lng,
+  ) async => Result<void>.guard(() {});
 }
 
 class _FakeSocketManager implements SocketManager {
-  final StreamController<SocketEvent> _controller = StreamController<SocketEvent>.broadcast();
+  final StreamController<SocketEvent> _controller =
+      StreamController<SocketEvent>.broadcast();
   StreamSink<SocketEvent> get sink => _controller.sink;
 
   @override
   Stream<SocketEvent> get events => _controller.stream;
   @override
-  Future<void> connect(SocketChannel channel, {Map<String, String>? auth}) async {}
+  Future<void> connect(
+    SocketChannel channel, {
+    Map<String, String>? auth,
+  }) async {}
   @override
   Future<void> disconnect(SocketChannel channel) async {}
   @override
@@ -46,11 +58,16 @@ void main() {
   group('TrackingMapper', () {
     const mapper = TrackingMapper();
     test('parses a tracking event by Type', () {
-      final parsed = mapper.parseTrackingEvent(<String, dynamic>{'Type': 'arrival_request'});
+      final parsed = mapper.parseTrackingEvent(<String, dynamic>{
+        'Type': 'arrival_request',
+      });
       expect(parsed.type, TrackingEventType.arrivalRequest);
     });
     test('parses coordinates payload', () {
-      final coords = mapper.parseCoordinates('a1', <String, dynamic>{'lat': 1.1, 'lng': 2.2});
+      final coords = mapper.parseCoordinates('a1', <String, dynamic>{
+        'lat': 1.1,
+        'lng': 2.2,
+      });
       expect(coords, isNotNull);
       expect(coords!.lng, 2.2);
     });
@@ -64,11 +81,15 @@ void main() {
 
     ProviderContainer makeContainer() {
       socket = _FakeSocketManager();
-      final container = ProviderContainer(overrides: [
-        cachedSessionProvider.overrideWith((_) => session),
-        trackingRepositoryProvider.overrideWithValue(_FakeTrackingRepository()),
-        socketManagerProvider.overrideWithValue(socket),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          cachedSessionProvider.overrideWith((_) => session),
+          trackingRepositoryProvider.overrideWithValue(
+            _FakeTrackingRepository(),
+          ),
+          socketManagerProvider.overrideWithValue(socket),
+        ],
+      );
       return container;
     }
 
@@ -85,12 +106,13 @@ void main() {
       addTearDown(container.dispose);
       final notifier = container.read(trackingProvider.notifier);
       await notifier.start();
-      socket.sink.add(const RawSocketEvent(
-        channel: SocketChannel.coordinates,
-        type: null,
-        payload: {'assistance_id': 'a1', 'lat': 4.5, 'lng': -74.0},
-      ));
-      // Give the broadcast stream a microtask to deliver.
+      socket.sink.add(
+        const RawSocketEvent(
+          channel: SocketChannel.coordinates,
+          type: null,
+          payload: {'assistance_id': 'a1', 'lat': 4.5, 'lng': -74.0},
+        ),
+      );
       await Future<void>.delayed(Duration.zero);
       final coords = container.read(trackingProvider).coordinates['a1'];
       expect(coords, isNotNull);
@@ -102,11 +124,13 @@ void main() {
       addTearDown(container.dispose);
       final notifier = container.read(trackingProvider.notifier);
       await notifier.start();
-      socket.sink.add(const RawSocketEvent(
-        channel: SocketChannel.tracking,
-        type: null,
-        payload: {'Type': 'monitoring'},
-      ));
+      socket.sink.add(
+        const RawSocketEvent(
+          channel: SocketChannel.tracking,
+          type: null,
+          payload: {'Type': 'monitoring'},
+        ),
+      );
       await Future<void>.delayed(Duration.zero);
       expect(
         container.read(trackingProvider).lastEvent,

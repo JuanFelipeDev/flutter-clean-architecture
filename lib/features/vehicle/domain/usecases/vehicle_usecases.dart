@@ -14,7 +14,8 @@ class GetVehiclesUseCase {
 class CreateVehicleUseCase {
   CreateVehicleUseCase(this._repository);
   final VehicleRepository _repository;
-  Future<Result<Vehicle>> call(String affKey, Vehicle vehicle) => _repository.create(affKey, vehicle);
+  Future<Result<Vehicle>> call(String affKey, Vehicle vehicle) =>
+      _repository.create(affKey, vehicle);
 }
 
 class DisableVehicleUseCase {
@@ -32,5 +33,6 @@ class GetBrandsUseCase {
 class GetModelsUseCase {
   GetModelsUseCase(this._repository);
   final VehicleRepository _repository;
-  Future<Result<List<VehicleModel>>> call(String brandId) => _repository.models(brandId);
+  Future<Result<List<VehicleModel>>> call(String brandId) =>
+      _repository.models(brandId);
 }

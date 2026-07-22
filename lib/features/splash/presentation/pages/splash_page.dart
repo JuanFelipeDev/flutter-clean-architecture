@@ -1,5 +1,4 @@
 /// Splash screen — runs root (release) + version checks, then routes to login
-/// or home (AFILIADO `SplashActivity` / `OpenApp`).
 library;
 
 import 'package:flutter/material.dart';
@@ -24,7 +23,6 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   @override
   void initState() {
     super.initState();
-    // Start after the first frame so providers are available.
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(splashProvider.notifier).start();
     });
@@ -59,8 +57,11 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     return switch (state) {
       SplashInitial() || SplashLoading() => _loading(theme, appName),
       SplashRooted() => _rooted(context, theme),
-      SplashUpdateRequired(:final latestVersion) =>
-        _updateRequired(context, theme, latestVersion),
+      SplashUpdateRequired(:final latestVersion) => _updateRequired(
+        context,
+        theme,
+        latestVersion,
+      ),
       SplashReady() => _loading(theme, appName),
     };
   }
@@ -73,8 +74,9 @@ class _SplashPageState extends ConsumerState<SplashPage> {
         const SizedBox(height: 16),
         Text(
           appName,
-          style: theme.textTheme.headlineSmall
-              ?.copyWith(color: theme.colorScheme.onPrimaryContainer),
+          style: theme.textTheme.headlineSmall?.copyWith(
+            color: theme.colorScheme.onPrimaryContainer,
+          ),
         ),
         const SizedBox(height: 24),
         CircularProgressIndicator(color: theme.colorScheme.primary),
@@ -106,7 +108,11 @@ class _SplashPageState extends ConsumerState<SplashPage> {
     );
   }
 
-  Widget _updateRequired(BuildContext context, ThemeData theme, String version) {
+  Widget _updateRequired(
+    BuildContext context,
+    ThemeData theme,
+    String version,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(32),
       child: Column(
@@ -114,10 +120,7 @@ class _SplashPageState extends ConsumerState<SplashPage> {
         children: [
           Icon(Icons.system_update, size: 64, color: theme.colorScheme.primary),
           const SizedBox(height: 16),
-          Text(
-            'Update required',
-            style: theme.textTheme.titleMedium,
-          ),
+          Text('Update required', style: theme.textTheme.titleMedium),
           const SizedBox(height: 8),
           Text('Latest version: $version', style: theme.textTheme.bodyMedium),
           const SizedBox(height: 24),

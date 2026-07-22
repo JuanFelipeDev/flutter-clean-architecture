@@ -1,5 +1,4 @@
 /// Encrypted storage for sensitive data (JWT, session JSON, biometric creds).
-/// Direct analog of AFILIADO's `EncryptedPreferences` + PRESTADOR's
 /// `ProviderPreferences` (EncryptedSharedPreferences, AES256-GCM).
 library;
 
@@ -9,22 +8,25 @@ import '../config/app_constants.dart';
 
 class SecureStorageService {
   SecureStorageService({FlutterSecureStorage? storage})
-    : _storage = storage ?? const FlutterSecureStorage(
-        aOptions: AndroidOptions(encryptedSharedPreferences: true),
-        iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
-      );
+    : _storage =
+          storage ??
+          const FlutterSecureStorage(
+            aOptions: AndroidOptions(encryptedSharedPreferences: true),
+            iOptions: IOSOptions(
+              accessibility: KeychainAccessibility.first_unlock,
+            ),
+          );
 
   final FlutterSecureStorage _storage;
 
   Future<String?> read(String key) => _storage.read(key: key);
 
-  Future<void> write(String key, String value) => _storage.write(key: key, value: value);
+  Future<void> write(String key, String value) =>
+      _storage.write(key: key, value: value);
 
   Future<void> delete(String key) => _storage.delete(key: key);
 
   Future<void> deleteAll() => _storage.deleteAll();
-
-  // -- Typed convenience (session) ---------------------------------------
 
   Future<String?> accessToken() => read(StorageKeys.accessToken);
 
@@ -46,7 +48,6 @@ class SecureStorageService {
     }
   }
 
-  /// Serialized `LoginSession` JSON (AFILIADO `login_data`).
   Future<String?> loginData() => read(StorageKeys.loginData);
   Future<void> setLoginData(String? json) async {
     if (json == null) {
@@ -56,7 +57,6 @@ class SecureStorageService {
     }
   }
 
-  /// Serialized `ClientProfile` JSON (AFILIADO `profile_data`).
   Future<String?> profileData() => read(StorageKeys.profileData);
   Future<void> setProfileData(String? json) async {
     if (json == null) {

@@ -9,8 +9,11 @@ import '../config/flavor_config.dart';
 
 /// Creates a [Dio] configured with base URL ([flavor.urlServerFor] of [env]),
 /// timeouts, and the provided interceptors (order-sensitive, matching
-/// PRESTADOR's `NetworkModule`).
-Dio createDio(FlavorConfig flavor, Environment env, List<Interceptor> interceptors) {
+Dio createDio(
+  FlavorConfig flavor,
+  Environment env,
+  List<Interceptor> interceptors,
+) {
   final dio = Dio(
     BaseOptions(
       baseUrl: flavor.urlServerFor(env),
@@ -18,14 +21,11 @@ Dio createDio(FlavorConfig flavor, Environment env, List<Interceptor> intercepto
       sendTimeout: NetworkLimits.defaultTimeout,
       receiveTimeout: NetworkLimits.defaultTimeout,
       responseType: ResponseType.json,
-      validateStatus: (_) => true, // errors handled by interceptors + mapper
-      headers: const <String, dynamic>{
-        'Accept': 'application/json',
-      },
+      validateStatus: (_) => true,
+      headers: const <String, dynamic>{'Accept': 'application/json'},
     ),
   );
 
-  // Order mirrors PRESTADOR's NetworkModule interceptor chain.
   for (final interceptor in interceptors) {
     dio.interceptors.add(interceptor);
   }

@@ -1,5 +1,4 @@
 /// Riverpod wiring for the notifications feature. [NotificationsNotifier]
-/// loads the list + unread counter (AFILIADO `NotificationsActivity` +
 /// `BaseActivity.fillNumberNotifications`).
 library;
 
@@ -14,18 +13,23 @@ import '../../domain/repositories/notifications_repository.dart';
 import '../../domain/usecases/notifications_usecases.dart';
 import '../states/notifications_state.dart';
 
-final notificationsRemoteDataSourceProvider = Provider<NotificationsRemoteDataSource>((ref) {
-  return NotificationsRemoteDataSource(ref.watch(dioProvider));
-});
+final notificationsRemoteDataSourceProvider =
+    Provider<NotificationsRemoteDataSource>((ref) {
+      return NotificationsRemoteDataSource(ref.watch(dioProvider));
+    });
 
-final notificationsRepositoryProvider = Provider<NotificationsRepository>((ref) {
+final notificationsRepositoryProvider = Provider<NotificationsRepository>((
+  ref,
+) {
   return NotificationsRepositoryImpl(
     remoteDataSource: ref.watch(notificationsRemoteDataSourceProvider),
     mapper: const NotificationsMapper(),
   );
 });
 
-final getNotificationsUseCaseProvider = Provider<GetNotificationsUseCase>((ref) {
+final getNotificationsUseCaseProvider = Provider<GetNotificationsUseCase>((
+  ref,
+) {
   return GetNotificationsUseCase(ref.watch(notificationsRepositoryProvider));
 });
 
@@ -35,17 +39,24 @@ final getUnreadCountUseCaseProvider = Provider<GetUnreadCountUseCase>((ref) {
 
 class NotificationsNotifier extends Notifier<NotificationsState> {
   @override
-  NotificationsState build() => const NotificationsState(status: NotificationsStatus.loading);
+  NotificationsState build() =>
+      const NotificationsState(status: NotificationsStatus.loading);
 
   String? get _username => ref.read(cachedSessionProvider)?.username;
 
   Future<void> load() async {
     final username = _username;
     if (username == null) {
-      state = state.copyWith(status: NotificationsStatus.failure, errorMessage: 'No session');
+      state = state.copyWith(
+        status: NotificationsStatus.failure,
+        errorMessage: 'No session',
+      );
       return;
     }
-    state = state.copyWith(status: NotificationsStatus.loading, errorMessage: '');
+    state = state.copyWith(
+      status: NotificationsStatus.loading,
+      errorMessage: '',
+    );
     final list = await ref.read(getNotificationsUseCaseProvider).call(username);
     final count = await ref.read(getUnreadCountUseCaseProvider).call(username);
     state = state.copyWith(
@@ -57,4 +68,6 @@ class NotificationsNotifier extends Notifier<NotificationsState> {
 }
 
 final notificationsProvider =
-    NotifierProvider<NotificationsNotifier, NotificationsState>(NotificationsNotifier.new);
+    NotifierProvider<NotificationsNotifier, NotificationsState>(
+      NotificationsNotifier.new,
+    );

@@ -1,10 +1,10 @@
-/// Payment UI state (AFILIADO `PlansShopActivity` / `UniqueServicesActivity` /
 /// shopping list). The cart lives in memory until checkout.
 library;
 
 import '../../domain/entities/payment_entities.dart';
 
 enum PaymentTab { plans, services, cart }
+
 enum PaymentStatus { idle, loading, paying, success, failure }
 
 class PaymentState {

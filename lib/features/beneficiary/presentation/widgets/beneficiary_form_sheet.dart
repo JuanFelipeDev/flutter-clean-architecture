@@ -1,4 +1,3 @@
-/// Bottom sheet form to create/edit a beneficiary (AFILIADO
 /// `DetailBeneficiaryActivity` + `obtener_parentescos` relationship picker).
 library;
 
@@ -31,7 +30,9 @@ class _BeneficiaryFormSheetState extends State<BeneficiaryFormSheet> {
   void initState() {
     super.initState();
     _name = TextEditingController(text: widget.existing?.name ?? '');
-    _document = TextEditingController(text: widget.existing?.documentNumber ?? '');
+    _document = TextEditingController(
+      text: widget.existing?.documentNumber ?? '',
+    );
     _relationshipId = widget.existing?.relationship;
   }
 
@@ -45,12 +46,16 @@ class _BeneficiaryFormSheetState extends State<BeneficiaryFormSheet> {
   void _submit() {
     final name = _name.text.trim();
     if (name.isEmpty) return;
-    widget.onSubmit(Beneficiary(
-      id: widget.existing?.id ?? '',
-      name: name,
-      relationship: _relationshipId,
-      documentNumber: _document.text.trim().isEmpty ? null : _document.text.trim(),
-    ));
+    widget.onSubmit(
+      Beneficiary(
+        id: widget.existing?.id ?? '',
+        name: name,
+        relationship: _relationshipId,
+        documentNumber: _document.text.trim().isEmpty
+            ? null
+            : _document.text.trim(),
+      ),
+    );
     Navigator.of(context).pop();
   }
 
@@ -72,7 +77,10 @@ class _BeneficiaryFormSheetState extends State<BeneficiaryFormSheet> {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 16),
-          TextField(controller: _name, decoration: const InputDecoration(labelText: 'Name')),
+          TextField(
+            controller: _name,
+            decoration: const InputDecoration(labelText: 'Name'),
+          ),
           const SizedBox(height: 12),
           DropdownButtonFormField<String>(
             key: ValueKey('rel-$_relationshipId'),

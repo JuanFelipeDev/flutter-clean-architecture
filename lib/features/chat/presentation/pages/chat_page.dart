@@ -1,4 +1,3 @@
-/// Chat screen — message list + composer (AFILIADO `ChatActivity`). Receives
 /// an `assistanceId` via the route and binds [chatProvider] to it.
 library;
 
@@ -31,7 +30,6 @@ class _ChatPageState extends ConsumerState<ChatPage> {
 
   @override
   void dispose() {
-    // Cancel socket/connectivity listeners when leaving the chat.
     ref.read(chatProvider.notifier).stop();
     _controller.dispose();
     _scrollController.dispose();
@@ -63,11 +61,16 @@ class _ChatPageState extends ConsumerState<ChatPage> {
                       controller: _scrollController,
                       padding: const EdgeInsets.all(12),
                       itemCount: messages.length,
-                      itemBuilder: (context, i) => _MessageBubble(message: messages[i]),
+                      itemBuilder: (context, i) =>
+                          _MessageBubble(message: messages[i]),
                     ),
             ),
             const Divider(height: 1),
-            _Composer(controller: _controller, onSend: _send, sending: state.status == ChatStatus.sending),
+            _Composer(
+              controller: _controller,
+              onSend: _send,
+              sending: state.status == ChatStatus.sending,
+            ),
           ],
         ),
       ),
@@ -88,9 +91,13 @@ class _MessageBubble extends StatelessWidget {
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 4),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(context).width * 0.75),
+        constraints: BoxConstraints(
+          maxWidth: MediaQuery.sizeOf(context).width * 0.75,
+        ),
         decoration: BoxDecoration(
-          color: own ? theme.colorScheme.primary : theme.colorScheme.surfaceContainerHighest,
+          color: own
+              ? theme.colorScheme.primary
+              : theme.colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(
@@ -98,7 +105,11 @@ class _MessageBubble extends StatelessWidget {
           children: [
             Text(
               message.content,
-              style: TextStyle(color: own ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface),
+              style: TextStyle(
+                color: own
+                    ? theme.colorScheme.onPrimary
+                    : theme.colorScheme.onSurface,
+              ),
             ),
             if (message.createdAt != null)
               Padding(
@@ -116,7 +127,11 @@ class _MessageBubble extends StatelessWidget {
 }
 
 class _Composer extends StatelessWidget {
-  const _Composer({required this.controller, required this.onSend, required this.sending});
+  const _Composer({
+    required this.controller,
+    required this.onSend,
+    required this.sending,
+  });
   final TextEditingController controller;
   final VoidCallback onSend;
   final bool sending;
@@ -138,8 +153,18 @@ class _Composer extends StatelessWidget {
           ),
           const SizedBox(width: 8),
           sending
-              ? const Padding(padding: EdgeInsets.all(12), child: SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2)))
-              : IconButton.filled(icon: const Icon(Icons.send), onPressed: onSend),
+              ? const Padding(
+                  padding: EdgeInsets.all(12),
+                  child: SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                )
+              : IconButton.filled(
+                  icon: const Icon(Icons.send),
+                  onPressed: onSend,
+                ),
         ],
       ),
     );

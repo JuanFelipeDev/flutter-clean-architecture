@@ -1,6 +1,5 @@
 /// Central Socket.IO manager seam. Phase 4 implements this with
 /// `socket_io_client`, managing the channels defined in [SocketChannel] with
-/// exponential-backoff reconnection (PRESTADOR `SocketManager` parity).
 library;
 
 import 'dart:async';
@@ -22,7 +21,10 @@ class NoopSocketManager implements SocketManager {
   Stream<SocketEvent> get events => const Stream<SocketEvent>.empty();
 
   @override
-  Future<void> connect(SocketChannel channel, {Map<String, dynamic>? auth}) async {}
+  Future<void> connect(
+    SocketChannel channel, {
+    Map<String, dynamic>? auth,
+  }) async {}
 
   @override
   Future<void> disconnect(SocketChannel channel) async {}

@@ -1,4 +1,3 @@
-/// Remote data source for notifications (AFILIADO
 /// `soaang-notifier/notifications/affiliate/{username}/` list +
 /// `obtener_numero_notificaciones/` counter).
 library;
@@ -25,7 +24,8 @@ class NotificationsRemoteDataSource {
     );
     final data = res.data;
     if (data is Map) {
-      final count = data['count'] ?? data['total'] ?? data['num_notificaciones'];
+      final count =
+          data['count'] ?? data['total'] ?? data['num_notificaciones'];
       if (count is num) return count.toInt();
     }
     if (data is num) return data.toInt();

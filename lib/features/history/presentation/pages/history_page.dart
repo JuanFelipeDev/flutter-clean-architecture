@@ -1,4 +1,3 @@
-/// History screen — paginated past-assistance list (AFILIADO
 /// `ServiceHistoryFragment`). Loads the first page on open and appends more
 /// when the list scrolls near the bottom.
 library;
@@ -19,7 +18,8 @@ class HistoryPage extends ConsumerStatefulWidget {
 }
 
 class _HistoryPageState extends ConsumerState<HistoryPage> {
-  late final ScrollController _scroll = ScrollController()..addListener(_onScroll);
+  late final ScrollController _scroll = ScrollController()
+    ..addListener(_onScroll);
 
   @override
   void initState() {
@@ -51,21 +51,21 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
         child: state.items.isEmpty && state.status == HistoryStatus.loading
             ? const Center(child: LoadingIndicator())
             : state.items.isEmpty
-                ? const Center(child: Text('No history'))
-                : ListView.builder(
-                    controller: _scroll,
-                    padding: const EdgeInsets.all(16),
-                    itemCount: state.items.length + (state.hasMore ? 1 : 0),
-                    itemBuilder: (context, i) {
-                      if (i == state.items.length) {
-                        return const Padding(
-                          padding: EdgeInsets.all(16),
-                          child: Center(child: LoadingIndicator()),
-                        );
-                      }
-                      return _HistoryTile(item: state.items[i]);
-                    },
-                  ),
+            ? const Center(child: Text('No history'))
+            : ListView.builder(
+                controller: _scroll,
+                padding: const EdgeInsets.all(16),
+                itemCount: state.items.length + (state.hasMore ? 1 : 0),
+                itemBuilder: (context, i) {
+                  if (i == state.items.length) {
+                    return const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Center(child: LoadingIndicator()),
+                    );
+                  }
+                  return _HistoryTile(item: state.items[i]);
+                },
+              ),
       ),
     );
   }
@@ -80,11 +80,13 @@ class _HistoryTile extends StatelessWidget {
     return ListTile(
       leading: const Icon(Icons.history),
       title: Text(item.serviceName ?? 'Assistance ${item.id}'),
-      subtitle: Text([
-        if (item.status != null) item.status!,
-        if (item.providerName != null) item.providerName!,
-        if (item.address != null) item.address!,
-      ].join(' · ')),
+      subtitle: Text(
+        [
+          if (item.status != null) item.status!,
+          if (item.providerName != null) item.providerName!,
+          if (item.address != null) item.address!,
+        ].join(' · '),
+      ),
     );
   }
 }

@@ -8,7 +8,8 @@ import '../repositories/beneficiary_repository.dart';
 class GetBeneficiariesUseCase {
   GetBeneficiariesUseCase(this._repository);
   final BeneficiaryRepository _repository;
-  Future<Result<List<Beneficiary>>> call(String affKey) => _repository.list(affKey);
+  Future<Result<List<Beneficiary>>> call(String affKey) =>
+      _repository.list(affKey);
 }
 
 class GetBeneficiaryDetailUseCase {
@@ -28,13 +29,15 @@ class CreateBeneficiaryUseCase {
 class UpdateBeneficiaryUseCase {
   UpdateBeneficiaryUseCase(this._repository);
   final BeneficiaryRepository _repository;
-  Future<Result<Beneficiary>> call(Beneficiary beneficiary) => _repository.update(beneficiary);
+  Future<Result<Beneficiary>> call(Beneficiary beneficiary) =>
+      _repository.update(beneficiary);
 }
 
 class DeleteBeneficiaryUseCase {
   DeleteBeneficiaryUseCase(this._repository);
   final BeneficiaryRepository _repository;
-  Future<Result<void>> call(String beneficiaryId) => _repository.delete(beneficiaryId);
+  Future<Result<void>> call(String beneficiaryId) =>
+      _repository.delete(beneficiaryId);
 }
 
 class GetRelationshipsUseCase {

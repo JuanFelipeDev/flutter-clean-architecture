@@ -1,4 +1,3 @@
-/// Two-factor verification use case (AFILIADO `DoubleFactAuthViewModel`).
 library;
 
 import '../../../../core/error/result.dart';

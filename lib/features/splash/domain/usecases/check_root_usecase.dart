@@ -1,4 +1,3 @@
-/// Checks whether the device is rooted/jailbroken (AFILIADO `RootBeer`,
 /// release-gated). Returns `true` when insecure.
 library;
 

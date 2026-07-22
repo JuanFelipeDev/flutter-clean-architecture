@@ -1,5 +1,4 @@
 /// Riverpod wiring for the survey feature. [SurveyNotifier] loads the
-/// questions for an assistance and submits the answers (AFILIADO
 /// `SurveyActivity`).
 library;
 
@@ -25,7 +24,9 @@ final surveyRepositoryProvider = Provider<SurveyRepository>((ref) {
   );
 });
 
-final getSurveyQuestionsUseCaseProvider = Provider<GetSurveyQuestionsUseCase>((ref) {
+final getSurveyQuestionsUseCaseProvider = Provider<GetSurveyQuestionsUseCase>((
+  ref,
+) {
   return GetSurveyQuestionsUseCase(ref.watch(surveyRepositoryProvider));
 });
 
@@ -43,7 +44,9 @@ class SurveyNotifier extends Notifier<SurveyState> {
   Future<void> load(String assistanceId) async {
     _assistanceId = assistanceId;
     state = state.copyWith(status: SurveyStatus.loading, errorMessage: '');
-    final result = await ref.read(getSurveyQuestionsUseCaseProvider).call(assistanceId);
+    final result = await ref
+        .read(getSurveyQuestionsUseCaseProvider)
+        .call(assistanceId);
     state = state.copyWith(
       questions: result.getOrNull() ?? const [],
       status: SurveyStatus.idle,
@@ -51,7 +54,8 @@ class SurveyNotifier extends Notifier<SurveyState> {
   }
 
   void setAnswer(String questionId, String answer) {
-    final answers = Map<String, String>.from(state.answers)..[questionId] = answer;
+    final answers = Map<String, String>.from(state.answers)
+      ..[questionId] = answer;
     state = state.copyWith(answers: answers);
   }
 
@@ -59,26 +63,35 @@ class SurveyNotifier extends Notifier<SurveyState> {
     final assistanceId = _assistanceId;
     if (assistanceId == null) return false;
     if (state.answers.length < state.questions.length) {
-      state = state.copyWith(status: SurveyStatus.failure, errorMessage: 'Answer all questions');
+      state = state.copyWith(
+        status: SurveyStatus.failure,
+        errorMessage: 'Answer all questions',
+      );
       return false;
     }
     state = state.copyWith(status: SurveyStatus.submitting, errorMessage: '');
     final answers = state.answers.entries
         .map((e) => SurveyAnswer(questionId: e.key, answer: e.value))
         .toList();
-    final result = await ref.read(submitSurveyUseCaseProvider).call(assistanceId, answers);
+    final result = await ref
+        .read(submitSurveyUseCaseProvider)
+        .call(assistanceId, answers);
     return result.fold(
       onSuccess: (_) {
         state = state.copyWith(status: SurveyStatus.success);
         return true;
       },
       onFailure: (failure) {
-        state = state.copyWith(status: SurveyStatus.failure, errorMessage: failure.message);
+        state = state.copyWith(
+          status: SurveyStatus.failure,
+          errorMessage: failure.message,
+        );
         return false;
       },
     );
   }
 }
 
-final surveyProvider =
-    NotifierProvider<SurveyNotifier, SurveyState>(SurveyNotifier.new);
+final surveyProvider = NotifierProvider<SurveyNotifier, SurveyState>(
+  SurveyNotifier.new,
+);

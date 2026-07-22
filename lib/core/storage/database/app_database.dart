@@ -15,7 +15,12 @@ import 'tables.dart';
 part 'app_database.g.dart';
 
 @DriftDatabase(
-  tables: [AssistCacheEntries, CoordinateEntries, ChatOutboxEntries, NotificationCacheEntries],
+  tables: [
+    AssistCacheEntries,
+    CoordinateEntries,
+    ChatOutboxEntries,
+    NotificationCacheEntries,
+  ],
   daos: [ChatOutboxDao],
 )
 class AppDatabase extends _$AppDatabase {
@@ -27,11 +32,11 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-        onCreate: (m) async => await m.createAll(),
-        beforeOpen: (details) async {
-          await customStatement('PRAGMA foreign_keys = ON');
-        },
-      );
+    onCreate: (m) async => await m.createAll(),
+    beforeOpen: (details) async {
+      await customStatement('PRAGMA foreign_keys = ON');
+    },
+  );
 }
 
 QueryExecutor _open() {

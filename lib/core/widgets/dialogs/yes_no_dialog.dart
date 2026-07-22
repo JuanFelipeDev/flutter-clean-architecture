@@ -1,4 +1,3 @@
-/// Confirmation dialog (PRESTADOR `YesOrNotDialog`).
 library;
 
 import 'package:flutter/material.dart';
@@ -31,7 +30,9 @@ class YesNoDialog extends StatelessWidget {
         ),
         FilledButton(
           style: isDestructive
-              ? FilledButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.error)
+              ? FilledButton.styleFrom(
+                  backgroundColor: Theme.of(context).colorScheme.error,
+                )
               : null,
           onPressed: () => Navigator.of(context).pop(true),
           child: Text(yesLabel),

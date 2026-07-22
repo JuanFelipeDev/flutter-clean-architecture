@@ -17,7 +17,9 @@ import '../../domain/usecases/check_version_usecase.dart';
 import '../../domain/usecases/decide_initial_route_usecase.dart';
 import '../states/splash_state.dart';
 
-final appConfigRemoteDataSourceProvider = Provider<AppConfigRemoteDataSource>((ref) {
+final appConfigRemoteDataSourceProvider = Provider<AppConfigRemoteDataSource>((
+  ref,
+) {
   return AppConfigRemoteDataSource(ref.watch(dioProvider));
 });
 
@@ -36,7 +38,9 @@ final checkVersionUseCaseProvider = Provider<CheckVersionUseCase>((ref) {
   return CheckVersionUseCase(ref.watch(appConfigRepositoryProvider));
 });
 
-final decideInitialRouteUseCaseProvider = Provider<DecideInitialRouteUseCase>((ref) {
+final decideInitialRouteUseCaseProvider = Provider<DecideInitialRouteUseCase>((
+  ref,
+) {
   return DecideInitialRouteUseCase(ref.watch(sessionRepositoryProvider));
 });
 
@@ -47,7 +51,6 @@ class SplashNotifier extends Notifier<SplashState> {
   Future<void> start({String? deepLinkCardId}) async {
     state = const SplashLoading();
 
-    // Root check only in release builds (AFILIADO `startValidationActivity`).
     if (!kDebugMode) {
       final rooted = await ref.read(checkRootUseCaseProvider).call();
       if (rooted.getOrNull() == true) {
@@ -58,7 +61,7 @@ class SplashNotifier extends Notifier<SplashState> {
 
     final versionResult = await ref
         .read(checkVersionUseCaseProvider)
-        .call(currentVersion: '1.0.0'); // package_info integration in Phase 6
+        .call(currentVersion: '1.0.0');
     final version = versionResult.getOrNull();
     if (version != null && version.isOutdated) {
       state = SplashUpdateRequired(version.latestVersion);
@@ -72,5 +75,6 @@ class SplashNotifier extends Notifier<SplashState> {
   }
 }
 
-final splashProvider =
-    NotifierProvider<SplashNotifier, SplashState>(SplashNotifier.new);
+final splashProvider = NotifierProvider<SplashNotifier, SplashState>(
+  SplashNotifier.new,
+);

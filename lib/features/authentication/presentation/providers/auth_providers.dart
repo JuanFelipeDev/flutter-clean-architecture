@@ -63,20 +63,27 @@ class LoginNotifier extends Notifier<LoginState> {
   Future<void> submit({String? deviceToken}) async {
     final credentials = _credentials();
     if (credentials == null) {
-      state = state.copyWith(status: LoginStatus.failure, errorMessage: 'Incomplete credentials');
+      state = state.copyWith(
+        status: LoginStatus.failure,
+        errorMessage: 'Incomplete credentials',
+      );
       return;
     }
 
     state = state.copyWith(status: LoginStatus.loading, errorMessage: '');
-    final result = await ref.read(loginUseCaseProvider).call(credentials, deviceToken: deviceToken);
+    final result = await ref
+        .read(loginUseCaseProvider)
+        .call(credentials, deviceToken: deviceToken);
 
     result.fold(
       onSuccess: (session) {
         // ignore: avoid_print
-        print('[LOGIN] success: requiresTwoFactor=${session.requiresTwoFactor} '
-            'twoFactorsAuth=${session.twoFactorsAuth} '
-            'user=${session.user?.id} userName=${session.userName} '
-            'affKey=${session.affKey} access=${session.accessToken.isNotEmpty}');
+        print(
+          '[LOGIN] success: requiresTwoFactor=${session.requiresTwoFactor} '
+          'twoFactorsAuth=${session.twoFactorsAuth} '
+          'user=${session.user?.id} userName=${session.userName} '
+          'affKey=${session.affKey} access=${session.accessToken.isNotEmpty}',
+        );
         if (session.requiresTwoFactor) {
           state = state.copyWith(
             status: LoginStatus.requiresTwoFactor,
@@ -89,7 +96,10 @@ class LoginNotifier extends Notifier<LoginState> {
       onFailure: (failure) {
         // ignore: avoid_print
         print('[LOGIN] failure: ${failure.message} (${failure.kind})');
-        state = state.copyWith(status: LoginStatus.failure, errorMessage: failure.message);
+        state = state.copyWith(
+          status: LoginStatus.failure,
+          errorMessage: failure.message,
+        );
       },
     );
   }
@@ -98,11 +108,16 @@ class LoginNotifier extends Notifier<LoginState> {
     final userName = state.twoFactorUserName;
     if (userName == null || code.isEmpty) return;
     state = state.copyWith(status: LoginStatus.loading, errorMessage: '');
-    final result = await ref.read(twoFactorUseCaseProvider).call(userName, code);
+    final result = await ref
+        .read(twoFactorUseCaseProvider)
+        .call(userName, code);
     result.fold(
-      onSuccess: (_) => state = state.copyWith(status: LoginStatus.success, errorMessage: ''),
-      onFailure: (failure) =>
-          state = state.copyWith(status: LoginStatus.failure, errorMessage: failure.message),
+      onSuccess: (_) =>
+          state = state.copyWith(status: LoginStatus.success, errorMessage: ''),
+      onFailure: (failure) => state = state.copyWith(
+        status: LoginStatus.failure,
+        errorMessage: failure.message,
+      ),
     );
   }
 
@@ -112,14 +127,21 @@ class LoginNotifier extends Notifier<LoginState> {
         if (state.username.isEmpty || state.password.isEmpty) return null;
         return StandardCredentials(state.username, state.password);
       case LoginStrategy.eo:
-        if (state.phone.isEmpty || state.name.isEmpty || state.password.isEmpty) return null;
+        if (state.phone.isEmpty || state.name.isEmpty || state.password.isEmpty)
+          return null;
         return EoCredentials(state.phone, state.name, state.password);
       case LoginStrategy.roble:
-        final creds = RobleCredentials(nit: state.nit, placa: state.placa, dpi: state.dpi);
+        final creds = RobleCredentials(
+          nit: state.nit,
+          placa: state.placa,
+          dpi: state.dpi,
+        );
         if (!creds.isValid) return null;
         return creds;
     }
   }
 }
 
-final loginProvider = NotifierProvider<LoginNotifier, LoginState>(LoginNotifier.new);
+final loginProvider = NotifierProvider<LoginNotifier, LoginState>(
+  LoginNotifier.new,
+);

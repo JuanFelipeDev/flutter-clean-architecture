@@ -1,4 +1,3 @@
-/// Beneficiary UI state (AFILIADO `BeneficiaryFragment` +
 /// `MapsBeneficiariesActivity`).
 library;
 

@@ -1,6 +1,5 @@
 /// Riverpod wiring for the profile feature. [ProfileNotifier] loads the
 /// profile + document types + companies, saves edits, and changes the
-/// password (AFILIADO `ProfileFragment` + `modificar_contrasena`).
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +14,9 @@ import '../../domain/repositories/profile_repository.dart';
 import '../../domain/usecases/profile_usecases.dart';
 import '../states/profile_state.dart';
 
-final profileRemoteDataSourceProvider = Provider<ProfileRemoteDataSource>((ref) {
+final profileRemoteDataSourceProvider = Provider<ProfileRemoteDataSource>((
+  ref,
+) {
   return ProfileRemoteDataSource(ref.watch(dioProvider));
 });
 
@@ -38,7 +39,9 @@ final changePasswordUseCaseProvider = Provider<ChangePasswordUseCase>((ref) {
   return ChangePasswordUseCase(ref.watch(profileRepositoryProvider));
 });
 
-final getDocumentTypesUseCaseProvider = Provider<GetDocumentTypesUseCase>((ref) {
+final getDocumentTypesUseCaseProvider = Provider<GetDocumentTypesUseCase>((
+  ref,
+) {
   return GetDocumentTypesUseCase(ref.watch(profileRepositoryProvider));
 });
 
@@ -55,7 +58,10 @@ class ProfileNotifier extends Notifier<ProfileState> {
   Future<void> load() async {
     final affKey = _affKey;
     if (affKey == null) {
-      state = state.copyWith(status: ProfileStatus.failure, errorMessage: 'No session');
+      state = state.copyWith(
+        status: ProfileStatus.failure,
+        errorMessage: 'No session',
+      );
       return;
     }
     state = state.copyWith(status: ProfileStatus.loading, errorMessage: '');
@@ -110,8 +116,12 @@ class ProfileNotifier extends Notifier<ProfileState> {
     final affKey = _affKey;
     if (affKey == null) return;
     state = state.copyWith(status: ProfileStatus.saving, errorMessage: '');
-    final result =
-        await ref.read(changePasswordUseCaseProvider).call(affKey, PassChange(oldPassword: oldPassword, newPassword: newPassword));
+    final result = await ref
+        .read(changePasswordUseCaseProvider)
+        .call(
+          affKey,
+          PassChange(oldPassword: oldPassword, newPassword: newPassword),
+        );
     result.fold(
       onSuccess: (_) => state = state.copyWith(status: ProfileStatus.success),
       onFailure: (failure) => state = state.copyWith(
@@ -122,5 +132,6 @@ class ProfileNotifier extends Notifier<ProfileState> {
   }
 }
 
-final profileProvider =
-    NotifierProvider<ProfileNotifier, ProfileState>(ProfileNotifier.new);
+final profileProvider = NotifierProvider<ProfileNotifier, ProfileState>(
+  ProfileNotifier.new,
+);

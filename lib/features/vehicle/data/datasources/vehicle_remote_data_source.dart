@@ -1,4 +1,3 @@
-/// Remote data source for vehicle (AFILIADO `list-affiliate-vehicles`,
 /// `create-affiliate-vehicle`, `disable-affiliate-vehicle`, brands, models).
 library;
 
@@ -27,11 +26,15 @@ class VehicleRemoteDataSource {
   }
 
   Future<void> disable(String vehicleId) async {
-    await _dio.delete<dynamic>('soaang-catalogs/api/affiliate/disable-affiliate-vehicle/$vehicleId/');
+    await _dio.delete<dynamic>(
+      'soaang-catalogs/api/affiliate/disable-affiliate-vehicle/$vehicleId/',
+    );
   }
 
   Future<List<BrandDto>> fetchBrands() async {
-    final res = await _dio.get<dynamic>('soaang-catalogs/api/parameters/brands/');
+    final res = await _dio.get<dynamic>(
+      'soaang-catalogs/api/parameters/brands/',
+    );
     return parseBrands(res.data);
   }
 

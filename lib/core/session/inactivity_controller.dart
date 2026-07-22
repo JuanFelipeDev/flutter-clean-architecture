@@ -1,4 +1,3 @@
-/// Inactivity timeout controller (AFILIADO `UserInactivityHandler` +
 /// `cltTimeLogoutApp`). Auto-logs-out after [timeout] of user inactivity,
 /// dispatching a session-expired event. Full wiring lands in Phase 4.
 library;

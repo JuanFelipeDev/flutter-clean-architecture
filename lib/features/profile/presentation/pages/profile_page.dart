@@ -1,4 +1,3 @@
-/// Profile screen — editable affiliate profile + password change (AFILIADO
 /// `ProfileFragment`). Fields use persistent controllers (see LoginForm) so
 /// editing/backspace works.
 library;
@@ -37,8 +36,11 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
       'documentNumber': TextEditingController(),
     };
     for (final entry in _controllers.entries) {
-      entry.value.addListener(() =>
-          ref.read(profileProvider.notifier).editField(entry.key, entry.value.text));
+      entry.value.addListener(
+        () => ref
+            .read(profileProvider.notifier)
+            .editField(entry.key, entry.value.text),
+      );
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.listenManual(profileProvider, _onChanged);
@@ -57,7 +59,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   }
 
   void _onChanged(ProfileState? previous, ProfileState next) {
-    // Sync controllers once when the profile first arrives.
     if (previous?.profile == null && next.profile != null) {
       _syncControllers(next.profile!);
     }
@@ -116,15 +117,22 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                       ),
                       const SizedBox(height: 12),
                       DropdownButtonFormField<String>(
-                        key: ValueKey('doctype-${state.profile?.documentTypeId}'),
+                        key: ValueKey(
+                          'doctype-${state.profile?.documentTypeId}',
+                        ),
                         initialValue: state.profile?.documentTypeId,
-                        decoration: const InputDecoration(labelText: 'Document type'),
+                        decoration: const InputDecoration(
+                          labelText: 'Document type',
+                        ),
                         items: [
                           for (final t in state.documentTypes)
                             DropdownMenuItem(value: t.id, child: Text(t.name)),
                         ],
                         onChanged: (value) {
-                          if (value != null) ref.read(profileProvider.notifier).editField('documentTypeId', value);
+                          if (value != null)
+                            ref
+                                .read(profileProvider.notifier)
+                                .editField('documentTypeId', value);
                         },
                       ),
                       const SizedBox(height: 12),
@@ -140,18 +148,25 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         child: const Text('Save'),
                       ),
                       const Divider(height: 48),
-                      Text('Change password', style: Theme.of(context).textTheme.titleMedium),
+                      Text(
+                        'Change password',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
                       const SizedBox(height: 12),
                       TextField(
                         controller: _oldPass,
                         obscureText: true,
-                        decoration: const InputDecoration(labelText: 'Current password'),
+                        decoration: const InputDecoration(
+                          labelText: 'Current password',
+                        ),
                       ),
                       const SizedBox(height: 12),
                       TextField(
                         controller: _newPass,
                         obscureText: true,
-                        decoration: const InputDecoration(labelText: 'New password'),
+                        decoration: const InputDecoration(
+                          labelText: 'New password',
+                        ),
                       ),
                       const SizedBox(height: 16),
                       FilledButton.tonal(

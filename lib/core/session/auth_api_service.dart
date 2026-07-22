@@ -1,4 +1,3 @@
-/// Auth API service for the core session refresh (AFILIADO
 /// `soaang-users/api/token/refresh/`). Uses a dedicated Dio (no refresh
 /// interceptor) to avoid recursion.
 library;
@@ -12,7 +11,9 @@ class AuthApiService {
 
   /// Refreshes the access token. Returns the new access token (and refresh if
   /// rotated). Throws [DioException] on failure; the caller maps to [Failure].
-  Future<({String access, String? refresh})> refresh(String refreshToken) async {
+  Future<({String access, String? refresh})> refresh(
+    String refreshToken,
+  ) async {
     final response = await _dio.post<dynamic>(
       'soaang-users/api/token/refresh/',
       data: {'refresh': refreshToken},

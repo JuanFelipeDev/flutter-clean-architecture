@@ -1,5 +1,4 @@
 /// Riverpod wiring for the vehicle feature. [VehicleNotifier] loads the
-/// affiliate vehicles + brands; selecting a brand loads its models (AFILIADO
 /// brand->model cascade). Supports create + disable.
 library;
 
@@ -15,7 +14,9 @@ import '../../domain/repositories/vehicle_repository.dart';
 import '../../domain/usecases/vehicle_usecases.dart';
 import '../states/vehicle_state.dart';
 
-final vehicleRemoteDataSourceProvider = Provider<VehicleRemoteDataSource>((ref) {
+final vehicleRemoteDataSourceProvider = Provider<VehicleRemoteDataSource>((
+  ref,
+) {
   return VehicleRemoteDataSource(ref.watch(dioProvider));
 });
 
@@ -55,7 +56,10 @@ class VehicleNotifier extends Notifier<VehicleState> {
   Future<void> load() async {
     final affKey = _affKey;
     if (affKey == null) {
-      state = state.copyWith(status: VehicleStatus.failure, errorMessage: 'No session');
+      state = state.copyWith(
+        status: VehicleStatus.failure,
+        errorMessage: 'No session',
+      );
       return;
     }
     state = state.copyWith(status: VehicleStatus.loading, errorMessage: '');
@@ -68,7 +72,6 @@ class VehicleNotifier extends Notifier<VehicleState> {
     );
   }
 
-  /// Loads models for [brandId] (AFILIADO `info_modelos` / parameters/models).
   Future<void> selectBrand(String brandId) async {
     final models = await ref.read(getModelsUseCaseProvider).call(brandId);
     state = state.copyWith(models: models.getOrNull() ?? const []);
@@ -78,7 +81,9 @@ class VehicleNotifier extends Notifier<VehicleState> {
     final affKey = _affKey;
     if (affKey == null) return;
     state = state.copyWith(status: VehicleStatus.saving, errorMessage: '');
-    final result = await ref.read(createVehicleUseCaseProvider).call(affKey, vehicle);
+    final result = await ref
+        .read(createVehicleUseCaseProvider)
+        .call(affKey, vehicle);
     result.fold(
       onSuccess: (created) => state = state.copyWith(
         vehicles: [...state.vehicles, created],
@@ -92,7 +97,9 @@ class VehicleNotifier extends Notifier<VehicleState> {
   }
 
   Future<void> remove(String vehicleId) async {
-    final result = await ref.read(disableVehicleUseCaseProvider).call(vehicleId);
+    final result = await ref
+        .read(disableVehicleUseCaseProvider)
+        .call(vehicleId);
     result.fold(
       onSuccess: (_) => state = state.copyWith(
         vehicles: state.vehicles.where((v) => v.id != vehicleId).toList(),
@@ -105,5 +112,6 @@ class VehicleNotifier extends Notifier<VehicleState> {
   }
 }
 
-final vehicleProvider =
-    NotifierProvider<VehicleNotifier, VehicleState>(VehicleNotifier.new);
+final vehicleProvider = NotifierProvider<VehicleNotifier, VehicleState>(
+  VehicleNotifier.new,
+);

@@ -13,7 +13,9 @@ class _FakeAuthApi implements AuthApiService {
   int calls = 0;
 
   @override
-  Future<({String access, String? refresh})> refresh(String refreshToken) async {
+  Future<({String access, String? refresh})> refresh(
+    String refreshToken,
+  ) async {
     calls++;
     return (access: _newAccess, refresh: refreshToken);
   }
@@ -29,19 +31,29 @@ void main() {
     service = SecureStorageService(storage: mockStorage);
     authApi = _FakeAuthApi('new-access');
 
-    // Default: no stored data.
-    when(() => mockStorage.read(key: any(named: 'key')))
-        .thenAnswer((_) async => null);
-    when(() => mockStorage.write(key: any(named: 'key'), value: any(named: 'value')))
-        .thenAnswer((_) async => ());
-    when(() => mockStorage.delete(key: any(named: 'key')))
-        .thenAnswer((_) async => ());
+    when(
+      () => mockStorage.read(key: any(named: 'key')),
+    ).thenAnswer((_) async => null);
+    when(
+      () => mockStorage.write(
+        key: any(named: 'key'),
+        value: any(named: 'value'),
+      ),
+    ).thenAnswer((_) async => ());
+    when(
+      () => mockStorage.delete(key: any(named: 'key')),
+    ).thenAnswer((_) async => ());
   });
 
   test('refresh succeeds when a refresh token is stored', () async {
-    const sessionJson = '{"access":"old","refresh":"old-refresh","client_id":"42"}';
-    when(() => mockStorage.read(key: 'login_data')).thenAnswer((_) async => sessionJson);
-    when(() => mockStorage.read(key: 'TOKEN')).thenAnswer((_) async => 'new-access');
+    const sessionJson =
+        '{"access":"old","refresh":"old-refresh","client_id":"42"}';
+    when(
+      () => mockStorage.read(key: 'login_data'),
+    ).thenAnswer((_) async => sessionJson);
+    when(
+      () => mockStorage.read(key: 'TOKEN'),
+    ).thenAnswer((_) async => 'new-access');
 
     final repo = SessionRepositoryImpl(storage: service, authApi: authApi);
     final result = await repo.refresh();
@@ -60,7 +72,9 @@ void main() {
   });
 
   test('hasSession reflects stored access token', () async {
-    when(() => mockStorage.read(key: 'TOKEN')).thenAnswer((_) async => 'a-token');
+    when(
+      () => mockStorage.read(key: 'TOKEN'),
+    ).thenAnswer((_) async => 'a-token');
     final repo = SessionRepositoryImpl(storage: service, authApi: authApi);
     expect(await repo.hasSession(), isTrue);
   });

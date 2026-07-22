@@ -1,4 +1,3 @@
-/// Analytics abstraction. AFILIADO/PRESTADOR lack a dedicated analytics SDK;
 /// this is a Flutter-improvement seam. Phase 4 wires `firebase_analytics`
 /// behind [FirebaseAnalyticsService]; until then [NoopAnalytics] is used.
 library;
@@ -12,7 +11,10 @@ abstract class AnalyticsService {
 
 class NoopAnalytics implements AnalyticsService {
   @override
-  Future<void> logEvent(String name, {Map<String, Object?>? parameters}) async {}
+  Future<void> logEvent(
+    String name, {
+    Map<String, Object?>? parameters,
+  }) async {}
   @override
   Future<void> setUserId(String? id) async {}
   @override

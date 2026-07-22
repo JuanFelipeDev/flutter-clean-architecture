@@ -1,6 +1,5 @@
 /// Riverpod wiring for the scheduling feature. [SchedulingNotifier] loads
 /// time slots for a date, validates, and confirms a scheduled assistance
-/// (AFILIADO `ProgramarActivity`).
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,9 +13,11 @@ import '../../domain/repositories/scheduling_repository.dart';
 import '../../domain/usecases/scheduling_usecases.dart';
 import '../states/scheduling_state.dart';
 
-final schedulingRemoteDataSourceProvider = Provider<SchedulingRemoteDataSource>((ref) {
-  return SchedulingRemoteDataSource(ref.watch(dioProvider));
-});
+final schedulingRemoteDataSourceProvider = Provider<SchedulingRemoteDataSource>(
+  (ref) {
+    return SchedulingRemoteDataSource(ref.watch(dioProvider));
+  },
+);
 
 final schedulingRepositoryProvider = Provider<SchedulingRepository>((ref) {
   return SchedulingRepositoryImpl(
@@ -29,7 +30,9 @@ final getTimeSlotsUseCaseProvider = Provider<GetTimeSlotsUseCase>((ref) {
   return GetTimeSlotsUseCase(ref.watch(schedulingRepositoryProvider));
 });
 
-final validateScheduleUseCaseProvider = Provider<ValidateScheduleUseCase>((ref) {
+final validateScheduleUseCaseProvider = Provider<ValidateScheduleUseCase>((
+  ref,
+) {
   return ValidateScheduleUseCase(ref.watch(schedulingRepositoryProvider));
 });
 
@@ -41,7 +44,8 @@ class SchedulingNotifier extends Notifier<SchedulingState> {
   @override
   SchedulingState build() => const SchedulingState();
 
-  void setService(String serviceId) => state = state.copyWith(serviceId: serviceId);
+  void setService(String serviceId) =>
+      state = state.copyWith(serviceId: serviceId);
 
   Future<void> pickDate(DateTime date) async {
     final serviceId = state.serviceId;
@@ -52,7 +56,9 @@ class SchedulingNotifier extends Notifier<SchedulingState> {
       slots: const [],
       status: SchedulingStatus.loading,
     );
-    final result = await ref.read(getTimeSlotsUseCaseProvider).call(serviceId, date);
+    final result = await ref
+        .read(getTimeSlotsUseCaseProvider)
+        .call(serviceId, date);
     state = state.copyWith(
       slots: result.getOrNull() ?? const [],
       status: SchedulingStatus.idle,
@@ -76,13 +82,24 @@ class SchedulingNotifier extends Notifier<SchedulingState> {
       address: state.address.isEmpty ? null : state.address,
     );
 
-    state = state.copyWith(status: SchedulingStatus.validating, errorMessage: '');
-    final validation = await ref.read(validateScheduleUseCaseProvider).call(request);
-    final valid = validation.fold(onSuccess: (v) => v.valid, onFailure: (_) => false);
+    state = state.copyWith(
+      status: SchedulingStatus.validating,
+      errorMessage: '',
+    );
+    final validation = await ref
+        .read(validateScheduleUseCaseProvider)
+        .call(request);
+    final valid = validation.fold(
+      onSuccess: (v) => v.valid,
+      onFailure: (_) => false,
+    );
     if (!valid) {
       state = state.copyWith(
         status: SchedulingStatus.failure,
-        errorMessage: validation.fold(onSuccess: (v) => v.message, onFailure: (f) => f.message),
+        errorMessage: validation.fold(
+          onSuccess: (v) => v.message,
+          onFailure: (f) => f.message,
+        ),
       );
       return false;
     }
@@ -94,7 +111,10 @@ class SchedulingNotifier extends Notifier<SchedulingState> {
         return true;
       },
       onFailure: (failure) {
-        state = state.copyWith(status: SchedulingStatus.failure, errorMessage: failure.message);
+        state = state.copyWith(
+          status: SchedulingStatus.failure,
+          errorMessage: failure.message,
+        );
         return false;
       },
     );
@@ -102,4 +122,6 @@ class SchedulingNotifier extends Notifier<SchedulingState> {
 }
 
 final schedulingProvider =
-    NotifierProvider<SchedulingNotifier, SchedulingState>(SchedulingNotifier.new);
+    NotifierProvider<SchedulingNotifier, SchedulingState>(
+      SchedulingNotifier.new,
+    );

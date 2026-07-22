@@ -19,7 +19,9 @@ import '../../domain/repositories/settings_repository.dart';
 import '../../domain/usecases/settings_usecases.dart';
 import '../states/settings_state.dart';
 
-final settingsRemoteDataSourceProvider = Provider<SettingsRemoteDataSource>((ref) {
+final settingsRemoteDataSourceProvider = Provider<SettingsRemoteDataSource>((
+  ref,
+) {
   return SettingsRemoteDataSource(ref.watch(dioProvider));
 });
 
@@ -31,9 +33,11 @@ final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
   );
 });
 
-final getAppConfigurationUseCaseProvider = Provider<GetAppConfigurationUseCase>((ref) {
-  return GetAppConfigurationUseCase(ref.watch(settingsRepositoryProvider));
-});
+final getAppConfigurationUseCaseProvider = Provider<GetAppConfigurationUseCase>(
+  (ref) {
+    return GetAppConfigurationUseCase(ref.watch(settingsRepositoryProvider));
+  },
+);
 
 final logoutUseCaseProvider = Provider<LogoutUseCase>((ref) {
   return LogoutUseCase(ref.watch(settingsRepositoryProvider));
@@ -51,11 +55,16 @@ class SettingsNotifier extends Notifier<SettingsState> {
   Future<void> loadConfiguration() async {
     final affKey = _affKey;
     if (affKey == null) {
-      state = state.copyWith(status: SettingsStatus.failure, errorMessage: 'No session');
+      state = state.copyWith(
+        status: SettingsStatus.failure,
+        errorMessage: 'No session',
+      );
       return;
     }
     state = state.copyWith(status: SettingsStatus.loading, errorMessage: '');
-    final result = await ref.read(getAppConfigurationUseCaseProvider).call(affKey);
+    final result = await ref
+        .read(getAppConfigurationUseCaseProvider)
+        .call(affKey);
     state = state.copyWith(
       configuration: result.getOrNull(),
       status: SettingsStatus.idle,
@@ -75,7 +84,6 @@ class SettingsNotifier extends Notifier<SettingsState> {
     final result = await ref.read(logoutUseCaseProvider).call();
     result.fold(
       onSuccess: (_) {
-        // Flip app auth state so the router returns to login.
         ref.read(cachedSessionProvider.notifier).state = null;
         ref.read(isAuthenticatedProvider.notifier).state = false;
         state = state.copyWith(status: SettingsStatus.success);
@@ -88,10 +96,10 @@ class SettingsNotifier extends Notifier<SettingsState> {
   }
 }
 
-final settingsProvider =
-    NotifierProvider<SettingsNotifier, SettingsState>(SettingsNotifier.new);
+final settingsProvider = NotifierProvider<SettingsNotifier, SettingsState>(
+  SettingsNotifier.new,
+);
 
-/// The languages AFILIADO supports (AFILIADO `getNameOfLanguage`).
 final supportedLanguagesProvider = Provider<List<LanguageOption>>((ref) {
   return const [
     LanguageOption(code: 'es', name: 'Español'),

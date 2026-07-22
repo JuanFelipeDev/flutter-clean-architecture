@@ -12,8 +12,10 @@ import 'typography.dart';
 class AppTheme {
   const AppTheme._();
 
-  static ThemeData light(FlavorConfig flavor) => _build(AppColorSchemes.light(flavor));
-  static ThemeData dark(FlavorConfig flavor) => _build(AppColorSchemes.dark(flavor));
+  static ThemeData light(FlavorConfig flavor) =>
+      _build(AppColorSchemes.light(flavor));
+  static ThemeData dark(FlavorConfig flavor) =>
+      _build(AppColorSchemes.dark(flavor));
 
   static ThemeData _build(ColorScheme scheme) {
     final base = ThemeData(

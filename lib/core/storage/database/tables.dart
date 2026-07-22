@@ -1,12 +1,9 @@
 /// Drift table definitions for the local relational store. Tables mirror the
-/// offline-first shape AFILIADO/PRESTADOR need: cached assists, live provider
-/// coordinates, a chat-send outbox (Flutter improvement — AFILIADO drops
 /// offline sends), and a notifications cache.
 library;
 
 import 'package:drift/drift.dart';
 
-/// Cached assistance summaries (AFILIADO active/history lists).
 class AssistCacheEntries extends Table {
   TextColumn get id => text()();
   TextColumn get affKey => text().nullable()();
@@ -18,7 +15,6 @@ class AssistCacheEntries extends Table {
   Set<Column<Object>> get primaryKey => {id};
 }
 
-/// Live provider coordinates per assistance (AFILIADO `mSocketCoordinates`).
 class CoordinateEntries extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get assistanceId => text()();
@@ -29,7 +25,6 @@ class CoordinateEntries extends Table {
 }
 
 /// Chat send outbox — messages persisted while offline and flushed on
-/// reconnect (improvement over AFILIADO which loses them).
 class ChatOutboxEntries extends Table {
   IntColumn get id => integer().autoIncrement()();
   TextColumn get assistanceId => text()();
@@ -38,7 +33,6 @@ class ChatOutboxEntries extends Table {
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }
 
-/// Cached notifications (AFILIADO `obtener_numero_notificaciones` / list).
 class NotificationCacheEntries extends Table {
   TextColumn get id => text()();
   TextColumn get type => text()();

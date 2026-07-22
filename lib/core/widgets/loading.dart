@@ -1,4 +1,3 @@
-/// Loading widgets (PRESTADOR `LoadingDialog` / `LoadingScreen`).
 library;
 
 import 'package:flutter/material.dart';
@@ -38,7 +37,11 @@ class LoadingScreen extends StatelessWidget {
 
 /// Modal loading overlay shown above content while an async op runs.
 class LoadingOverlay extends StatelessWidget {
-  const LoadingOverlay({required this.isLoading, required this.child, super.key});
+  const LoadingOverlay({
+    required this.isLoading,
+    required this.child,
+    super.key,
+  });
   final bool isLoading;
   final Widget child;
 

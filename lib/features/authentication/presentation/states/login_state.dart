@@ -1,4 +1,3 @@
-/// Login UI state (AFILIADO `LoginActivity` form + status).
 library;
 
 import '../../../../core/config/flavor_config.dart';

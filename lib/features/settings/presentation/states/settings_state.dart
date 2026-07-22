@@ -1,4 +1,3 @@
-/// Settings UI state (AFILIADO `configurationapp/` + language + logout).
 library;
 
 import '../../domain/entities/settings_entities.dart';

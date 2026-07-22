@@ -21,6 +21,7 @@ class _FakePrefs implements PrefsService {
   Future<void> setLocale(String tag) async {
     _localeTag = tag;
   }
+
   @override
   String? getString(String key) => null;
   @override
@@ -50,11 +51,13 @@ class _FakeSettingsRepository implements SettingsRepository {
 
   @override
   Future<Result<AppConfiguration>> appConfiguration(String affKey) async =>
-      const Success(AppConfiguration(
-        primaryColor: 0xFF1E88E5,
-        displayItemBeneficiaries: true,
-        maxInactivityMinutes: 10,
-      ));
+      const Success(
+        AppConfiguration(
+          primaryColor: 0xFF1E88E5,
+          displayItemBeneficiaries: true,
+          maxInactivityMinutes: 10,
+        ),
+      );
   @override
   Future<Result<void>> logout() async {
     loggedOut = true;
@@ -68,11 +71,13 @@ void main() {
   group('SettingsMapper', () {
     const mapper = SettingsMapper();
     test('parses colors and flags', () {
-      final cfg = mapper.toEntity(const AppConfigurationDto(
-        primaryColor: '#1E88E5',
-        displayItemBeneficiaries: true,
-        maxInactivityMinutes: 10,
-      ));
+      final cfg = mapper.toEntity(
+        const AppConfigurationDto(
+          primaryColor: '#1E88E5',
+          displayItemBeneficiaries: true,
+          maxInactivityMinutes: 10,
+        ),
+      );
       expect(cfg.primaryColor, 0xFF1E88E5);
       expect(cfg.displayItemBeneficiaries, isTrue);
       expect(cfg.maxInactivityMinutes, 10);
@@ -89,11 +94,13 @@ void main() {
 
     ProviderContainer makeContainer() {
       repo = _FakeSettingsRepository();
-      return ProviderContainer(overrides: [
-        cachedSessionProvider.overrideWith((_) => session),
-        settingsRepositoryProvider.overrideWithValue(repo),
-        prefsServiceProvider.overrideWith((_) => _FakePrefs()),
-      ]);
+      return ProviderContainer(
+        overrides: [
+          cachedSessionProvider.overrideWith((_) => session),
+          settingsRepositoryProvider.overrideWithValue(repo),
+          prefsServiceProvider.overrideWith((_) => _FakePrefs()),
+        ],
+      );
     }
 
     test('loads configuration', () async {
@@ -101,7 +108,13 @@ void main() {
       addTearDown(container.dispose);
       final notifier = container.read(settingsProvider.notifier);
       await notifier.loadConfiguration();
-      expect(container.read(settingsProvider).configuration?.displayItemBeneficiaries, isTrue);
+      expect(
+        container
+            .read(settingsProvider)
+            .configuration
+            ?.displayItemBeneficiaries,
+        isTrue,
+      );
     });
 
     test('changeLanguage updates the locale', () async {

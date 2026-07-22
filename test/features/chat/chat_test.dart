@@ -19,24 +19,40 @@ import 'package:flutter_test/flutter_test.dart';
 class _FakeChatRepository implements ChatRepository {
   List<String> sent = [];
   @override
-  Future<Result<List<ChatMessage>>> history(String assistanceId, {int page = 1}) async =>
-      const Success([ChatMessage(id: 'm1', assistanceId: 'a1', content: 'hi', username: 'prov', typeUser: 'prov')]);
+  Future<Result<List<ChatMessage>>> history(
+    String assistanceId, {
+    int page = 1,
+  }) async => const Success([
+    ChatMessage(
+      id: 'm1',
+      assistanceId: 'a1',
+      content: 'hi',
+      username: 'prov',
+      typeUser: 'prov',
+    ),
+  ]);
   @override
   Future<Result<void>> send(String assistanceId, String content) async {
     sent.add(content);
     return Result<void>.guard(() {});
   }
+
   @override
-  Future<Result<void>> flushOutbox(String assistanceId) async => Result<void>.guard(() {});
+  Future<Result<void>> flushOutbox(String assistanceId) async =>
+      Result<void>.guard(() {});
 }
 
 class _FakeSocketManager implements SocketManager {
-  final StreamController<SocketEvent> _controller = StreamController<SocketEvent>.broadcast();
+  final StreamController<SocketEvent> _controller =
+      StreamController<SocketEvent>.broadcast();
   StreamSink<SocketEvent> get sink => _controller.sink;
   @override
   Stream<SocketEvent> get events => _controller.stream;
   @override
-  Future<void> connect(SocketChannel channel, {Map<String, String>? auth}) async {}
+  Future<void> connect(
+    SocketChannel channel, {
+    Map<String, String>? auth,
+  }) async {}
   @override
   Future<void> disconnect(SocketChannel channel) async {}
   @override
@@ -60,14 +76,23 @@ void main() {
   group('ChatMapper', () {
     const mapper = ChatMapper();
     test('maps a DTO and detects own message', () {
-      final m = mapper.toEntity(const ChatMessageDto(
-        id: '1', assistanceId: 'a1', content: 'x', username: 'me', typeUser: 'aff',
-      ));
+      final m = mapper.toEntity(
+        const ChatMessageDto(
+          id: '1',
+          assistanceId: 'a1',
+          content: 'x',
+          username: 'me',
+          typeUser: 'aff',
+        ),
+      );
       expect(m.isOwn, isTrue);
     });
     test('parses an incoming socket payload, filtering own messages', () {
       final incoming = mapper.toEntityFromSocket(<String, dynamic>{
-        '_id': '2', 'assistanceId': 'a1', 'msContent': 'hello', 'msTypeUser': 'prov',
+        '_id': '2',
+        'assistanceId': 'a1',
+        'msContent': 'hello',
+        'msTypeUser': 'prov',
       });
       expect(incoming, isNotNull);
       expect(incoming!.isOwn, isFalse);
@@ -88,12 +113,16 @@ void main() {
       repo = _FakeChatRepository();
       socket = _FakeSocketManager();
       connectivity = _FakeConnectivity();
-      container = ProviderContainer(overrides: [
-        chatRepositoryProvider.overrideWithValue(repo),
-        socketManagerProvider.overrideWithValue(socket),
-        connectivityProvider.overrideWithValue(connectivity),
-        localDatabaseProvider.overrideWithValue(AppDatabase.forTesting(NativeDatabase.memory())),
-      ]);
+      container = ProviderContainer(
+        overrides: [
+          chatRepositoryProvider.overrideWithValue(repo),
+          socketManagerProvider.overrideWithValue(socket),
+          connectivityProvider.overrideWithValue(connectivity),
+          localDatabaseProvider.overrideWithValue(
+            AppDatabase.forTesting(NativeDatabase.memory()),
+          ),
+        ],
+      );
     });
     tearDown(() {
       container.dispose();
@@ -112,11 +141,18 @@ void main() {
     test('appends an incoming socket message', () async {
       final notifier = container.read(chatProvider.notifier);
       await notifier.start('a1');
-      socket.sink.add(const RawSocketEvent(
-        channel: SocketChannel.chat,
-        type: null,
-        payload: {'_id': 's1', 'assistanceId': 'a1', 'msContent': 'yo', 'msTypeUser': 'prov'},
-      ));
+      socket.sink.add(
+        const RawSocketEvent(
+          channel: SocketChannel.chat,
+          type: null,
+          payload: {
+            '_id': 's1',
+            'assistanceId': 'a1',
+            'msContent': 'yo',
+            'msTypeUser': 'prov',
+          },
+        ),
+      );
       await Future<void>.delayed(Duration.zero);
       expect(container.read(chatProvider).messages, hasLength(2));
     });

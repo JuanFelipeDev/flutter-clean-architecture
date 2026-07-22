@@ -1,8 +1,6 @@
-/// Settings entities (AFILIADO `configurationapp/` `ResponseApplicationSetting`
 /// + language + logout).
 library;
 
-/// Per-client app configuration pulled from the backend (AFILIADO
 /// `api-python/affiliate/application_settings/` / `configuraciones_app_afiliado/`).
 class AppConfiguration {
   const AppConfiguration({
@@ -25,7 +23,6 @@ class AppConfiguration {
   final int? maxInactivityMinutes;
 }
 
-/// A selectable language (AFILIADO `dialogs/language`).
 class LanguageOption {
   const LanguageOption({required this.code, required this.name});
   final String code;
