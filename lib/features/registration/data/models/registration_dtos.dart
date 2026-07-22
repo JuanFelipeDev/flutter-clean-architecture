@@ -1,38 +1,9 @@
-/// DTOs + mappers for registration (AFILIADO `ValidateDocumentResponse`,
 /// `ResponseOfTheRegistrationForm` / `RegisterResponse`).
 library;
 
 import 'dart:convert';
 
 import '../../domain/entities/registration_entities.dart';
-
-class ValidateDocumentDto {
-  const ValidateDocumentDto({this.valid, this.message, this.cveAffiliate});
-  final bool? valid;
-  final String? message;
-  final String? cveAffiliate;
-
-  factory ValidateDocumentDto.fromJson(Map<String, dynamic> json) {
-    return ValidateDocumentDto(
-      valid: json['valid'] is bool
-          ? json['valid'] as bool
-          : json['success'] is bool
-              ? json['success'] as bool
-              : null,
-      message: json['message']?.toString() ?? json['detail']?.toString(),
-      cveAffiliate: json['cve_affiliate']?.toString() ?? json['cveAffiliate']?.toString(),
-    );
-  }
-
-  static ValidateDocumentDto? tryParse(dynamic body) {
-    if (body is Map<String, dynamic>) return ValidateDocumentDto.fromJson(body);
-    if (body is String) {
-      final decoded = jsonDecode(body);
-      if (decoded is Map<String, dynamic>) return ValidateDocumentDto.fromJson(decoded);
-    }
-    return null;
-  }
-}
 
 class RegisterDto {
   const RegisterDto({this.success, this.message, this.cveAffiliate});
@@ -46,7 +17,8 @@ class RegisterDto {
           ? json['success'] as bool
           : json['status']?.toString() == 'ok' || json['id'] != null,
       message: json['message']?.toString() ?? json['detail']?.toString(),
-      cveAffiliate: json['cve_affiliate']?.toString() ??
+      cveAffiliate:
+          json['cve_affiliate']?.toString() ??
           json['cveAffiliate']?.toString() ??
           json['id']?.toString(),
     );
@@ -64,14 +36,6 @@ class RegisterDto {
 
 class RegistrationMapper {
   const RegistrationMapper();
-
-  ValidateDocumentResult toValidateResult(ValidateDocumentDto dto) {
-    return ValidateDocumentResult(
-      valid: dto.valid ?? false,
-      message: dto.message,
-      existingCve: dto.cveAffiliate,
-    );
-  }
 
   RegisterResult toRegisterResult(RegisterDto dto) {
     return RegisterResult(

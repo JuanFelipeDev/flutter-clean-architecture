@@ -1,4 +1,4 @@
-/// [AssistanceRepository] + [PlacesRepository] implementations.
+/// [AssistanceRepository] implementation.
 library;
 
 import 'package:dio/dio.dart';
@@ -12,7 +12,10 @@ import '../datasources/assistance_remote_data_source.dart';
 import '../models/assistance_dtos.dart';
 
 class AssistanceRepositoryImpl implements AssistanceRepository {
-  AssistanceRepositoryImpl({required this.remoteDataSource, required this.mapper});
+  AssistanceRepositoryImpl({
+    required this.remoteDataSource,
+    required this.mapper,
+  });
 
   final AssistanceRemoteDataSource remoteDataSource;
   final AssistanceMapper mapper;
@@ -42,7 +45,10 @@ class AssistanceRepositoryImpl implements AssistanceRepository {
   }
 
   @override
-  Future<Result<List<ServiceFamily>>> families(String affKey, String planId) async {
+  Future<Result<List<ServiceFamily>>> families(
+    String affKey,
+    String planId,
+  ) async {
     try {
       final dtos = await remoteDataSource.fetchFamilies(affKey, planId);
       return Success(dtos.map(mapper.toFamily).toList());
@@ -54,9 +60,17 @@ class AssistanceRepositoryImpl implements AssistanceRepository {
   }
 
   @override
-  Future<Result<List<Service>>> services(String affKey, String planId, String familyId) async {
+  Future<Result<List<Service>>> services(
+    String affKey,
+    String planId,
+    String familyId,
+  ) async {
     try {
-      final dtos = await remoteDataSource.fetchServices(affKey, planId, familyId);
+      final dtos = await remoteDataSource.fetchServices(
+        affKey,
+        planId,
+        familyId,
+      );
       return Success(dtos.map(mapper.toService).toList());
     } on DioException catch (e) {
       return Err(mapDioError(e));
@@ -66,7 +80,9 @@ class AssistanceRepositoryImpl implements AssistanceRepository {
   }
 
   @override
-  Future<Result<List<CoverageQuestion>>> coverageQuestions(String serviceId) async {
+  Future<Result<List<CoverageQuestion>>> coverageQuestions(
+    String serviceId,
+  ) async {
     try {
       final dtos = await remoteDataSource.fetchCoverageQuestions(serviceId);
       return Success(dtos.map(mapper.toQuestion).toList());
@@ -101,52 +117,6 @@ class AssistanceRepositoryImpl implements AssistanceRepository {
         answers: answerJson,
       );
       return Success(mapper.toAssistance(dto));
-    } on DioException catch (e) {
-      return Err(mapDioError(e));
-    } on Object catch (e, st) {
-      return Err(Failure.unknown(e, st));
-    }
-  }
-}
-
-class PlacesRepositoryImpl implements PlacesRepository {
-  PlacesRepositoryImpl({required this.remoteDataSource, required this.mapper});
-
-  final PlacesRemoteDataSource remoteDataSource;
-  final AssistanceMapper mapper;
-
-  @override
-  Future<Result<List<PlaceSuggestion>>> autocomplete(String query) async {
-    try {
-      final dtos = await remoteDataSource.autocomplete(query);
-      return Success(dtos.map(mapper.toSuggestion).toList());
-    } on DioException catch (e) {
-      return Err(mapDioError(e));
-    } on Object catch (e, st) {
-      return Err(Failure.unknown(e, st));
-    }
-  }
-
-  @override
-  Future<Result<PlaceLocation>> placeDetails(String placeId) async {
-    try {
-      final dto = await remoteDataSource.placeDetails(placeId);
-      return Success(mapper.toPlace(dto));
-    } on DioException catch (e) {
-      return Err(mapDioError(e));
-    } on Object catch (e, st) {
-      return Err(Failure.unknown(e, st));
-    }
-  }
-
-  @override
-  Future<Result<String>> reverseGeocode(double lat, double lng) async {
-    try {
-      final address = await remoteDataSource.reverseGeocode(lat, lng);
-      if (address == null || address.isEmpty) {
-        return Err(Failure.unknown('No address found for location'));
-      }
-      return Success(address);
     } on DioException catch (e) {
       return Err(mapDioError(e));
     } on Object catch (e, st) {

@@ -15,7 +15,10 @@ class _FakeAuthRepository implements AuthRepository {
   final LoginSession _session;
 
   @override
-  Future<Result<LoginSession>> login(LoginCredentials credentials, {String? deviceToken}) async {
+  Future<Result<LoginSession>> login(
+    LoginCredentials credentials, {
+    String? deviceToken,
+  }) async {
     if (credentials is RobleCredentials && !credentials.isValid) {
       return Err(Failure.validation('Complete at least two fields'));
     }
@@ -23,7 +26,10 @@ class _FakeAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<Result<LoginSession>> verifyTwoFactor(String userName, String code) async {
+  Future<Result<LoginSession>> verifyTwoFactor(
+    String userName,
+    String code,
+  ) async {
     return Success(_session);
   }
 
@@ -98,36 +104,43 @@ void main() {
 
   group('LoginNotifier', () {
     test('builds standard credentials and submits', () async {
-      final container = ProviderContainer(overrides: [
-        flavorConfigProvider.overrideWithValue(
-          const FlavorConfig(
-            flavor: Flavor.basenewsoa,
-            environment: Environment.dev,
-            appName: 'Test',
-            primaryColor: 0xFF000000,
-            accentColor: 0xFF000000,
-            loginStrategy: LoginStrategy.standard,
-            registerFields: [],
-            clientId: '',
-            country: '',
-            urlServerDev: '',
-            urlServerQa: '',
-            urlServerProd: '',
-            urlServerPreprod: '',
-            urlSocket: '',
-            socketPath: '',
-            sentryDsn: '',
-            mapsApiKey: '',
-            envSwitcherEnabled: false,
+      final container = ProviderContainer(
+        overrides: [
+          flavorConfigProvider.overrideWithValue(
+            const FlavorConfig(
+              flavor: Flavor.basenewsoa,
+              environment: Environment.dev,
+              appName: 'Test',
+              primaryColor: 0xFF000000,
+              accentColor: 0xFF000000,
+              loginStrategy: LoginStrategy.standard,
+              registerFields: [],
+              clientId: '',
+              country: '',
+              urlServerDev: '',
+              urlServerQa: '',
+              urlServerProd: '',
+              urlServerPreprod: '',
+              urlSocket: '',
+              socketPath: '',
+              sentryDsn: '',
+              mapsApiKey: '',
+              envSwitcherEnabled: false,
+              requiresAccountTypeSelection: false,
+              passwordStrengthRequired: true,
+              addressAsPlainText: false,
+            ),
           ),
-        ),
-        authRepositoryProvider.overrideWithValue(
-          _FakeAuthRepository(const LoginSession(
-            accessToken: 'tok',
-            user: AffiliateUser(id: '1', userName: 'bob'),
-          )),
-        ),
-      ]);
+          authRepositoryProvider.overrideWithValue(
+            _FakeAuthRepository(
+              const LoginSession(
+                accessToken: 'tok',
+                user: AffiliateUser(id: '1', userName: 'bob'),
+              ),
+            ),
+          ),
+        ],
+      );
 
       addTearDown(container.dispose);
       final notifier = container.read(loginProvider.notifier);
@@ -139,33 +152,38 @@ void main() {
     });
 
     test('fails on incomplete standard credentials', () async {
-      final container = ProviderContainer(overrides: [
-        flavorConfigProvider.overrideWithValue(
-          const FlavorConfig(
-            flavor: Flavor.basenewsoa,
-            environment: Environment.dev,
-            appName: 'Test',
-            primaryColor: 0xFF000000,
-            accentColor: 0xFF000000,
-            loginStrategy: LoginStrategy.standard,
-            registerFields: [],
-            clientId: '',
-            country: '',
-            urlServerDev: '',
-            urlServerQa: '',
-            urlServerProd: '',
-            urlServerPreprod: '',
-            urlSocket: '',
-            socketPath: '',
-            sentryDsn: '',
-            mapsApiKey: '',
-            envSwitcherEnabled: false,
+      final container = ProviderContainer(
+        overrides: [
+          flavorConfigProvider.overrideWithValue(
+            const FlavorConfig(
+              flavor: Flavor.basenewsoa,
+              environment: Environment.dev,
+              appName: 'Test',
+              primaryColor: 0xFF000000,
+              accentColor: 0xFF000000,
+              loginStrategy: LoginStrategy.standard,
+              registerFields: [],
+              clientId: '',
+              country: '',
+              urlServerDev: '',
+              urlServerQa: '',
+              urlServerProd: '',
+              urlServerPreprod: '',
+              urlSocket: '',
+              socketPath: '',
+              sentryDsn: '',
+              mapsApiKey: '',
+              envSwitcherEnabled: false,
+              requiresAccountTypeSelection: false,
+              passwordStrengthRequired: true,
+              addressAsPlainText: false,
+            ),
           ),
-        ),
-        authRepositoryProvider.overrideWithValue(
-          _FakeAuthRepository(const LoginSession(accessToken: 'tok')),
-        ),
-      ]);
+          authRepositoryProvider.overrideWithValue(
+            _FakeAuthRepository(const LoginSession(accessToken: 'tok')),
+          ),
+        ],
+      );
       addTearDown(container.dispose);
       final notifier = container.read(loginProvider.notifier);
       await notifier.submit();

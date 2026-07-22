@@ -5,7 +5,7 @@
   "PRIMARY_COLOR": "0xFFC62828",
   "ACCENT_COLOR": "0xFFFFFFFF",
   "LOGIN_STRATEGY": "standard",
-  "REGISTER_FIELDS": "email,phone,name,lastname,nit",
+  "REGISTER_FIELDS": "email,phone,name,lastname,nit,password,address",
   "CLIENT_ID": "masservicios",
   "COUNTRY": "MX",
   "URL_SERVER_DEV": "https://ekus.masservicios.com.mx/api-mas/app/",

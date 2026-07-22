@@ -1,14 +1,13 @@
-/// Assistance wizard (AFILIADO plans -> families -> services -> coverage
 /// questions -> address -> create). A single page rendering the current step
 /// driven by [AssistanceState.step].
 library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../../core/widgets/loading.dart';
 import '../../../../core/widgets/toast.dart';
+import '../../../places/presentation/widgets/address_map_picker.dart';
 import '../../domain/entities/assistance_entities.dart';
 import '../providers/assistance_providers.dart';
 import '../states/assistance_state.dart';
@@ -112,15 +111,11 @@ class _AssistancePageState extends ConsumerState<AssistancePage> {
         );
       case AssistanceStep.address:
         return _AddressStep(
-          suggestions: state.suggestions,
           address: state.address,
           lat: state.lat,
           lng: state.lng,
           status: state.status,
-          onChanged: notifier.autocompleteAddress,
-          onPicked: notifier.selectSuggestion,
-          onMapMoved: notifier.onMapMoved,
-          onConfirm: notifier.confirmLocation,
+          onPicked: notifier.setLocation,
           onCreate: notifier.create,
         );
       case AssistanceStep.done:
@@ -177,7 +172,10 @@ class _SelectionList<T> extends StatelessWidget {
           margin: const EdgeInsets.symmetric(vertical: 4),
           child: ListTile(
             leading: CircleAvatar(child: Icon(icon, size: 22)),
-            title: Text(title(item), style: Theme.of(context).textTheme.titleSmall),
+            title: Text(
+              title(item),
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
             subtitle: sub != null ? Text(sub) : null,
             trailing: const Icon(Icons.chevron_right, color: Colors.grey),
             onTap: () => onSelected(item),
@@ -214,7 +212,11 @@ class _QuestionsStep extends StatelessWidget {
             itemCount: questions.length,
             itemBuilder: (context, i) {
               final q = questions[i];
-              return _QuestionTile(question: q, selected: answers[q.id], onAnswer: onAnswer);
+              return _QuestionTile(
+                question: q,
+                selected: answers[q.id],
+                onAnswer: onAnswer,
+              );
             },
           ),
         ),
@@ -231,7 +233,11 @@ class _QuestionsStep extends StatelessWidget {
 }
 
 class _QuestionTile extends StatelessWidget {
-  const _QuestionTile({required this.question, required this.selected, required this.onAnswer});
+  const _QuestionTile({
+    required this.question,
+    required this.selected,
+    required this.onAnswer,
+  });
   final CoverageQuestion question;
   final String? selected;
   final void Function(String, String) onAnswer;
@@ -243,7 +249,10 @@ class _QuestionTile extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 12),
-          child: Text(question.text, style: Theme.of(context).textTheme.titleMedium),
+          child: Text(
+            question.text,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
         ),
         for (final option in question.options)
           ListTile(
@@ -256,166 +265,46 @@ class _QuestionTile extends StatelessWidget {
   }
 }
 
-/// AFILIADO `SelectLocationDialog` parity: a Google Map with a centered pin,
-/// a search field backed by Places autocomplete, and a "confirm" action that
-/// reverse-geocodes the camera target before requesting the assistance.
-class _AddressStep extends StatefulWidget {
+/// Address step: the reusable [AddressMapPicker] (which resolves
+/// address + lat/lng and calls [onPicked]) followed by the "create
+/// assistance" action.
+class _AddressStep extends StatelessWidget {
   const _AddressStep({
-    required this.suggestions,
     required this.address,
     required this.lat,
     required this.lng,
     required this.status,
-    required this.onChanged,
     required this.onPicked,
-    required this.onMapMoved,
-    required this.onConfirm,
     required this.onCreate,
   });
 
-  final List<PlaceSuggestion> suggestions;
   final String address;
   final double? lat;
   final double? lng;
   final AssistanceStatus status;
-  final Future<void> Function(String) onChanged;
-  final Future<void> Function(PlaceSuggestion) onPicked;
-  final void Function(double lat, double lng) onMapMoved;
-  final Future<void> Function() onConfirm;
+  final void Function(String address, double lat, double lng) onPicked;
   final Future<void> Function() onCreate;
 
   @override
-  State<_AddressStep> createState() => _AddressStepState();
-}
-
-class _AddressStepState extends State<_AddressStep> {
-  static const _default = LatLng(4.624335, -74.063644); // Bogotá fallback
-  late final TextEditingController _controller;
-  GoogleMapController? _mapController;
-  LatLng? _lastTarget;
-  bool _animating = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController(text: widget.address);
-  }
-
-  @override
-  void didUpdateWidget(covariant _AddressStep old) {
-    super.didUpdateWidget(old);
-    // Animate the camera only when the notified lat/lng differs from where
-    // the map already is (i.e. a suggestion was picked). User drags update
-    // state to the same target the map already shows, so this stays a no-op
-    // and avoids a feedback loop.
-    final lat = widget.lat;
-    final lng = widget.lng;
-    if (lat == null || lng == null || _animating) return;
-    final last = _lastTarget;
-    if (last == null ||
-        (last.latitude != lat || last.longitude != lng)) {
-      _animateTo(lat, lng);
-    }
-  }
-
-  Future<void> _animateTo(double lat, double lng) async {
-    _animating = true;
-    await _mapController?.animateCamera(CameraUpdate.newLatLng(LatLng(lat, lng)));
-    _animating = false;
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final initial = (widget.lat != null && widget.lng != null)
-        ? LatLng(widget.lat!, widget.lng!)
-        : _default;
-    final busy = widget.status == AssistanceStatus.loading;
+    final busy = status == AssistanceStatus.loading;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(12, 12, 12, 4),
-          child: TextField(
-            controller: _controller,
-            decoration: const InputDecoration(
-              labelText: 'Buscar dirección',
-              prefixIcon: Icon(Icons.search),
-              border: OutlineInputBorder(),
-            ),
-            onChanged: (value) => widget.onChanged(value),
-          ),
-        ),
-        if (widget.suggestions.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Material(
-              elevation: 2,
-              borderRadius: BorderRadius.circular(8),
-              child: ListView(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  for (final s in widget.suggestions)
-                    ListTile(
-                      title: Text(s.description),
-                      onTap: () {
-                        _controller.text = s.description;
-                        widget.onPicked(s);
-                      },
-                    ),
-                ],
-              ),
-            ),
-          ),
         Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(12),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Stack(
-                children: [
-                  GoogleMap(
-                    initialCameraPosition: CameraPosition(target: initial, zoom: 14),
-                    myLocationButtonEnabled: false,
-                    onMapCreated: (controller) => _mapController = controller,
-                    onCameraMove: (pos) => _lastTarget = pos.target,
-                    onCameraIdle: () {
-                      final target = _lastTarget;
-                      if (target != null) widget.onMapMoved(target.latitude, target.longitude);
-                    },
-                  ),
-                  // Centered pin (AFILIADO style): the chosen point is always
-                  // the camera target, so a fixed center marker represents it.
-                  const Center(
-                    child: Icon(Icons.location_pin, size: 44, color: Colors.red),
-                  ),
-                ],
-              ),
-            ),
+          child: AddressMapPicker(
+            initialAddress: address,
+            initialLat: lat,
+            initialLng: lng,
+            onPicked: onPicked,
           ),
         ),
-        if (widget.address.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Text(widget.address,
-                style: Theme.of(context).textTheme.bodyMedium,
-                textAlign: TextAlign.center),
-          ),
         Padding(
           padding: const EdgeInsets.all(12),
           child: FilledButton.icon(
             onPressed: busy
                 ? null
-                : () async {
-                    await widget.onConfirm();
-                    await widget.onCreate();
-                  },
+                : () => onCreate(),
             icon: busy
                 ? const SizedBox(
                     width: 18,

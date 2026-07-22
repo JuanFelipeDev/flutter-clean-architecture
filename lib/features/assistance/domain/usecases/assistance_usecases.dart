@@ -8,7 +8,8 @@ import '../repositories/assistance_repository.dart';
 class GetAccountsUseCase {
   GetAccountsUseCase(this._repository);
   final AssistanceRepository _repository;
-  Future<Result<List<Account>>> call(String affKey) => _repository.accounts(affKey);
+  Future<Result<List<Account>>> call(String affKey) =>
+      _repository.accounts(affKey);
 }
 
 class GetPlansUseCase {
@@ -28,8 +29,11 @@ class GetFamiliesUseCase {
 class GetServicesUseCase {
   GetServicesUseCase(this._repository);
   final AssistanceRepository _repository;
-  Future<Result<List<Service>>> call(String affKey, String planId, String familyId) =>
-      _repository.services(affKey, planId, familyId);
+  Future<Result<List<Service>>> call(
+    String affKey,
+    String planId,
+    String familyId,
+  ) => _repository.services(affKey, planId, familyId);
 }
 
 class GetCoverageQuestionsUseCase {
@@ -61,23 +65,4 @@ class CreateAssistanceUseCase {
       answers: answers,
     );
   }
-}
-
-class AutocompletePlacesUseCase {
-  AutocompletePlacesUseCase(this._repository);
-  final PlacesRepository _repository;
-  Future<Result<List<PlaceSuggestion>>> call(String query) => _repository.autocomplete(query);
-}
-
-class PlaceDetailsUseCase {
-  PlaceDetailsUseCase(this._repository);
-  final PlacesRepository _repository;
-  Future<Result<PlaceLocation>> call(String placeId) => _repository.placeDetails(placeId);
-}
-
-class ReverseGeocodeUseCase {
-  ReverseGeocodeUseCase(this._repository);
-  final PlacesRepository _repository;
-  Future<Result<String>> call(double lat, double lng) =>
-      _repository.reverseGeocode(lat, lng);
 }

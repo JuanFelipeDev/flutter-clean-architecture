@@ -1,15 +1,12 @@
 /// Flavor & environment configuration injected at compile time via
 /// `--dart-define-from-file flavors/<flavor>/config.json`.
 ///
-/// Mirrors AFILIADO's product-flavor `BuildConfig` flags (CLIENT_ID, COUNTRY,
-/// login strategy, register fields, per-env server URLs) and PRESTADOR's
 /// `BuildConfig.URL_SERVER_*` / `ProviderFlavors` enum, but expressed as a
 /// single immutable typed object instead of scattered static getters.
 library;
 
 import 'package:flutter/foundation.dart';
 
-/// White-label flavors reproduced from AFILIADO/PRESTADOR.
 enum Flavor {
   basenewsoa,
   roble,
@@ -23,7 +20,6 @@ enum Flavor {
   }
 }
 
-/// Runtime environment selector (AFILIADO's `TYPE_ENVIROMENT`).
 enum Environment {
   dev,
   qa,
@@ -38,7 +34,6 @@ enum Environment {
   }
 }
 
-/// Login screen shape per flavor (AFILIADO: standard / EO 3-field / Roble
 /// NIT+placa+DPI).
 enum LoginStrategy {
   standard,
@@ -78,6 +73,9 @@ class FlavorConfig {
     required this.sentryDsn,
     required this.mapsApiKey,
     required this.envSwitcherEnabled,
+    required this.requiresAccountTypeSelection,
+    required this.passwordStrengthRequired,
+    required this.addressAsPlainText,
   });
 
   final Flavor flavor;
@@ -99,9 +97,25 @@ class FlavorConfig {
   final String mapsApiKey;
 
   /// Whether the login screen exposes the dev/qa/prod/preprod env picker
-  /// (AFILIADO gates it to certain flavors via `IS_IKATECH` /
   /// `IS_MASSERVICIOS_PERSONALIZADA`). Per flavor via `--dart-define`.
   final bool envSwitcherEnabled;
+
+  /// Whether the registration flow starts with an account-type selection
+  /// (Affiliate vs Guest). In AFILIADO this only exists for the ccife flavor
+  /// (`LoginViewModel` ccife branch); all other flavors go straight to the
+  /// form. Gated by `--dart-define ACCOUNT_TYPE_SELECTION` (default false).
+  final bool requiresAccountTypeSelection;
+
+  /// Whether the registration password field enforces strength rules
+  /// (min 8, digit, upper, lower, special). In AFILIADO only a subset of
+  /// flavors enforce this; ccife only checks length + match. Gated by
+  /// `--dart-define PASSWORD_STRENGTH_REQUIRED` (default true).
+  final bool passwordStrengthRequired;
+
+  /// Whether the registration address is captured as plain text (ccife) rather
+  /// than via the Google Maps picker (every other flavor). Gated by
+  /// `--dart-define ADDRESS_AS_PLAIN_TEXT` (default false).
+  final bool addressAsPlainText;
 
   /// Base server URL for a given environment.
   String urlServerFor(Environment env) {
@@ -118,7 +132,6 @@ class FlavorConfig {
   }
 
   /// Base server URL for the compile-time active environment (default before a
-  /// runtime override via the env picker, AFILIADO's `setTypeEnviroment`).
   String get urlServer => urlServerFor(environment);
 
   bool get isProduction => environment == Environment.prod;
@@ -130,21 +143,36 @@ class FlavorConfig {
       environment: Environment.fromName(
         const String.fromEnvironment('ENVIRONMENT'),
       ),
-      appName: const String.fromEnvironment('APP_NAME', defaultValue: 'Afiliado'),
+      appName: const String.fromEnvironment(
+        'APP_NAME',
+        defaultValue: 'Afiliado',
+      ),
       primaryColor: _parseColor(
-        const String.fromEnvironment('PRIMARY_COLOR', defaultValue: '0xFF1E88E5'),
+        const String.fromEnvironment(
+          'PRIMARY_COLOR',
+          defaultValue: '0xFF1E88E5',
+        ),
       ),
       accentColor: _parseColor(
-        const String.fromEnvironment('ACCENT_COLOR', defaultValue: '0xFFFFC107'),
+        const String.fromEnvironment(
+          'ACCENT_COLOR',
+          defaultValue: '0xFFFFC107',
+        ),
       ),
       loginStrategy: LoginStrategy.fromName(
-        const String.fromEnvironment('LOGIN_STRATEGY', defaultValue: 'standard'),
+        const String.fromEnvironment(
+          'LOGIN_STRATEGY',
+          defaultValue: 'standard',
+        ),
       ),
       registerFields: const String.fromEnvironment(
         'REGISTER_FIELDS',
         defaultValue: 'email,phone,name,lastname',
       ).split(',').where((s) => s.isNotEmpty).toList(),
-      clientId: const String.fromEnvironment('CLIENT_ID', defaultValue: 'basenewsoa'),
+      clientId: const String.fromEnvironment(
+        'CLIENT_ID',
+        defaultValue: 'basenewsoa',
+      ),
       country: const String.fromEnvironment('COUNTRY', defaultValue: 'CO'),
       urlServerDev: const String.fromEnvironment(
         'URL_SERVER_DEV',
@@ -171,8 +199,26 @@ class FlavorConfig {
         defaultValue: '/soaang-notifier/wss/',
       ),
       sentryDsn: const String.fromEnvironment('SENTRY_DSN', defaultValue: ''),
-      mapsApiKey: const String.fromEnvironment('MAPS_API_KEY', defaultValue: ''),
-      envSwitcherEnabled: const bool.fromEnvironment('ENV_SWITCHER', defaultValue: true),
+      mapsApiKey: const String.fromEnvironment(
+        'MAPS_API_KEY',
+        defaultValue: '',
+      ),
+      envSwitcherEnabled: const bool.fromEnvironment(
+        'ENV_SWITCHER',
+        defaultValue: true,
+      ),
+      requiresAccountTypeSelection: const bool.fromEnvironment(
+        'ACCOUNT_TYPE_SELECTION',
+        defaultValue: false,
+      ),
+      passwordStrengthRequired: const bool.fromEnvironment(
+        'PASSWORD_STRENGTH_REQUIRED',
+        defaultValue: true,
+      ),
+      addressAsPlainText: const bool.fromEnvironment(
+        'ADDRESS_AS_PLAIN_TEXT',
+        defaultValue: false,
+      ),
     );
   }
 

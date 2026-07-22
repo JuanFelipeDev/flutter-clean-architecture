@@ -17,16 +17,24 @@ class _FakeAssistanceRepository implements AssistanceRepository {
   Future<Result<List<Plan>>> plans(String affKey, String accountId) async =>
       const Success([Plan(id: 'plan1', name: 'Plan 1')]);
   @override
-  Future<Result<List<ServiceFamily>>> families(String affKey, String planId) async =>
-      const Success([ServiceFamily(id: 'fam1', name: 'Family 1')]);
+  Future<Result<List<ServiceFamily>>> families(
+    String affKey,
+    String planId,
+  ) async => const Success([ServiceFamily(id: 'fam1', name: 'Family 1')]);
   @override
-  Future<Result<List<Service>>> services(String affKey, String planId, String familyId) async =>
-      const Success([Service(id: 'svc1', name: 'Service 1', description: null, familyId: 'fam1')]);
+  Future<Result<List<Service>>> services(
+    String affKey,
+    String planId,
+    String familyId,
+  ) async => const Success([
+    Service(id: 'svc1', name: 'Service 1', description: null, familyId: 'fam1'),
+  ]);
   @override
-  Future<Result<List<CoverageQuestion>>> coverageQuestions(String serviceId) async =>
-      const Success([
-        CoverageQuestion(id: 'q1', text: 'Are you safe?', options: ['Yes', 'No']),
-      ]);
+  Future<Result<List<CoverageQuestion>>> coverageQuestions(
+    String serviceId,
+  ) async => const Success([
+    CoverageQuestion(id: 'q1', text: 'Are you safe?', options: ['Yes', 'No']),
+  ]);
   @override
   Future<Result<Assistance>> createAssistance({
     required String affKey,
@@ -36,8 +44,9 @@ class _FakeAssistanceRepository implements AssistanceRepository {
     required String latitude,
     required String longitude,
     required List<CoverageAnswer> answers,
-  }) async =>
-      const Success(Assistance(id: 'assist-1', serviceId: 'svc1', status: 'created'));
+  }) async => const Success(
+    Assistance(id: 'assist-1', serviceId: 'svc1', status: 'created'),
+  );
 }
 
 void main() {
@@ -48,15 +57,16 @@ void main() {
     test('maps account, plan, family, service', () {
       expect(mapper.toAccount(const AccountDto(id: 'a', name: 'n')).name, 'n');
       expect(mapper.toPlan(const PlanDto(id: 'p', name: 'Plan')).name, 'Plan');
-      expect(mapper.toFamily(const FamilyDto(id: 'f', name: 'Fam')).name, 'Fam');
+      expect(
+        mapper.toFamily(const FamilyDto(id: 'f', name: 'Fam')).name,
+        'Fam',
+      );
       expect(mapper.toService(const ServiceDto(id: 's', name: 'Svc')).id, 's');
     });
     test('maps coverage question', () {
-      final q = mapper.toQuestion(const CoverageQuestionDto(
-        id: 'q1',
-        text: 'T',
-        options: ['Yes', 'No'],
-      ));
+      final q = mapper.toQuestion(
+        const CoverageQuestionDto(id: 'q1', text: 'T', options: ['Yes', 'No']),
+      );
       expect(q.options, ['Yes', 'No']);
     });
     test('parses account list from a keyed map', () {
@@ -76,10 +86,14 @@ void main() {
     late ProviderContainer container;
 
     setUp(() {
-      container = ProviderContainer(overrides: [
-        cachedSessionProvider.overrideWith((_) => session),
-        assistanceRepositoryProvider.overrideWithValue(_FakeAssistanceRepository()),
-      ]);
+      container = ProviderContainer(
+        overrides: [
+          cachedSessionProvider.overrideWith((_) => session),
+          assistanceRepositoryProvider.overrideWithValue(
+            _FakeAssistanceRepository(),
+          ),
+        ],
+      );
     });
     tearDown(() => container.dispose);
 
@@ -108,7 +122,7 @@ void main() {
       notifier.setAnswer('q1', 'Yes');
       await notifier.completeQuestions();
       expect(container.read(assistanceProvider).step, AssistanceStep.address);
-      notifier.setAddress('123 Main St');
+      notifier.setLocation('123 Main St', 4.6, -74.0);
       await notifier.create();
       final state = container.read(assistanceProvider);
       expect(state.step, AssistanceStep.done);
@@ -116,13 +130,15 @@ void main() {
     });
 
     test('selecting a service with no questions jumps to address', () async {
-      final container = ProviderContainer(overrides: [
-        cachedSessionProvider.overrideWith((_) => session),
-        assistanceRepositoryProvider.overrideWithValue(_FakeAssistanceRepository()),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          cachedSessionProvider.overrideWith((_) => session),
+          assistanceRepositoryProvider.overrideWithValue(
+            _FakeAssistanceRepository(),
+          ),
+        ],
+      );
       addTearDown(container.dispose);
-      // Override coverage questions to empty via a second fake is overkill;
-      // here we just assert the not-empty path stays on questions.
       final notifier = container.read(assistanceProvider.notifier);
       await notifier.loadAccounts();
       await notifier.selectAccount('acc1');

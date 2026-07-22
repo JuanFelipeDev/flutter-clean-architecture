@@ -5,7 +5,7 @@
   "PRIMARY_COLOR": "0xFF1E88E5",
   "ACCENT_COLOR": "0xFFFFC107",
   "LOGIN_STRATEGY": "standard",
-  "REGISTER_FIELDS": "email,phone,name,lastname",
+  "REGISTER_FIELDS": "email,phone,name,lastname,document,password,address",
   "CLIENT_ID": "basenewsoa",
   "COUNTRY": "CO",
   "URL_SERVER_DEV": "https://api.sistemaoperaciones.com/",

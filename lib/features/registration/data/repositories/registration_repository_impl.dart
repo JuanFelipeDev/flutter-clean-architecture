@@ -12,38 +12,25 @@ import '../datasources/registration_remote_data_source.dart';
 import '../models/registration_dtos.dart';
 
 class RegistrationRepositoryImpl implements RegistrationRepository {
-  RegistrationRepositoryImpl({required this.remoteDataSource, required this.mapper});
+  RegistrationRepositoryImpl({
+    required this.remoteDataSource,
+    required this.mapper,
+  });
 
   final RegistrationRemoteDataSource remoteDataSource;
   final RegistrationMapper mapper;
 
   @override
-  Future<Result<ValidateDocumentResult>> validateDocument({
-    required String document,
-    required AccountType accountType,
-  }) async {
-    try {
-      final dto = await remoteDataSource.validateDocument(
-        document: document,
-        accountType: accountType,
-      );
-      return Success(mapper.toValidateResult(dto));
-    } on DioException catch (error) {
-      return Err(mapDioError(error));
-    } on Object catch (error, stackTrace) {
-      return Err(Failure.unknown(error, stackTrace));
-    }
-  }
-
-  @override
   Future<Result<RegisterResult>> register({
-    required AccountType accountType,
+    required String affkey,
     required Map<String, String> fields,
+    required String clientId,
   }) async {
     try {
       final dto = await remoteDataSource.register(
-        accountType: accountType,
+        affkey: affkey,
         fields: fields,
+        clientId: clientId,
       );
       return Success(mapper.toRegisterResult(dto));
     } on DioException catch (error) {

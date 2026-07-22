@@ -1,10 +1,18 @@
-/// Assistance wizard state (AFILIADO plans -> families -> services ->
 /// coverage questions -> create).
 library;
 
 import '../../domain/entities/assistance_entities.dart';
 
-enum AssistanceStep { accounts, plans, families, services, questions, address, done }
+enum AssistanceStep {
+  accounts,
+  plans,
+  families,
+  services,
+  questions,
+  address,
+  done,
+}
+
 enum AssistanceStatus { idle, loading, success, failure }
 
 class AssistanceState {
@@ -20,7 +28,6 @@ class AssistanceState {
     this.selectedFamilyId,
     this.selectedServiceId,
     this.answers = const {},
-    this.suggestions = const [],
     this.address = '',
     this.lat,
     this.lng,
@@ -40,7 +47,6 @@ class AssistanceState {
   final String? selectedFamilyId;
   final String? selectedServiceId;
   final Map<String, String> answers;
-  final List<PlaceSuggestion> suggestions;
   final String address;
   final double? lat;
   final double? lng;
@@ -60,7 +66,6 @@ class AssistanceState {
     String? selectedFamilyId,
     String? selectedServiceId,
     Map<String, String>? answers,
-    List<PlaceSuggestion>? suggestions,
     String? address,
     double? lat,
     double? lng,
@@ -80,7 +85,6 @@ class AssistanceState {
       selectedFamilyId: selectedFamilyId ?? this.selectedFamilyId,
       selectedServiceId: selectedServiceId ?? this.selectedServiceId,
       answers: answers ?? this.answers,
-      suggestions: suggestions ?? this.suggestions,
       address: address ?? this.address,
       lat: lat ?? this.lat,
       lng: lng ?? this.lng,

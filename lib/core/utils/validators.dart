@@ -1,4 +1,3 @@
-/// Business validators reproduced from AFILIADO (`ConfigUtils.validatePassword`,
 /// `VALID_EMAIL_ADDRESS_REGEX`, Roble field rules).
 library;
 
@@ -10,7 +9,6 @@ class Validators {
   static const String _emailRegex =
       r'^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$';
 
-  /// AFILIADO `VALID_PASSWORD`: digit + upper + lower + special, no spaces, ≥8.
   static const String _passwordRegex =
       r'^(?=.*[0-9])(?=.*[A-Z])(?=.*[a-z])(?=.*[^A-Za-z0-9])(?!.*\s).{8,}$';
 
@@ -26,8 +24,19 @@ class Validators {
     return (value) => RegExp(_passwordRegex).hasMatch(value) ? null : message;
   }
 
+  /// Validates that this field's value matches another field's current value
+  /// (e.g. password confirmation). The [other] getter is re-evaluated on each
+  /// validation so re-validating after the counterpart changes stays correct.
+  static FieldValidator match(
+    String Function() other, {
+    String message = 'Las contraseñas no coinciden',
+  }) {
+    return (value) => value == other() ? null : message;
+  }
+
   static FieldValidator minLength(int min, {String? message}) {
-    return (value) => value.length >= min ? null : (message ?? 'Min $min characters');
+    return (value) =>
+        value.length >= min ? null : (message ?? 'Min $min characters');
   }
 
   /// Roble: requires at least 2 of 3 fields non-empty (checked at submit time,

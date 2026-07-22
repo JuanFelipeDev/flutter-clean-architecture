@@ -1,5 +1,4 @@
 /// Riverpod providers for the network layer. Assembles the ordered Dio
-/// interceptor chain (PRESTADOR `NetworkModule` parity).
 library;
 
 import 'dart:async';
@@ -30,8 +29,6 @@ final connectivityProvider = Provider<ConnectivityService>((ref) {
   ref.onDispose(service.dispose);
   return service;
 });
-
-// -- Accessor implementations (DI seams wired to storage/config) -----------
 
 class _CredentialAccessor implements CredentialAccessor {
   _CredentialAccessor(this._storage, this._session);
@@ -103,7 +100,7 @@ final dioProvider = Provider<Dio>((ref) {
     ),
     AuthInterceptor(
       _CredentialAccessor(storage, session),
-      skipPaths: const ['api/token/', 'sign_up', 'password-reset'],
+      skipPaths: const ['api/token/', 'validate-affiliate', 'password-reset'],
     ),
     RefreshTokenInterceptor(_TokenRefresherImpl(sessionRepository, storage)),
     LoggingInterceptor(telemetry: telemetry, verbose: true),
