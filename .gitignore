@@ -27,6 +27,7 @@ coverage/
 
 # Flutter / native build outputs
 .dart_tool/
+.gradle/
 **/android/.gradle
 **/android/captures/
 **/android/gradlew
